@@ -1,3 +1,5 @@
+import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
+import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,12 +12,12 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 세로 방향으로 고정
-  SystemChrome.setPreferredOrientations(
-    [
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ],
-  );
+  // SystemChrome.setPreferredOrientations(
+  //   [
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ],
+  // );
 
   runApp(
     MaterialApp(
@@ -46,10 +48,13 @@ void main() {
       //   arguments: {
       //     // 넣어줄 arguments 있을 시,
       //   },
-      //   ModalRoute.withName({초기화하고 싶은 라우팅 시점점),
+      //   ModalRoute.withName({초기화하고 싶은 라우팅 시점),
       // );
       routes: {
         '/': (context) => RootScreen(),
+        '/home': (context) => HomeScreen(),
+        '/exercise': (context) => ExerciseScreen(),
+        '/exercise_detail': (context) => ExerciseDetailScreen(),
       },
       // home: const HomeScreen(),
     ),

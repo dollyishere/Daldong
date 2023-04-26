@@ -1,3 +1,5 @@
+import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
+import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -11,6 +13,8 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  // 하단에 보여줄 이모티콘 및 이동할 스크린 이름 지정
+  // colors의 경우 navbar package에서 직접 상속받는 듯 함(무슨 일이 벌어질 지 몰라서 건드리지는 않음!)
   List<NavbarItem> items = [
     NavbarItem(Icons.home, '홈', backgroundColor: colors[0]),
     NavbarItem(Icons.directions_run_rounded, '운동', backgroundColor: colors[1]),
@@ -19,12 +23,14 @@ class _RootScreenState extends State<RootScreen> {
     NavbarItem(Icons.person_pin, '마이페이지', backgroundColor: colors[0]),
   ];
 
+  // 네브바의 각 버튼을 누를 시, 이동할 스크린 지정
   final Map<int, Map<String, Widget>> _routes = {
     0: {
       '/': HomeScreen(),
     },
     1: {
-      '/': HomeScreen(),
+      '/': ExerciseScreen(),
+      // ExerciseDetailScreen.route: ExerciseDetailScreen(),
     },
     2: {
       '/': HomeScreen(),
@@ -37,6 +43,7 @@ class _RootScreenState extends State<RootScreen> {
     },
   };
 
+  // back button 누를 시(즉, 사용자가 종료하고 싶어하는 것 같을 때), 경고 메세지 출력
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -44,11 +51,12 @@ class _RootScreenState extends State<RootScreen> {
         duration: Duration(milliseconds: 600),
         margin: EdgeInsets.only(
             bottom: kBottomNavigationBarHeight, right: 2, left: 2),
-        content: Text('Tap back button again to exit'),
+        content: Text('두 번 연속으로 누를 시 앱이 종료됩니다.'),
       ),
     );
   }
 
+  // 일정 시간 이후, snackbar 숨김
   void hideSnackBar() {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
@@ -78,7 +86,7 @@ class _RootScreenState extends State<RootScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
+        padding: const EdgeInsets.only(bottom: 100.0),
         child: FloatingActionButton(
           child: Icon(NavbarNotifier.isNavbarHidden
               ? Icons.toggle_off
@@ -95,10 +103,13 @@ class _RootScreenState extends State<RootScreen> {
         ),
       ),
       body: NavbarRouter(
+        // 에러가 발생했거나, 해당 주소가 없을 때, 에러 발생문 출력
         errorBuilder: (context) {
-          return const Center(child: Text('Error 404'));
+          return const Center(child: Text('에러가 발생했습니다.'));
         },
+        // 데스크톱 모드인지 아닌지 검사한 후 만약 데스크탑 모드라면 변경
         isDesktop: size.width > 600 ? true : false,
+        // 만약 routing이 stack에 남은 요소가 없는데, 사용자가 back button을 누를 시, 종료 메시지 출력
         onBackButtonPressed: (isExitingApp) {
           if (isExitingApp) {
             newTime = DateTime.now();
@@ -116,8 +127,9 @@ class _RootScreenState extends State<RootScreen> {
           }
         },
         initialIndex: 0,
-        // footer 형식 지정
+        // 네브바 형식 지정
         type: NavbarType.material3,
+        // 현재 해당하는 페이지에 머무르고 있을 시, navbar 형식 지정
         destinationAnimationCurve: Curves.fastOutSlowIn,
         destinationAnimationDuration: 600,
         decoration: M3NavbarDecoration(
@@ -132,7 +144,6 @@ class _RootScreenState extends State<RootScreen> {
             ),
             indicatorColor: Theme.of(context).primaryColorLight,
             // iconTheme: const IconThemeData(color: Colors.indigo),
-            /// labelTextStyle: const TextStyle(color: Colors.white, fontSize: 14),
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow),
         onChanged: (x) {},
         backButtonBehavior: BackButtonBehavior.rememberHistory,
