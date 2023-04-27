@@ -1,4 +1,4 @@
-package com.example.daldong
+package com.ssafy.daldong
 
 import io.flutter.embedding.android.FlutterActivity
 

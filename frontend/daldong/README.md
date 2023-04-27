@@ -1,6 +1,6 @@
 # daldong
 
-a running meta animals project
+exercising with meta animals
 
 ## Getting Started
 
