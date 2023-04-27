@@ -82,7 +82,7 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size * 0.8;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: Padding(

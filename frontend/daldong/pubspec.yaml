@@ -38,6 +38,8 @@ dependencies:
   navbar_router: ^0.5.0
   syncfusion_flutter_charts: ^21.1.41
   table_calendar: ^3.0.9
+  webview_flutter: ^4.2.0
+  flutter_inappwebview: ^5.7.2+3
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +66,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/assets/fonts/
+    - lib/assets/htmls/
     - lib/assets/images/samples/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
