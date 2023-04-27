@@ -14,7 +14,7 @@ class _RootScreenState extends State<RootScreen> {
   List<NavbarItem> items = [
     NavbarItem(Icons.home, '홈', backgroundColor: colors[0]),
     NavbarItem(Icons.directions_run_rounded, '운동', backgroundColor: colors[1]),
-    NavbarItem(Icons.people_alt_rounded, '친구', backgroundColor: colors[0]),
+    NavbarItem(Icons.people_alt_rounded, '친구', backgroundColor: colors[2]),
     NavbarItem(Icons.flag_circle_rounded, '미션', backgroundColor: colors[2]),
     NavbarItem(Icons.person_pin, '마이페이지', backgroundColor: colors[0]),
   ];

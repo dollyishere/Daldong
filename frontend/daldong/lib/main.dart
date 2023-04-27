@@ -2,8 +2,6 @@ import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:daldong/screens/home_screen/home_screen.dart';
-
 void main() {
   // 앱 처음 실행 시 flutter 엔진 초기화 메소드 호출
   // flutter 자체의 렌더링 엔진을 사용할 때 필요한 기본적인 설정들을 수행하는 메소드라고 생각하면 됨
@@ -49,7 +47,7 @@ void main() {
       //   ModalRoute.withName({초기화하고 싶은 라우팅 시점점),
       // );
       routes: {
-        '/': (context) => RootScreen(),
+        '/': (context) => const RootScreen(),
       },
       // home: const HomeScreen(),
     ),

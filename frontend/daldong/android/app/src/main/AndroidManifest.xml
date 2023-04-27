@@ -1,9 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.daldong">
     <application
-        android:label="daldong"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:label="@string/applicationName"
+        android:icon="@mipmap/App_Icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

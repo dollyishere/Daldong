@@ -4,7 +4,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:daldong/widgets/home_screen/info_block.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,24 +14,26 @@ class HomeScreen extends StatelessWidget {
       NavbarItem(Icons.person, 'Me', backgroundColor: colors[2]),
     ];
 
-    final Map<int, Map<String, Widget>> _routes = {
+    final Map<int, Map<String, Widget>> routes = {
       0: {
         '/': HomeScreen(),
       },
     };
 
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [InfoBlock(
-            petNumber: 5,
-            nickName: 'jy',
-            playerLevel: 10,
-            playerExp: 1100,
-            playerKcal: 2540,
-          ),],
+          children: [
+            InfoBlock(
+              petNumber: 5,
+              nickName: 'jy',
+              playerLevel: 10,
+              playerExp: 1100,
+              playerKcal: 2540,
+            ),
+          ],
         ),
       ),
     );
