@@ -2,7 +2,7 @@
     package="com.example.daldong">
     <application
         android:label="@string/applicationName"
-        android:icon="@mipmap/App_Icon">
+        android:icon="@mipmap/app_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

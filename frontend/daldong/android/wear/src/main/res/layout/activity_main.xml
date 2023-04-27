@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
-    android:background="@mipmap/App_Icon"
+    android:background="@mipmap/app_icon"
     tools:context=".MainActivity"
     tools:deviceIds="wear">
 
