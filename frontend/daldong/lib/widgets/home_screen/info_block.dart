@@ -58,7 +58,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           '칼로리',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -66,6 +66,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           '${widget.playerKcal}Kcal',
                           style: TextStyle(
                             color: Colors.white,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -100,7 +101,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           '경험치',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -108,6 +109,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           '${widget.playerExp}exp',
                           style: TextStyle(
                             color: Colors.white,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -163,7 +165,7 @@ class _InfoBlockState extends State<InfoBlock> {
                         'LV.${widget.playerLevel}',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 10,
                           color: Theme.of(context).secondaryHeaderColor,
                         ),
                       ),
@@ -177,7 +179,7 @@ class _InfoBlockState extends State<InfoBlock> {
                         widget.nickName,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 10,
                           color: Theme.of(context).secondaryHeaderColor,
                         ),
                       ),
