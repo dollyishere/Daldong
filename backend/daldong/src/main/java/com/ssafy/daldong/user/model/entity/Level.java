@@ -5,7 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Enabled
+@Entity
 @Table(name = "level")
 @Getter
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class Level {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "level", nullable = false)
-    private int level;
+    private long level;
 
     @Column(name = "required_exp", nullable = false)
     private int reauiredExp;
