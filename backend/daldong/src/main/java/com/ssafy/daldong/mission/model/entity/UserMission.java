@@ -19,12 +19,12 @@ public class UserMission {
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "mission_id", nullable = false)
-    private DailyMission dailyMission;
+    private DailyMission missionId;
 
     @Column(name = "is_receive", nullable = false)
     private boolean isReceive;

@@ -4,6 +4,7 @@ import com.ssafy.daldong.user.model.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "stastics")
@@ -12,11 +13,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class Stastics {
+public class Stastics implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "stastics_id", nullable = false)
+    private long stasticsId;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, unique = true)
     private User user;
 
     @Column(name = "daily_ex_time", nullable = false)
