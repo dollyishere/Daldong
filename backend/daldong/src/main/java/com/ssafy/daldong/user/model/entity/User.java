@@ -1,6 +1,6 @@
 package com.ssafy.daldong.user.model.entity;
 
-import com.ssafy.daldong.asset.model.entity.Asset;
+import com.ssafy.daldong.main.model.entity.Asset;
 import lombok.*;
 
 import javax.persistence.*;

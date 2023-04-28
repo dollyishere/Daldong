@@ -1,7 +1,5 @@
 package com.ssafy.daldong.friend.model.entity;
 
-import com.ssafy.daldong.asset.model.entity.UserAssetId;
-
 import java.io.Serializable;
 import java.util.Objects;
 
