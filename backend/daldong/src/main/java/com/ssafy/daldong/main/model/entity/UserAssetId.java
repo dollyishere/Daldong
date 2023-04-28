@@ -1,4 +1,4 @@
-package com.ssafy.daldong.asset.model.entity;
+package com.ssafy.daldong.main.model.entity;
 
 import java.io.Serializable;
 import java.util.Objects;

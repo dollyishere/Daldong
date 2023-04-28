@@ -1,4 +1,4 @@
-package com.ssafy.daldong.mission.model.entity;
+package com.ssafy.daldong.user.model.entity;
 
 import com.ssafy.daldong.user.model.entity.User;
 import lombok.*;
