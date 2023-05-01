@@ -1,16 +1,23 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
+import 'package:daldong/screens/login_screen/login_screen.dart';
+import 'package:daldong/screens/profile_screen/profile_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
+import 'package:daldong/screens/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:daldong/screens/home_screen/home_screen.dart';
 
-void main() {
+void main() async {
   // 앱 처음 실행 시 flutter 엔진 초기화 메소드 호출
   // flutter 자체의 렌더링 엔진을 사용할 때 필요한 기본적인 설정들을 수행하는 메소드라고 생각하면 됨
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   // 세로 방향으로 고정
   // SystemChrome.setPreferredOrientations(
   //   [
@@ -51,8 +58,10 @@ void main() {
       //   ModalRoute.withName({초기화하고 싶은 라우팅 시점),
       // );
       routes: {
-        '/': (context) => RootScreen(),
+        '/': (context) => SplashScreen(),
         '/home': (context) => HomeScreen(),
+        '/login': (context) => LoginScreen(),
+        '/profile': (context) => ProfileScreen(),
         '/exercise': (context) => ExerciseScreen(),
         '/exercise_detail': (context) => ExerciseDetailScreen(),
       },
