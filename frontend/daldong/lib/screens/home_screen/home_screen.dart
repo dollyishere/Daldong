@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:daldong/screens/login_screen/login_screen.dart';
+import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -97,9 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: Footer(),
+        body: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

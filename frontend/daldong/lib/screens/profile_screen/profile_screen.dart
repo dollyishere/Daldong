@@ -1,4 +1,5 @@
 import 'package:daldong/screens/login_screen/login_screen.dart';
+import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -30,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         MaterialPageRoute(
           builder: (context) => LoginScreen(),
         ),
-      );// 로그인 페이지로 이동
+      ); // 로그인 페이지로 이동
     }
   }
 
@@ -41,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkUserState();
     });
+    print('haha');
   }
 
   void signOut() async {
@@ -59,12 +61,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     late String email;
     late String photoUrl;
 
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child:
-          Column(
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: Footer(),
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -87,7 +89,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     )
                   ],
                 ),
-                child: Center(child: Text(userName ?? "기본값", style: TextStyle(color: Colors.white,),)),
+                child: Center(
+                    child: Text(
+                  userName ?? "기본값",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )),
               ),
               TextButton(
                 onPressed: signOut,
@@ -115,10 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           image: const DecorationImage(
-                            image: AssetImage('lib/assets/images/common/google_logo.png'),),
+                            image: AssetImage(
+                                'lib/assets/images/common/google_logo.png'),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 15,),
+                      const SizedBox(
+                        width: 15,
+                      ),
                       Text(
                         "로그아웃하기",
                         style: TextStyle(
@@ -131,6 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+        ),
       ),
     );
   }
