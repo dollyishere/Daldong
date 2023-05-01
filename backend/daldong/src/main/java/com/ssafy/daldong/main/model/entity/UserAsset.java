@@ -17,12 +17,12 @@ public class UserAsset {
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "asset_id", nullable = false)
-    private Asset assetId;
+    private Asset asset;
 
     @Column(name = "asset_type", nullable = false)
     private boolean assetType;
