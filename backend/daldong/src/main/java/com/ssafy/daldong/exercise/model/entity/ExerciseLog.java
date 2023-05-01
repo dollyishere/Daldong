@@ -19,7 +19,7 @@ import java.time.LocalTime;
 public class ExerciseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "exercize_id")
+    @Column(name = "exercise_id")
     private Long exerciseId;
 
     @ManyToOne

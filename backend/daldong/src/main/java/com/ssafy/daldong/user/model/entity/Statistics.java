@@ -1,24 +1,23 @@
 package com.ssafy.daldong.user.model.entity;
 
-import com.ssafy.daldong.user.model.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "stastics")
+@Table(name = "statistics")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class Stastics implements Serializable {
+public class Statistics implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "stastics_id", nullable = false)
-    private long stasticsId;
+    @Column(name = "statistics_id", nullable = false)
+    private long statisticsId;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, unique = true)

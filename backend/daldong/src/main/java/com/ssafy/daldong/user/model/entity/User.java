@@ -19,8 +19,8 @@ public class User {
     @Column(name = "user_id", nullable = false)
     private long userId;
 
-    @Column(name = "kakao_uid", nullable = false)
-    private String kakaoUid;
+    @Column(name = "user_uid", nullable = false)
+    private String UserUid;
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
