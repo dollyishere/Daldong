@@ -1,0 +1,3 @@
+<resources>
+    <string name="hello_world">안녕,\nHello, %1$s!</string>
+</resources>
