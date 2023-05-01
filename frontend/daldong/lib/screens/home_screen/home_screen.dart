@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:daldong/widgets/home_screen/info_block.dart';
 
@@ -14,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final InAppLocalhostServer localhostServer = new InAppLocalhostServer();
-  bool loading = false;
+  bool loading = true;
 
   // final controller = WebViewController()
   //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -49,13 +51,41 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future.delayed(const Duration(milliseconds: 10));
     setState(() {
       loading = false;
+      print(loading);
     });
+  }
+
+  static const storage = FlutterSecureStorage();
+  dynamic userName = '';
+  dynamic userProfileImg = '';
+  dynamic userEmail = '';
+
+  checkUserState() async {
+    var name = await storage.read(key: 'nickName');
+    var img = await storage.read(key: 'picture');
+    var email = await storage.read(key: 'googleEmail');
+    print(userName);
+    setState(() {
+      userName = name;
+      userProfileImg = img;
+      userEmail = email;
+    });
+    if (name == null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      ); // 로그인 페이지로 이동
+    }
   }
 
   @override
   void initState() {
     // TODO: implement initState
     // getLocalHost();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkUserState();
+    });
     super.initState();
   }
 
@@ -87,21 +117,25 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               height: 420,
               child: loading
-                  ? Container()
+                  ? Center(
+                      child: Text(
+                        'Welcome!',
+                      ),
+                    )
                   : Center(
                       child: Text(
                         'Welcome!',
                       ),
                     ),
-              // InAppWebView(
-              //         initialUrlRequest: URLRequest(
-              //           url: Uri.parse(
-              //               "http://localhost:8080/lib/assets/htmls/models.html"),
-              //         ),
-              //         onWebViewCreated: (controller) {},
-              //         onLoadStart: (controller, url) {},
-              //         onLoadStop: (controller, url) {},
-              //       ),
+              // : InAppWebView(
+              //     initialUrlRequest: URLRequest(
+              //       url: Uri.parse(
+              //           "http://localhost:8080/lib/assets/htmls/index.html"),
+              //     ),
+              //     onWebViewCreated: (controller) {},
+              //     onLoadStart: (controller, url) {},
+              //     onLoadStop: (controller, url) {},
+              //   ),
               // WebViewWidget(
               //   controller: controller,
               // ),

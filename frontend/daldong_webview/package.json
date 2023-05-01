@@ -12,6 +12,8 @@
   "dependencies": {
     "@react-three/drei": "^9.66.0",
     "@react-three/fiber": "^8.12.2",
+    "@types/three": "^0.150.2",
+    "babylonjs": "^6.1.0",
     "react": "^18.2.0",
     "react-babylonjs": "^3.1.16",
     "react-dom": "^18.2.0",
@@ -25,9 +27,15 @@
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react-swc": "^3.0.0",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "postcss": "^8.4.23",
+    "prettier": "^2.8.8",
+    "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   }

@@ -1,441 +1,354 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-    <title>Babylon.js sample code</title>
-
-    <!-- Babylon.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
-    <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
-    <script src="https://cdn.babylonjs.com/ammo.js"></script>
-    <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
-    <script src="https://cdn.babylonjs.com/cannon.js"></script>
-    <script src="https://cdn.babylonjs.com/Oimo.js"></script>
-    <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-    <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-    <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-    <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
-    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-
-    <style>
-      html,
-      body {
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      #renderCanvas {
-        width: 100%;
-        height: 100%;
-        touch-action: none;
-      }
-
-      #canvasZone {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
+    <title>three.js webgl - FBX loader</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="main.css" />
   </head>
+
   <body>
-    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
-    <script>
-      var canvas = document.getElementById("renderCanvas");
+    <div id="info">
+      <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a>
+      - FBXLoader<br />
+      Character and animation from
+      <a href="https://www.mixamo.com/" target="_blank" rel="noopener"
+        >Mixamo</a
+      >
+    </div>
 
-      var startRenderLoop = function (engine, canvas) {
-        engine.runRenderLoop(function () {
-          if (sceneToRender && sceneToRender.activeCamera) {
-            sceneToRender.render();
-          }
-        });
+    <!-- Import maps polyfill -->
+    <!-- Remove this when import maps will be widely supported -->
+    <script
+      async
+      src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
+    ></script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../build/three.module.js",
+          "three/addons/": "./jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+
+      import Stats from "three/addons/libs/stats.module.js";
+
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+      import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+
+      let camera, scene, renderer, stats;
+
+      const clock = new THREE.Clock();
+
+      let mixer;
+
+      const crossFadeControls = [];
+
+      let currentBaseAction = "idle";
+      const allActions = [];
+      const baseActions = {
+        Idle_A: { weight: 1 },
+        Jump: { weight: 0 },
+        Eat: { weight: 0 },
+        Roll: { weight: 0 },
       };
+      let panelSettings, numAnimations;
 
-      var engine = null;
-      var scene = null;
-      var sceneToRender = null;
-      var createDefaultEngine = function () {
-        return new BABYLON.Engine(canvas, true, {
-          preserveDrawingBuffer: true,
-          stencil: true,
-          disableWebGL2Support: false,
-        });
-      };
+      init();
+      animate();
 
-      var createScene = async function () {
-        // This creates a basic Babylon Scene object (non-mesh)
-        var scene = new BABYLON.Scene(engine);
+      function init() {
+        const container = document.createElement("div");
+        document.body.appendChild(container);
 
-        scene.clearColor = new BABYLON.Color3(0.31, 0.48, 0.64);
-
-        //add an arcRotateCamera to the scene
-        var camera = new BABYLON.ArcRotateCamera(
-          "camera",
-          BABYLON.Tools.ToRadians(125),
-          BABYLON.Tools.ToRadians(70),
-          25,
-          new BABYLON.Vector3(0, 3, 0),
-          scene
+        camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          1,
+          2000
         );
-        camera.lowerRadiusLimit = 10;
-        //camera.upperRadiusLimit = 40;
+        camera.position.set(100, 200, 300);
+        // camera.position.set( 500, 800, 1300 );
+        // camera.lookAt( 0, 0, 0 );
 
-        // This attaches the camera to the canvas
-        camera.attachControl(canvas, true);
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x46a094);
+        // scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
 
-        //enable physics in the scene
-        scene.enablePhysics(
-          new BABYLON.Vector3(0, -9.8, 0),
-          new BABYLON.AmmoJSPlugin()
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+        hemiLight.position.set(0, 200, 0);
+        scene.add(hemiLight);
+
+        // const gridHelper = new THREE.GridHelper( 1000, 20 );
+        // scene.add( gridHelper );
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        dirLight.position.set(0, 200, 100);
+        dirLight.castShadow = true;
+        dirLight.shadow.camera.top = 180;
+        dirLight.shadow.camera.bottom = -100;
+        dirLight.shadow.camera.left = -120;
+        dirLight.shadow.camera.right = 120;
+        scene.add(dirLight);
+
+        // scene.add( new THREE.CameraHelper( dirLight.shadow.camera ) );
+
+        // ground
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(2000, 2000),
+          new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false })
         );
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.receiveShadow = true;
+        scene.add(mesh);
 
-        //array for holding the cannon and "paired" animation group
-        var cannonAnimationPairings = {};
+        const grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000);
+        grid.material.opacity = 0.2;
+        grid.material.transparent = true;
+        scene.add(grid);
 
-        //array for holding readyToPlay status for the cannons
-        var cannonReadyToPlay = {};
+        // model
+        const loader = new FBXLoader();
+        loader.load("Sparrow_Animations.fbx", function (object) {
+          const animations = object.animations;
+          console.log(object);
+          mixer = new THREE.AnimationMixer(object);
+          numAnimations = animations.length;
+          console.log(animations);
 
-        //create a cannonBall template to clone from, set it's visibility to off.
-        var cannonBall = BABYLON.MeshBuilder.CreateSphere(
-          "cannonBall",
-          { diameter: 0.3 },
-          scene
-        );
-        var cannonBallMat = new BABYLON.StandardMaterial(
-          "cannonBallMaterial",
-          scene
-        );
-        cannonBallMat.diffuseColor = BABYLON.Color3.Black();
-        cannonBallMat.specularPower = 256;
-        cannonBall.material = cannonBallMat;
-        cannonBall.visibility = false;
+          for (let i = 0; i !== numAnimations; ++i) {
+            let clip = animations[i];
+            const name = clip.name;
 
-        //create a large box far underneath the tower, that will act as a trigger to destroy the cannonballs.
-        var killBox = BABYLON.MeshBuilder.CreateBox(
-          "killBox",
-          { width: 400, depth: 400, height: 4 },
-          scene
-        );
-        killBox.position = new BABYLON.Vector3(0, -50, 0);
-        killBox.visibility = 0;
-
-        //Load the tower assets
-        const pirateFortImport = await BABYLON.SceneLoader.ImportMeshAsync(
-          "",
-          "https://models.babylonjs.com/pirateFort/",
-          "pirateFort.glb",
-          scene
-        );
-        pirateFortImport.meshes[0].name = "pirateFort";
-        scene.getMeshByName("sea").material.needDepthPrePass = true;
-        scene.getLightByName("Sun").intensity = 12;
-
-        const car = await BABYLON.SceneLoader.ImportMeshAsync(
-          "./src/assets",
-          "sparrow.glb",
-          scene,
-          function (meshes) {}
-        );
-
-        //Load the cannon model and create clones
-        const cannonImportResult = await BABYLON.SceneLoader.ImportMeshAsync(
-          "",
-          "https://models.babylonjs.com/pirateFort/",
-          "cannon.glb",
-          scene
-        );
-        //remove the top level root node
-        // var cannon = cannonImportResult.meshes[0].getChildren()[0];
-        var cannon = car.meshes[0].getChildren()[0];
-        cannon.setParent(null);
-        car.meshes[0].dispose();
-
-        //set the metadata of each mesh to filter on later
-        var cannonMeshes = car.getChildMeshes();
-        for (var i = 0; i < cannonMeshes.length; i++) {
-          cannonMeshes[i].metadata = "cannon";
-        }
-
-        const importedAnimGroups = cannonImportResult.animationGroups;
-
-        //loop through all imported animation groups and copy the animation curve data to an array.
-        var animations = [];
-        for (var i = 0; i < importedAnimGroups.length; i++) {
-          importedAnimGroups[i].stop();
-          animations.push(
-            importedAnimGroups[i].targetedAnimations[0].animation
-          );
-          importedAnimGroups[i].dispose();
-        }
-
-        //create a new animation group and add targeted animations based on copied curve data from the "animations" array.
-        var cannonAnimGroup = new BABYLON.AnimationGroup("cannonAnimGroup");
-        cannonAnimGroup.addTargetedAnimation(
-          animations[0],
-          cannon.getChildMeshes()[1]
-        );
-        cannonAnimGroup.addTargetedAnimation(
-          animations[1],
-          cannon.getChildMeshes()[0]
-        );
-
-        //create a box for particle emission, position it at the muzzle of the cannon, turn off visibility and parent it to the cannon mesh
-        var particleEmitter = BABYLON.MeshBuilder.CreateBox(
-          "particleEmitter",
-          { size: 0.05 },
-          scene
-        );
-        particleEmitter.position = new BABYLON.Vector3(0, 0.76, 1.05);
-        particleEmitter.rotation.x = BABYLON.Tools.ToRadians(78.5);
-        particleEmitter.isVisible = false;
-        particleEmitter.setParent(cannon.getChildMeshes()[1]);
-
-        //load particle system from the snippet server and set the emitter to the particleEmitter. Set its stopDuration.
-        const smokeBlast = await BABYLON.ParticleHelper.CreateFromSnippetAsync(
-          "LCBQ5Y#6",
-          scene
-        );
-        smokeBlast.emitter = particleEmitter;
-        smokeBlast.targetStopDuration = 0.2;
-
-        //load a cannon blast sound
-        var cannonBlastSound = new BABYLON.Sound(
-          "music",
-          "https://assets.babylonjs.com/sound/cannonBlast.mp3",
-          scene
-        );
-
-        //position and rotation data for the placement of the cannon clones
-        var cannonPositionArray = [
-          [
-            new BABYLON.Vector3(0.97, 5.52, 1.79),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(1.08, 2.32, 3.05),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(1.46, 2.35, -0.73),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(90),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(1.45, 5.52, -1.66),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(90),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(1.49, 8.69, -0.35),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(90),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(-1.37, 8.69, -0.39),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(-90),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(0.58, 4, -2.18),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(180),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(1.22, 8.69, -2.5),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(180),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(-1.31, 2.33, -2.45),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(180),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-          [
-            new BABYLON.Vector3(-3.54, 5.26, -2.12),
-            new BABYLON.Vector3(
-              BABYLON.Tools.ToRadians(0),
-              BABYLON.Tools.ToRadians(-90),
-              BABYLON.Tools.ToRadians(180)
-            ),
-          ],
-        ];
-
-        //create 10 cannon clones, each with unique position/rotation data. Note that particle systems are cloned with parent meshes
-        //also create 10 new animation groups with targeted animations applied to the newly cloned meshes
-        for (var i = 0; i < 10; i++) {
-          var cannonClone = cannon.clone("cannonClone" + i);
-          cannonClone.position = cannonPositionArray[i][0];
-          cannonClone.rotation = cannonPositionArray[i][1];
-          var cannonAnimGroupClone = new BABYLON.AnimationGroup(
-            "cannonAnimGroupClone" + i
-          );
-          cannonAnimGroupClone.addTargetedAnimation(
-            cannonAnimGroup.targetedAnimations[0].animation,
-            cannonClone.getChildMeshes()[1]
-          );
-          cannonAnimGroupClone.addTargetedAnimation(
-            cannonAnimGroup.targetedAnimations[1].animation,
-            cannonClone.getChildMeshes()[0]
-          );
-
-          //store a key/value pair of each clone name and the name of the associated animation group name.
-          cannonAnimationPairings[cannonClone.name] = cannonAnimGroupClone.name;
-
-          //store key/value pair for the cannon name and it's readyToPlay status as 1;
-          cannonReadyToPlay[cannonClone.name] = 1;
-        }
-        //dispose of the original cannon, animation group, and particle system
-        cannon.dispose();
-        cannonAnimGroup.dispose();
-        smokeBlast.dispose();
-
-        //create an array for all particle systems in the scene, loop through it and stop all systems from playing.
-        var smokeBlasts = scene.particleSystems;
-        for (var i = 0; i < smokeBlasts.length; i++) {
-          smokeBlasts[i].stop();
-        }
-
-        //logic of what happens on a click
-        scene.onPointerDown = function (evt, pickResult) {
-          //check if a mesh was picked and if that mesh has specific metadata
-          if (
-            pickResult.pickedMesh &&
-            pickResult.pickedMesh.metadata === "cannon"
-          ) {
-            //find the top level parent (necessary since the cannon is an extra layer below the clone root)
-            var topParent = pickResult.pickedMesh.parent;
-            if (topParent.parent) {
-              topParent = topParent.parent;
-            }
-
-            //wrap all 'play' elements into a check to make sure the cannon can be played.
-            if (cannonReadyToPlay[topParent.name] === 1) {
-              //set the readyToPlay status to 0
-              cannonReadyToPlay[topParent.name] = 0;
-              //loop through all of the animation groups in the scene and play the correct group based on the top level parent of the picked mesh.
-              var animationToPlay = cannonAnimationPairings[topParent.name];
-              for (var i = 0; i < scene.animationGroups.length; i++) {
-                if (scene.animationGroups[i].name === animationToPlay) {
-                  scene.animationGroups[i].play();
-                  //after the animation has finished, set the readyToPlay status for this cannon to 1;
-                  scene.animationGroups[
-                    i
-                  ].onAnimationGroupEndObservable.addOnce(() => {
-                    cannonReadyToPlay[topParent.name] = 1;
-                  });
-                }
-              }
-              //loop through all particle systems in the scene, loop through all picked mesh submeshes. if there is a matching mesh and particle system emitter, start the particle system.
-              var childMeshes = pickResult.pickedMesh.getChildMeshes();
-              for (var i = 0; i < smokeBlasts.length; i++) {
-                for (var j = 0; j < childMeshes.length; j++) {
-                  if (childMeshes[j] === smokeBlasts[i].emitter) {
-                    smokeBlasts[i].start();
-
-                    //clone the cannonBall, make it visible, and add a physics imposter to it. Finally apply a force by scaling the up vector of the particle emitter box
-                    var cannonBallClone = cannonBall.clone("cannonBallClone");
-                    cannonBallClone.visibility = 1;
-                    cannonBallClone.position = childMeshes[j].absolutePosition;
-                    cannonBallClone.physicsImpostor =
-                      new BABYLON.PhysicsImpostor(
-                        cannonBallClone,
-                        BABYLON.PhysicsImpostor.SphereImpostor,
-                        { mass: 2, friction: 0.5, restitution: 0 },
-                        scene
-                      );
-                    cannonBallClone.physicsImpostor.applyImpulse(
-                      childMeshes[j].up.scale(40),
-                      BABYLON.Vector3.Zero()
-                    );
-
-                    //create an action manager for the cannonBallClone that will fire when intersecting the killbox. It will then dispose of the cannonBallClone.
-                    cannonBallClone.actionManager = new BABYLON.ActionManager(
-                      scene
-                    );
-                    cannonBallClone.actionManager.registerAction(
-                      new BABYLON.ExecuteCodeAction(
-                        {
-                          trigger:
-                            BABYLON.ActionManager.OnIntersectionEnterTrigger,
-                          parameter: killBox,
-                        },
-                        function () {
-                          cannonBallClone.dispose();
-                        }
-                      )
-                    );
-                  }
-                }
-              }
-              cannonBlastSound.play();
+            if (baseActions[name]) {
+              const action = mixer.clipAction(clip);
+              activateAction(action);
+              baseActions[name].action = action;
+              allActions.push(action);
             }
           }
-        };
 
-        return scene;
-      };
-      window.initFunction = async function () {
-        var asyncEngineCreation = async function () {
-          try {
-            return createDefaultEngine();
-          } catch (e) {
-            console.log(
-              "the available createEngine function failed. Creating the default engine instead"
-            );
-            return createDefaultEngine();
-          }
-        };
+          const action = mixer.clipAction(object.animations[9]);
+          action.play();
 
-        window.engine = await asyncEngineCreation();
-        if (!engine) throw "engine should not be null.";
-        startRenderLoop(engine, canvas);
-        window.scene = createScene();
-      };
-      initFunction().then(() => {
-        scene.then((returnedScene) => {
-          sceneToRender = returnedScene;
+          object.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          scene.add(object);
+          createPanel();
         });
-      });
 
-      // Resize
-      window.addEventListener("resize", function () {
-        engine.resize();
-      });
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 100, 0);
+        controls.update();
+
+        window.addEventListener("resize", onWindowResize);
+
+        // stats
+        stats = new Stats();
+        container.appendChild(stats.dom);
+      }
+
+      function activateAction(action) {
+        const clip = action.getClip();
+        const settings = baseActions[clip.name] || additiveActions[clip.name];
+        setWeight(action, settings.weight);
+        action.play();
+      }
+
+      function setWeight(action, weight) {
+        action.enabled = true;
+        action.setEffectiveTimeScale(1);
+        action.setEffectiveWeight(weight);
+      }
+
+      function synchronizeCrossFade(startAction, endAction, duration) {
+        mixer.addEventListener("loop", onLoopFinished);
+
+        function onLoopFinished(event) {
+          if (event.action === startAction) {
+            mixer.removeEventListener("loop", onLoopFinished);
+            // console.log("fade!!!!!")
+            // console.log(startAction)
+            // console.log(endAction)
+
+            executeCrossFade(startAction, endAction, duration);
+          }
+        }
+      }
+
+      function executeCrossFade(startAction, endAction, duration) {
+        console.log("Start");
+        console.log(startAction);
+
+        // Not only the start action, but also the end action must get a weight of 1 before fading
+        // (concerning the start action this is already guaranteed in this place)
+
+        if (endAction) {
+          setWeight(endAction, 1);
+          endAction.time = 0;
+
+          if (startAction) {
+            // Crossfade with warping
+
+            startAction.crossFadeTo(endAction, duration, true);
+          } else {
+            // Fade in
+
+            endAction.fadeIn(duration);
+          }
+        } else {
+          // Fade out
+
+          startAction.fadeOut(duration);
+        }
+      }
+
+      function createPanel() {
+        const panel = new GUI({ width: 310 });
+
+        const folder1 = panel.addFolder("Base Actions");
+        const folder2 = panel.addFolder("Additive Action Weights");
+        const folder3 = panel.addFolder("General Speed");
+
+        panelSettings = {
+          "modify time scale": 1.0,
+        };
+
+        const baseNames = ["None", ...Object.keys(baseActions)];
+        console.log(baseNames);
+
+        for (let i = 0, l = baseNames.length; i !== l; ++i) {
+          const name = baseNames[i];
+          const settings = baseActions[name];
+          console.log(name);
+          panelSettings[name] = function () {
+            const currentSettings = baseActions[currentBaseAction];
+            const currentAction = currentSettings
+              ? currentSettings.action
+              : null;
+            const action = settings ? settings.action : null;
+            if (currentAction !== action) {
+              prepareCrossFade(currentAction, action, 0.35);
+            }
+          };
+
+          crossFadeControls.push(folder1.add(panelSettings, name));
+        }
+
+        // for ( const name of Object.keys( additiveActions ) ) {
+
+        // 	const settings = additiveActions[ name ];
+
+        // 	panelSettings[ name ] = settings.weight;
+        // 	folder2.add( panelSettings, name, 0.0, 1.0, 0.01 ).listen().onChange( function ( weight ) {
+
+        // 		setWeight( settings.action, weight );
+        // 		settings.weight = weight;
+
+        // 	} );
+
+        // }
+
+        // folder3.add( panelSettings, 'modify time scale', 0.0, 1.5, 0.01 ).onChange( modifyTimeScale );
+
+        folder1.open();
+        folder2.open();
+        folder3.open();
+
+        crossFadeControls.forEach(function (control) {
+          control.setInactive = function () {
+            control.domElement.classList.add("control-inactive");
+          };
+
+          control.setActive = function () {
+            control.domElement.classList.remove("control-inactive");
+          };
+
+          const settings = baseActions[control.property];
+
+          if (!settings || !settings.weight) {
+            control.setInactive();
+          }
+        });
+      }
+
+      function prepareCrossFade(startAction, endAction, duration) {
+        // If the current action is 'Idle_A', execute the crossfade immediately;
+        // else wait until the current action has finished its current loop
+
+        if (currentBaseAction === "Idle_A" || !startAction || !endAction) {
+          executeCrossFade(startAction, endAction, duration);
+        } else {
+          synchronizeCrossFade(startAction, endAction, duration);
+        }
+
+        // Update control colors
+
+        if (endAction) {
+          const clip = endAction.getClip();
+          currentBaseAction = clip.name;
+        } else {
+          currentBaseAction = "None";
+        }
+
+        crossFadeControls.forEach(function (control) {
+          const name = control.property;
+
+          if (name === currentBaseAction) {
+            control.setActive();
+          } else {
+            control.setInactive();
+          }
+        });
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      //
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // for ( let i = 0; i !== numAnimations; ++ i ) {
+
+        // 	const action = allActions[ i ];
+        // 	const clip = action.getClip();
+        // 	const settings = baseActions[ clip.name ] || additiveActions[ clip.name ];
+        // 	settings.weight = action.getEffectiveWeight();
+
+        // }
+
+        const mixerUpdateDelta = clock.getDelta();
+
+        mixer.update(mixerUpdateDelta);
+        stats.update();
+
+        renderer.render(scene, camera);
+      }
     </script>
   </body>
 </html>
