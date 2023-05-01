@@ -1,4 +1,5 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
+import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -87,9 +88,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar: Footer(),
+        body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

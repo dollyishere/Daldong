@@ -1,6 +1,8 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
+import 'package:daldong/screens/friend_screen/friend_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
+import 'package:daldong/screens/mission_screen/mission_screen.dart';
 import 'package:daldong/screens/profile_screen/profile_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:daldong/screens/splash_screen/splash_screen.dart';
@@ -59,10 +61,13 @@ void main() async {
       // );
       routes: {
         '/': (context) => SplashScreen(),
+        // '/root': (context) => RootScreen(),
         '/home': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
         '/profile': (context) => ProfileScreen(),
         '/exercise': (context) => ExerciseScreen(),
+        '/friend': (context) => FriendScreen(),
+        '/mission': (context) => MissionScreen(),
         '/exercise_detail': (context) => ExerciseDetailScreen(),
       },
       // home: const HomeScreen(),

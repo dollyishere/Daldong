@@ -72,9 +72,9 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [

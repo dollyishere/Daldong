@@ -1,13 +1,12 @@
 import 'package:daldong/widgets/common/footer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class FriendScreen extends StatefulWidget {
+class MissionScreen extends StatefulWidget {
   @override
-  State<FriendScreen> createState() => _FriendScreenState();
+  State<MissionScreen> createState() => _MissionScreenState();
 }
 
-class _FriendScreenState extends State<FriendScreen> {
+class _MissionScreenState extends State<MissionScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
