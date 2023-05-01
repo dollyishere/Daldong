@@ -20,12 +20,12 @@ public class Friend {
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "friend_id", nullable = false)
-    private User friendId;
+    private User friend;
 
     @Column(name = "is_sting", nullable = false)
     private boolean isSting;

@@ -20,10 +20,10 @@ public class FriendRequest {
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sender_id", nullable = false)
-    private User senderId;
+    private User sender;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiverId;
+    private User receiver;
 }
