@@ -24,9 +24,6 @@ public class Asset {
     @Column(name = "asset_name", nullable = false)
     private String assetName;
 
-    @Column(name = "directory", nullable = false)
-    private String directory;
-
     @Column(name = "asset_unlock_level", nullable = false)
     private int assetUnlockLevel;
 
