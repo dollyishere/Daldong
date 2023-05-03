@@ -105,9 +105,8 @@ fun PreparingExercise(
                     prepareExercise()
                 }
             }
-
+            Log.d("위치 서비스 상태", serviceState.toString())
             val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
-
 
             ExerciseTheme {
                 Scaffold(timeText =
@@ -134,15 +133,13 @@ fun PreparingExercise(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.height(40.dp)
                         ) {
+                            Log.d("지역", location.toString())
                             when (location) {
                                 LocationAvailability.ACQUIRING, LocationAvailability.UNKNOWN -> ProgressBar()
                                 LocationAvailability.ACQUIRED_TETHERED, LocationAvailability.ACQUIRED_UNTETHERED -> AcquiredCheck()
                                 else -> NotAcquired()
-
                             }
-
                         }
-
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.Top
@@ -187,6 +184,7 @@ fun PreparingExercise(
 
 @Composable
 private fun updatePrepareLocationStatus(locationAvailability: LocationAvailability): String {
+
     val gpsText = when (locationAvailability) {
         LocationAvailability.ACQUIRED_TETHERED, LocationAvailability.ACQUIRED_UNTETHERED -> R.string.GPS_acquired
         LocationAvailability.NO_GNSS -> R.string.GPS_disabled // TODO Consider redirecting user to change device settings in this case

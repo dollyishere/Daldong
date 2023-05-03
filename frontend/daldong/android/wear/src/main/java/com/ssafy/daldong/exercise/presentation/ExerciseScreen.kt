@@ -92,8 +92,6 @@ fun ExerciseScreen(
             var activeDuration by remember { mutableStateOf(Duration.ZERO) }
             val exerciseStateChange by mutableStateOf(getExerciseServiceState.exerciseStateChange)
 
-
-
             /** Collect [DataPoint]s from the aggregate and exercise metric flows. Because
              * collectAsStateWithLifecycle() is asynchronous, store the last known value from each flow,
              * and update the value on screen only when the flow re-connects. **/
@@ -128,7 +126,6 @@ fun ExerciseScreen(
                 when (exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding) {
                     true -> Icons.Default.PlayArrow
                     false -> Icons.Default.Stop
-
                 }
 
             // The ticker coroutine updates activeDuration, but the ticker fires more often than

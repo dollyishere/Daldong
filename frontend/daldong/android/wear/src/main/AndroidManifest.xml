@@ -25,7 +25,6 @@
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
-
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
@@ -38,6 +37,7 @@
             android:name="com.ssafy.daldong.exercise.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +47,7 @@
         </activity>
 
         <service
-            android:name="com.ssafy.daldong.exercise.service.MyForegroundService"
+            android:name=".exercise.service.ForegroundService"
             android:exported="true"
             android:foregroundServiceType="location" />
     </application>
