@@ -1,0 +1,292 @@
+import 'package:flutter/material.dart';
+
+class FriendBlock extends StatefulWidget {
+  final int friendId;
+  final String friendNickname;
+  final int friendUserLevel;
+  final String mainPetAssetName;
+  final int isSting;
+  final void Function(BuildContext, Function, String, String, String, String,
+      {dynamic data}) showConfirmationDialog;
+
+  const FriendBlock({
+    Key? key,
+    required this.friendId,
+    required this.friendNickname,
+    required this.friendUserLevel,
+    required this.mainPetAssetName,
+    required this.isSting,
+    required this.showConfirmationDialog,
+  }) : super(key: key);
+
+  @override
+  State<FriendBlock> createState() => _FriendBlockState();
+}
+
+class _FriendBlockState extends State<FriendBlock> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 8,
+        horizontal: 4,
+      ),
+      child: Container(
+        width: 350,
+        height: 118,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 30,
+              top: 22,
+              child: Container(
+                width: 314,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor,
+                      spreadRadius: 0.5,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(44, 0, 0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: double.infinity,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: Container(
+                          width: 77,
+                          height: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.account_box,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                '상세정보',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 52,
+                        width: 2,
+                        color: widget.isSting == 1
+                            ? Colors.transparent
+                            : Theme.of(context).primaryColorDark,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          print('하하');
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: Container(
+                          width: 77,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: widget.isSting == 1
+                                ? Theme.of(context).shadowColor
+                                : Colors.transparent,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.push_pin,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                '찌르기',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: double.infinity,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                            Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).disabledColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: InkWell(
+                                onTap: () {},
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.waving_hand,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    Text(
+                                      '이별하기',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 40,
+              child: Container(
+                width: 30,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).disabledColor,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.5),
+                      spreadRadius: 0.3,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 6,
+              child: Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                    image: AssetImage("lib/assets/images/samples/cat5.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).secondaryHeaderColor,
+                    width: 10,
+                    strokeAlign: BorderSide.strokeAlignInside,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.5),
+                      spreadRadius: 0.3,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 68,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.75),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'LV.${widget.friendUserLevel}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 10,
+                            color: Theme.of(context).secondaryHeaderColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 68,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .primaryColorLight
+                            .withOpacity(0.75),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 1,
+                            vertical: 2,
+                          ),
+                          child: Text(
+                            widget.friendNickname,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10,
+                              color: Theme.of(context).secondaryHeaderColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

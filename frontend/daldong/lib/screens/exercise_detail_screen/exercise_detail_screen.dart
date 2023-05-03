@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -74,10 +75,12 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        // bottomNavigationBar: Footer(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              // 이때 값 받아오면 될 듯?
               ValueListenableBuilder<DateTime>(
                 valueListenable: _focusedDay,
                 builder: (context, value, _) {

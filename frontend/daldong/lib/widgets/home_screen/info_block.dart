@@ -42,8 +42,8 @@ class _InfoBlockState extends State<InfoBlock> {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.5),
-                        spreadRadius: 0.3,
+                        color: Theme.of(context).shadowColor,
+                        spreadRadius: 0.5,
                         blurRadius: 6,
                       ),
                     ],
@@ -85,8 +85,8 @@ class _InfoBlockState extends State<InfoBlock> {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.5),
-                        spreadRadius: 0.3,
+                        color: Theme.of(context).shadowColor,
+                        spreadRadius: 0.5,
                         blurRadius: 6,
                       ),
                     ],
