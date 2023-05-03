@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
         child: Image.asset(
-          'lib/assets/images/common/Splash.gif',
+          'lib/assets/images/common/Splash_2.gif',
           width: double.infinity,
         ),
       ),

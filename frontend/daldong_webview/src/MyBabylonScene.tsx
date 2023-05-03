@@ -19,15 +19,18 @@ const MyBabylonScene = () => {
     // );
 
     // The first parameter can be set to null to load all meshes and skeletons
-    const importPromise = BABYLON.SceneLoader.ImportMeshAsync(
-      ['myMesh1', 'myMesh2'],
-      './',
-      'duck.gltf',
+    BABYLON.SceneLoader.ImportMesh(
+      '',
+      'https://playground.babylonjs.com/scenes/BoomBox/',
+      'BoomBox.gltf',
       scene,
+      (newMeshes: any) => {
+        newMeshes[0].position.y = 1;
+        newMeshes[0].scaling = new BABYLON.Vector3(80, 80, 80);
+      },
     );
-    importPromise.then((result) => {
-      //// Result has meshes, particleSystems, skeletons, animationGroups and transformNodes
-    });
+
+    scene.render();
     const createScene = async function () {
       const myModel = await BABYLON.SceneLoader.ImportMesh(
         'myModel',
