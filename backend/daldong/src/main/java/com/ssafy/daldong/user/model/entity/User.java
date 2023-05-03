@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class User {
     private long userId;
 
     @Column(name = "user_uid", nullable = false)
-    private String UserUid;
+    private String userUid;
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
