@@ -32,13 +32,13 @@ public class User {
     private Float weight;
 
     @Column(name = "gender")
-    private boolean gender;
+    private Boolean gender;
 
     @Column(name = "age")
-    private int age;
+    private Integer age;
 
     @Column(name = "ability")
-    private int ability;
+    private Integer ability;
 
     @Column(name = "user_level", nullable = false)
     private int userLevel;

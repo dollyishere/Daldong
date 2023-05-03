@@ -11,7 +11,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class Statistics implements Serializable {
 
     @Id
