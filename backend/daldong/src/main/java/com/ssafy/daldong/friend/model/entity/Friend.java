@@ -33,4 +33,9 @@ public class Friend {
 
     @Column(name = "is_sting", nullable = false)
     private boolean isSting;
+
+    public Friend updateFriend(){
+        this.isSting = true;
+        return this;
+    }
 }

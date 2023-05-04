@@ -30,4 +30,5 @@ public class FriendRequest {
     @JoinColumn(name = "receiver_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User receiver;
+
 }
