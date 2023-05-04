@@ -22,9 +22,21 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //mysql
+    implementation 'com.mysql:mysql-connector-j:8.0.32'
+
+    //jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    //lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //swagger
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
+
 }
 
 tasks.named('test') {
