@@ -72,11 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
       userEmail = email;
     });
     if (name == null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      ); // 로그인 페이지로 이동
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
@@ -107,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             InfoBlock(
               petNumber: 5,
-              nickName: 'jy',
+              nickName: '집에가고싶다',
               playerLevel: 10,
               playerExp: 1100,
               playerKcal: 2540,

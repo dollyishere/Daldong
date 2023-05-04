@@ -41,12 +41,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Create a new credential
       final credential = googleAuth.accessToken;
+      print('token: ${googleUser.hashCode}');
+      print('token: ${googleUser.authentication}');
+      print('token: ${googleUser.serverAuthCode}');
+      print('token: ${googleUser.authHeaders}');
+      print('구분선');
+      print(googleUser.authHeaders.toString());
+      // print('hash: ${googleAuth.hashCode}');
+      // print('access: ${googleAuth.accessToken}');
+      print(googleAuth?.idToken);
+      // print(googleUser.id);
 
-      // final googleCredential = GoogleAuthProvider.credential(
-      //   accessToken: googleAuth?.accessToken,
-      //   idToken: googleAuth?.idToken,
-      // );
-
+      final googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      print(googleCredential);
       // // Once signed in, return the UserCredential
       // await FirebaseAuth.instance.signInWithCredential(googleCredential);
 
@@ -66,11 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await storage.write(key: "picture", value: googleUser.photoUrl);
         await storage.write(key: "googleEmail", value: googleUser.email);
         setState(() {});
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => HomeScreen(),
+        //   ),
+        // );
+
+        Navigator.pushReplacementNamed(context, '/home');
       }
     }
 

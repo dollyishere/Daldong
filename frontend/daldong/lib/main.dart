@@ -45,6 +45,7 @@ void main() async {
         shadowColor: const Color(0xFFEFEFEF),
         disabledColor: const Color(0xFF999999),
       ),
+      darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
       // 앱 시작 시 초기 경로
       initialRoute: '/',
@@ -61,7 +62,7 @@ void main() async {
       // );
       routes: {
         '/': (context) => SplashScreen(),
-        // '/root': (context) => RootScreen(),
+        '/root': (context) => RootScreen(),
         '/home': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
         '/profile': (context) => ProfileScreen(),

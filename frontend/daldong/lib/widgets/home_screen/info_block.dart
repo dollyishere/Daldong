@@ -33,7 +33,7 @@ class _InfoBlockState extends State<InfoBlock> {
             children: [
               Positioned(
                 left: 0,
-                top: 32,
+                top: 30,
                 child: Container(
                   width: 140,
                   height: 80,
@@ -76,7 +76,7 @@ class _InfoBlockState extends State<InfoBlock> {
               ),
               Positioned(
                 left: 210,
-                top: 32,
+                top: 30,
                 child: Container(
                   width: 140,
                   height: 80,
@@ -137,12 +137,16 @@ class _InfoBlockState extends State<InfoBlock> {
               ),
               Positioned(
                 left: 110,
-                top: 10,
+                top: 8,
                 child: Container(
                   width: 124,
                   height: 124,
                   decoration: BoxDecoration(
                     color: Colors.white,
+                    image: DecorationImage(
+                      image: AssetImage("lib/assets/images/samples/Dog.PNG"),
+                      fit: BoxFit.cover,
+                    ),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: Theme.of(context).secondaryHeaderColor,
@@ -157,33 +161,59 @@ class _InfoBlockState extends State<InfoBlock> {
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'LV.${widget.playerLevel}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10,
-                          color: Theme.of(context).secondaryHeaderColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'LV.${widget.playerLevel}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 10,
+                                color: Theme.of(context).secondaryHeaderColor,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        child:
-                            Image.asset('lib/assets/images/samples/cat5.jpg'),
-                      ),
-                      Text(
-                        widget.nickName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10,
-                          color: Theme.of(context).secondaryHeaderColor,
+                        SizedBox(
+                          height: 36,
                         ),
-                      ),
-                    ],
+                        Container(
+                          width: 74,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 1,
+                                vertical: 2,
+                              ),
+                              child: Text(
+                                widget.nickName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 10,
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
