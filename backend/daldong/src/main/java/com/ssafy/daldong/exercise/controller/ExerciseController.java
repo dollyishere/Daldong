@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/exercise")
+@RequestMapping("/exercise")
 public class ExerciseController {
 
     private static final Logger logger = LogManager.getLogger(ExerciseController.class);
