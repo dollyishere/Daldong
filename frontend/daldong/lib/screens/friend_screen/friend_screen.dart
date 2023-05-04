@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/friend_screen/friend_block.dart';
 import 'package:daldong/widgets/friend_screen/my_progress_bar.dart';
-import 'package:daldong/utilites/friend_screen/friend_screen.dart';
+import 'package:daldong/utilites/friend_screen/friend_utilite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -75,37 +75,44 @@ class _FriendScreenState extends State<FriendScreen> {
     List<Map<String, dynamic>> friendList = [
       {
         "friendId": 1,
-        "friendNickname": '헤헤헤헤헤헤',
+        "friendNickname": '팩ㄺ팍페규ㅖ',
         "friendUserLevel": 12,
-        "mainPetAssetName": 'Sparrow',
+        "mainPetAssetName": 'Dog',
+        "isSting": 0,
+      },
+      {
+        "friendId": 1,
+        "friendNickname": 'YouKno',
+        "friendUserLevel": 12,
+        "mainPetAssetName": 'Frog',
         "isSting": 0,
       },
       {
         "friendId": 1,
         "friendNickname": '핡핡핡핵핽핽',
         "friendUserLevel": 12,
-        "mainPetAssetName": 'Sparrow',
+        "mainPetAssetName": 'Snow_Weasel',
         "isSting": 0,
       },
       {
         "friendId": 1,
-        "friendNickname": 'j y',
+        "friendNickname": 'Naver',
         "friendUserLevel": 12,
-        "mainPetAssetName": 'Sparrow',
+        "mainPetAssetName": 'Crocodile',
         "isSting": 1,
       },
       {
         "friendId": 1,
-        "friendNickname": 'j y',
+        "friendNickname": '판다조하조하',
         "friendUserLevel": 12,
-        "mainPetAssetName": 'Sparrow',
+        "mainPetAssetName": 'Red_Panda',
         "isSting": 0,
       },
       {
         "friendId": 1,
-        "friendNickname": 'j y',
+        "friendNickname": '짹쨰그거ㅏㅣ',
         "friendUserLevel": 12,
-        "mainPetAssetName": 'Sparrow',
+        "mainPetAssetName": 'Bat',
         "isSting": 0,
       },
     ];

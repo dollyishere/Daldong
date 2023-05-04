@@ -212,7 +212,8 @@ class _FriendBlockState extends State<FriendBlock> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   image: DecorationImage(
-                    image: AssetImage("lib/assets/images/samples/cat5.jpg"),
+                    image: AssetImage(
+                        "lib/assets/images/samples/${widget.mainPetAssetName}.PNG"),
                     fit: BoxFit.cover,
                   ),
                   shape: BoxShape.circle,
@@ -233,34 +234,32 @@ class _FriendBlockState extends State<FriendBlock> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Container(
+                    //   width: 64,
+                    //   height: 20,
+                    //   decoration: BoxDecoration(
+                    //     // color: Colors.white.withOpacity(0.75),
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                    //   child: Center(
+                    //     child: Text(
+                    //       'LV.${widget.friendUserLevel}',
+                    //       style: TextStyle(
+                    //         fontWeight: FontWeight.w700,
+                    //         fontSize: 10,
+                    //         color: Theme.of(context).secondaryHeaderColor,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 40,
+                    ),
                     Container(
-                      width: 68,
+                      width: 64,
                       height: 20,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.75),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'LV.${widget.friendUserLevel}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 10,
-                            color: Theme.of(context).secondaryHeaderColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: 68,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .primaryColorLight
-                            .withOpacity(0.75),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(

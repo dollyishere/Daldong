@@ -47,11 +47,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void signOut() async {
     await GoogleSignIn().signOut();
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => LoginScreen(),
+    //   ),
+    // );
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

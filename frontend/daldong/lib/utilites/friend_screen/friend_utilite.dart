@@ -9,10 +9,11 @@ void showDetailCalender(
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        backgroundColor: Theme.of(context).primaryColorLight,
+        // backgroundColor: Theme.of(context).primaryColorLight,
+        backgroundColor: Colors.white,
         child: Container(
           height: MediaQuery.of(context).size.height * 0.7,
-          width: MediaQuery.of(context).size.width * 0.8,
+          width: MediaQuery.of(context).size.width * 0.9,
           padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +36,8 @@ void showDetailCalender(
                         surfaceTintColor: Colors.transparent,
                         shadowColor: Colors.transparent,
                         toolbarHeight: 1,
-                        backgroundColor: Theme.of(context).primaryColorLight,
+                        // backgroundColor: Theme.of(context).primaryColorLight,
+                        backgroundColor: Colors.white,
                         bottom: TabBar(
                           labelColor: Theme.of(context).primaryColorDark,
                           unselectedLabelColor: Theme.of(context).disabledColor,
@@ -85,7 +87,8 @@ void showDetailCalender(
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColorLight,
+                              // color: Theme.of(context).primaryColorLight,
+                              color: Colors.white,
                             ),
                             child: Column(
                               children: [
@@ -121,7 +124,8 @@ void showDetailCalender(
                                           isDense: true,
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                              color: Colors.white,
+                                              color: Theme.of(context)
+                                                  .primaryColorDark,
                                               width: 2.0,
                                             ),
                                             borderRadius:
@@ -138,7 +142,7 @@ void showDetailCalender(
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                               color: Theme.of(context)
-                                                  .primaryColorDark,
+                                                  .primaryColorLight,
                                               width: 2.0,
                                             ),
                                             borderRadius:
@@ -205,55 +209,55 @@ void showDetailCalender(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Coyote',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Snow_Weasel',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Bat',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Anctic_Fox',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Red_Panda',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Sea_Otter',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Crocodile',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Frog',
                                               isSting: 0),
                                           OtherUserBlock(
                                               friendId: 1,
                                               friendNickname: 'jy',
                                               friendUserLevel: 112,
-                                              mainPetAssetName: 'Sparrow',
+                                              mainPetAssetName: 'Dog',
                                               isSting: 0),
                                         ],
                                       ),

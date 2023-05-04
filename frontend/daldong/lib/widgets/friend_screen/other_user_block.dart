@@ -209,7 +209,8 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   image: DecorationImage(
-                    image: AssetImage("lib/assets/images/samples/cat5.jpg"),
+                    image: AssetImage(
+                        "lib/assets/images/samples/${widget.mainPetAssetName}.PNG"),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(10),
