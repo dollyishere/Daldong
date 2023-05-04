@@ -19,7 +19,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)) // basic-error-controller 제외
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .pathMapping("/test/api");
     }
 
     private ApiInfo apiInfo() {
