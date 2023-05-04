@@ -20,5 +20,5 @@ public class Level {
     private long level;
 
     @Column(name = "required_exp", nullable = false)
-    private int reauiredExp;
+    private int requiredExp;
 }
