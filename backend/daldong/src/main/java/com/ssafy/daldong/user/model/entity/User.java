@@ -52,11 +52,11 @@ public class User {
     @Column(name = "user_point", nullable = false)
     private int userPoint;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "main_back_id", nullable = false)
     private Asset mainBack;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "main_pet_id", nullable = false)
     private Asset mainPet;
 
