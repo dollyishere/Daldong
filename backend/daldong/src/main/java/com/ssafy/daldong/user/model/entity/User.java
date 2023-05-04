@@ -2,6 +2,8 @@ package com.ssafy.daldong.user.model.entity;
 
 import com.ssafy.daldong.main.model.entity.Asset;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -51,11 +53,11 @@ public class User {
     @Column(name = "user_point", nullable = false)
     private int userPoint;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_back_id", nullable = false)
     private Asset mainBack;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_pet_id", nullable = false)
     private Asset mainPet;
 

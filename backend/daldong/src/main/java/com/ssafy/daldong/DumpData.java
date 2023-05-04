@@ -7,7 +7,7 @@ import com.ssafy.daldong.exercise.model.repository.ExerciseLogRepository;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.entity.FriendRequest;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
-import com.ssafy.daldong.friend.model.repository.FriendRquestRepository;
+import com.ssafy.daldong.friend.model.repository.FriendRequestRepository;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
@@ -22,6 +22,7 @@ import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -36,19 +37,24 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DumpData implements CommandLineRunner {
+    @Value("${spring.jpa.hibernate.ddl-auto}")
+    private String DDL_CONFIG;
 
     private final UserRepository userRepository;
     private final StatisticsRepository statisticsRepository;
     private final AssetRepository assetRepository;
     private final UserAssetRepository userAssetRepository;
     private final FriendRepository friendRepository;
-    private final FriendRquestRepository friendRquestRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final ExerciseLogRepository exerciseLogRepository;
     private final DailyExerciseLogRepository dailyExerciseLogRepository;
     private final DailyMissionRepository dailyMissionRepository;
     private final UserMissionRepository userMissionRepository;
     @Override
     public void run(String... args) throws Exception {
+        // JPA DDL 설정 보고 실행 판단
+        if(!DDL_CONFIG.equals("create")) return;
+
         log.info("Asset");
         createAsset();
         log.info("User");
@@ -70,9 +76,9 @@ public class DumpData implements CommandLineRunner {
     }
 
     private void createAsset(){
-            List<Asset> assetList = new ArrayList<>();
-            Asset sparrow = Asset.builder()
-                    .assetType(true)
+        List<Asset> assetList = new ArrayList<>();
+        Asset sparrow = Asset.builder()
+                .assetType(true)
                 .assetName("sparrow")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
@@ -213,7 +219,7 @@ public class DumpData implements CommandLineRunner {
     private void createFriendRequest(){
         User user1 = userRepository.findById((long) 1).get();
         User user3 = userRepository.findById((long) 3).get();
-        friendRquestRepository.save(FriendRequest.builder()
+        friendRequestRepository.save(FriendRequest.builder()
                 .sender(user1)
                 .receiver(user3)
                 .build());
