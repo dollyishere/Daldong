@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/mission")
+@RequestMapping("/mission")
 public class MissionController {
 
     private static final Logger logger = LogManager.getLogger(MissionController.class);
