@@ -7,7 +7,7 @@ import com.ssafy.daldong.exercise.model.repository.ExerciseLogRepository;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.entity.FriendRequest;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
-import com.ssafy.daldong.friend.model.repository.FriendRquestRepository;
+import com.ssafy.daldong.friend.model.repository.FriendRequestRepository;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
@@ -42,7 +42,7 @@ public class DumpData implements CommandLineRunner {
     private final AssetRepository assetRepository;
     private final UserAssetRepository userAssetRepository;
     private final FriendRepository friendRepository;
-    private final FriendRquestRepository friendRquestRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final ExerciseLogRepository exerciseLogRepository;
     private final DailyExerciseLogRepository dailyExerciseLogRepository;
     private final DailyMissionRepository dailyMissionRepository;
@@ -213,7 +213,7 @@ public class DumpData implements CommandLineRunner {
     private void createFriendRequest(){
         User user1 = userRepository.findById((long) 1).get();
         User user3 = userRepository.findById((long) 3).get();
-        friendRquestRepository.save(FriendRequest.builder()
+        friendRequestRepository.save(FriendRequest.builder()
                 .sender(user1)
                 .receiver(user3)
                 .build());
