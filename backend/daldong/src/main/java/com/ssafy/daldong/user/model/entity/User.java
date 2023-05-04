@@ -11,7 +11,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class User {
 
     @Id
@@ -62,4 +61,8 @@ public class User {
 
     @Column(name = "main_pet_name", nullable = false)
     private String mainPetName;
+
+    public void payPoint(int rewardPoint) {
+        userPoint += rewardPoint;
+    }
 }

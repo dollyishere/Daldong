@@ -12,6 +12,10 @@ import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
+import com.ssafy.daldong.mission.model.entity.DailyMission;
+import com.ssafy.daldong.mission.model.entity.UserMission;
+import com.ssafy.daldong.mission.model.repository.DailyMissionRepository;
+import com.ssafy.daldong.mission.model.repository.UserMissionRepository;
 import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
@@ -21,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,6 +45,8 @@ public class DumpData implements CommandLineRunner {
     private final FriendRquestRepository friendRquestRepository;
     private final ExerciseLogRepository exerciseLogRepository;
     private final DailyExerciseLogRepository dailyExerciseLogRepository;
+    private final DailyMissionRepository dailyMissionRepository;
+    private final UserMissionRepository userMissionRepository;
     @Override
     public void run(String... args) throws Exception {
         log.info("Asset");
@@ -56,6 +63,10 @@ public class DumpData implements CommandLineRunner {
         createFriendRequest();
         log.info("createExerciseLog");
         createExerciseLog();
+        log.info(("createDailyMission"));
+        createDailyMission();
+        log.info(("createUserMission"));
+        createUserMission();
     }
 
     private void createAsset(){
@@ -248,6 +259,65 @@ public class DumpData implements CommandLineRunner {
                 .build());
 
     }
-
-
+    private void createDailyMission(){
+        dailyMissionRepository.save(DailyMission.builder()
+                .missionContent("test")
+                .rewardPoint(10)
+                .missionName("test")
+                .qualificationName("KCAL")
+                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
+                .build());
+        dailyMissionRepository.save(DailyMission.builder()
+                .missionContent("test")
+                .rewardPoint(10)
+                .missionName("test")
+                .qualificationName("EX_TIME")
+                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
+                .build());
+        dailyMissionRepository.save(DailyMission.builder()
+                .missionContent("test")
+                .rewardPoint(10)
+                .missionName("test")
+                .qualificationName("COUNT")
+                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
+                .build());
+        dailyMissionRepository.save(DailyMission.builder()
+                .missionContent("test")
+                .rewardPoint(10)
+                .missionName("test")
+                .qualificationName("FRIEND")
+                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
+                .build());
+    }
+    private void createUserMission(){
+        User user = userRepository.findById((long) 1).get();
+        DailyMission dailyMission1 = dailyMissionRepository.findById((long) 1).get();
+        userMissionRepository.save(UserMission.builder()
+                .mission(dailyMission1)
+                .user(user)
+                .isDone(false)
+                .isReceive(false)
+                .build());
+        DailyMission dailyMission2 = dailyMissionRepository.findById((long) 2).get();
+        userMissionRepository.save(UserMission.builder()
+                .mission(dailyMission2)
+                .user(user)
+                .isDone(true)
+                .isReceive(true)
+                .build());
+        DailyMission dailyMission3 = dailyMissionRepository.findById((long) 3).get();
+        userMissionRepository.save(UserMission.builder()
+                .mission(dailyMission3)
+                .user(user)
+                .isDone(true)
+                .isReceive(false)
+                .build());
+        DailyMission dailyMission4 = dailyMissionRepository.findById((long) 4).get();
+        userMissionRepository.save(UserMission.builder()
+                .mission(dailyMission4)
+                .user(user)
+                .isDone(false)
+                .isReceive(false)
+                .build());
+    }
 }

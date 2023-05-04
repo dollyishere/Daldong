@@ -1,4 +1,4 @@
-package com.ssafy.daldong.response;
+package com.ssafy.daldong.global.response;
 
 
 import lombok.Builder;
