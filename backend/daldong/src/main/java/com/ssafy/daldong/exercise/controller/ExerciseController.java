@@ -63,9 +63,9 @@ public class ExerciseController {
      * @return
      */
     @Operation(summary = "해당 월 운동 조회")
-    @GetMapping("/monthly/{userid}/{month}")
+    @GetMapping("/monthly/{userid}/{year-month}")
     public ResponseEntity<?> getExerciseMonthly(@PathVariable(name = "userid") Long userid,
-                                                    @PathVariable(name = "month") String month) {
+                                                    @PathVariable(name = "year-month") String month) {
         logger.info("ExerciseController.getExerciseMonthly({}, {})",month, userid);
 
 
