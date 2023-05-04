@@ -110,9 +110,9 @@ public class DumpData implements CommandLineRunner {
     }
 
     private void createUser(){
-        Asset mainPet = assetRepository.findById((long) 1).get();
-        Asset mainBack = assetRepository.findById((long) 3).get();
-        User user1 = User.builder()
+        Asset mainPet = assetRepository.getReferenceById((long) 1);
+        Asset mainBack = assetRepository.getReferenceById((long) 3);
+        userRepository.save(User.builder()
                 .userUid("user1uid")
                 .nickname("user1")
                 .height((float)180)
@@ -127,12 +127,11 @@ public class DumpData implements CommandLineRunner {
                 .mainPet(mainPet)
                 .mainBack(mainBack)
                 .mainPetName("짹짹이")
-                .build();
-        userRepository.save(user1);
+                .build());
 
-        mainPet = assetRepository.findById((long) 2).get();
-        mainBack = assetRepository.findById((long) 4).get();
-        User user2 = User.builder()
+        mainPet = assetRepository.getReferenceById((long) 2);
+        mainBack = assetRepository.getReferenceById((long) 4);
+        userRepository.save(User.builder()
                 .userUid("user2uid")
                 .nickname("user2")
                 .height((float)180)
@@ -147,11 +146,11 @@ public class DumpData implements CommandLineRunner {
                 .mainPet(mainPet)
                 .mainBack(mainBack)
                 .mainPetName("멍멍이")
-                .build();
-        userRepository.save(user2);
-        mainPet = assetRepository.findById((long) 1).get();
-        User user3 = User.builder()
-                .userUid("user2uid")
+                .build());
+
+        mainPet = assetRepository.getReferenceById((long) 1);
+        userRepository.save(User.builder()
+                .userUid("user3uid")
                 .nickname("user3")
                 .height((float)150)
                 .weight((float)40)
@@ -165,13 +164,29 @@ public class DumpData implements CommandLineRunner {
                 .mainPet(mainPet)
                 .mainBack(mainBack)
                 .mainPetName("짹이")
-                .build();
-        userRepository.save(user3);
+                .build());
+
+        userRepository.save(User.builder()
+                .userUid("user4uid")
+                .nickname("user4")
+                .height((float)150)
+                .weight((float)40)
+                .gender(false)
+                .age(23)
+                .ability(1)
+                .userLevel(0)
+                .userExp(0)
+                .requiredExp(10)
+                .userPoint(10)
+                .mainPet(mainPet)
+                .mainBack(mainBack)
+                .mainPetName("참새")
+                .build());
 
     }
 
     private void createStatistics(){
-        User user = userRepository.findById((long) 1).get();
+        User user = userRepository.getReferenceById((long) 1);
         statisticsRepository.save(Statistics.builder()
                 .user(user)
                 .dailyExTime(0)
@@ -259,6 +274,28 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .exDate(LocalDate.parse("2023-05-01"))
                 .exTime(LocalTime.parse("01:20:00"))
+                .kcal(200)
+                .count(2)
+                .point(200)
+                .build());
+
+        exerciseLogRepository.save(ExerciseLog.builder()
+                .user(user)
+                .exerciseStartTime(LocalDateTime.parse("2023-05-03T14:00:00"))
+                .exerciseEndTime(LocalDateTime.parse("2023-05-03T14:20:00"))
+                .exerciseTime(LocalTime.parse("00:20:00"))
+                .exerciseKcal(100)
+                .averageHeart(120)
+                .maxHeart(150)
+                .exercisePoint(100)
+                .exerciseUserExp(100)
+                .exercisePetExp(100)
+                .exerciseMemo("야외운동")
+                .build());
+        dailyExerciseLogRepository.save(DailyExerciseLog.builder()
+                .user(user)
+                .exDate(LocalDate.parse("2023-05-03"))
+                .exTime(LocalTime.parse("00:20:00"))
                 .kcal(200)
                 .count(2)
                 .point(200)
