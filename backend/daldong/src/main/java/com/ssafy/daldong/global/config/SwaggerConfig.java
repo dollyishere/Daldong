@@ -1,4 +1,4 @@
-package com.ssafy.daldong.config;
+package com.ssafy.daldong.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
