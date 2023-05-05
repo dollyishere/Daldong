@@ -46,7 +46,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void signOut() async {
-    await GoogleSignIn().signOut();
+    // storage의 정보 날린 뒤 로그아웃 시킨다.
+    await storage.deleteAll();
+    await GoogleSignIn().disconnect();
     // Navigator.of(context).push(
     //   MaterialPageRoute(
     //     builder: (context) => LoginScreen(),
