@@ -37,35 +37,39 @@ class _LoginScreenState extends State<LoginScreen> {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      final accessToken = googleAuth.accessToken;
 
       // Create a new credential
-      final credential = googleAuth.accessToken;
-      print('hashCode: ${googleUser.hashCode}');
-      print('authentication: ${googleUser.authentication}');
-      print('serverAuthCode: ${googleUser.serverAuthCode}');
-      print('authHeaders: ${googleUser.authHeaders}');
-      print('구분선');
-      print(credential);
-      print(googleUser.authHeaders.toString());
-      // print('hash: ${googleAuth.hashCode}');
-      // print('access: ${googleAuth.accessToken}');
-      print(googleAuth.idToken);
-      // print(googleUser.id);
-
-      final googleCredential = GoogleAuthProvider.credential(
+      final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       // Once signed in, return the UserCredential
       // await FirebaseAuth.instance.signInWithCredential(googleCredential);
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
+      print(userCredential);
+      print(googleUser);
+
+      // print('hashCode: ${googleUser.hashCode}');
+      // print('authentication: ${googleUser.authentication}');
+      // print('serverAuthCode: ${googleUser.serverAuthCode}');
+      // print('authHeaders: ${googleUser.authHeaders}');
+      // print('구분선');
+      // print(accessToken);
+      // print(googleUser.authHeaders.toString());
+      // print('hash: ${googleAuth.hashCode}');
+      // print('access: ${googleAuth.accessToken}');
+      // print(googleAuth.idToken);
+      // print(googleUser.id);
+
 
       if (googleUser != null) {
-        print(googleUser.photoUrl);
+        print("googleUser != null");
         await storage.write(
           key: "accessToken",
-          value: credential,
+          value: accessToken,
         );
         setState(() {
           displayName = googleUser.displayName!;
@@ -76,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await storage.write(key: "nickName", value: googleUser.displayName);
         await storage.write(key: "picture", value: googleUser.photoUrl);
         await storage.write(key: "googleEmail", value: googleUser.email);
+        print(googleUser.email + googleUser.displayName!);
         setState(() {});
         // Navigator.of(context).push(
         //   MaterialPageRoute(
