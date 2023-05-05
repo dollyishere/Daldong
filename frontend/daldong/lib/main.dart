@@ -7,9 +7,10 @@ import 'package:daldong/screens/profile_screen/profile_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:daldong/screens/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 import 'package:daldong/screens/home_screen/home_screen.dart';
 
@@ -20,6 +21,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await dotenv.load(fileName: ".env");
   // 세로 방향으로 고정
   // SystemChrome.setPreferredOrientations(
   //   [

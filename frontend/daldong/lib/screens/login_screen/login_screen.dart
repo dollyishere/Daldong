@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   static const storage =
-      FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
   // dynamic userName = ''; // storage에 있는 유저 정보를 저장
   Map<String, dynamic> userInfo = {};
 
@@ -36,29 +36,30 @@ class _LoginScreenState extends State<LoginScreen> {
     Future signInWithGoogle() async {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
 
       // Create a new credential
       final credential = googleAuth.accessToken;
-      print('token: ${googleUser.hashCode}');
-      print('token: ${googleUser.authentication}');
-      print('token: ${googleUser.serverAuthCode}');
-      print('token: ${googleUser.authHeaders}');
+      print('hashCode: ${googleUser.hashCode}');
+      print('authentication: ${googleUser.authentication}');
+      print('serverAuthCode: ${googleUser.serverAuthCode}');
+      print('authHeaders: ${googleUser.authHeaders}');
       print('구분선');
+      print(credential);
       print(googleUser.authHeaders.toString());
       // print('hash: ${googleAuth.hashCode}');
       // print('access: ${googleAuth.accessToken}');
-      print(googleAuth?.idToken);
+      print(googleAuth.idToken);
       // print(googleUser.id);
 
       final googleCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
-      print(googleCredential);
-      // // Once signed in, return the UserCredential
+      // Once signed in, return the UserCredential
       // await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      final User? user = userCredential.user;
 
       if (googleUser != null) {
         print(googleUser.photoUrl);
@@ -82,7 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
         //   ),
         // );
 
-        Navigator.pushReplacementNamed(context, '/home');
       }
     }
 
@@ -91,79 +91,85 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: nowLogin
             ? Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50, // 원의 반지름 설정
-                    backgroundImage: NetworkImage(photoUrl), // 이미지 가져오기
-                  ),
-                  Container(
-                    width: 240,
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).primaryColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).shadowColor,
-                          blurRadius: 3.0,
-                          spreadRadius: 1.0,
-                        )
-                      ],
-                    ),
-                    child: Text(
-                      displayName,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
+          children: [
+            CircleAvatar(
+              radius: 50, // 원의 반지름 설정
+              backgroundImage: NetworkImage(photoUrl), // 이미지 가져오기
+            ),
+            Container(
+              width: 240,
+              height: 40,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Theme.of(context).primaryColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor,
+                    blurRadius: 3.0,
+                    spreadRadius: 1.0,
                   )
                 ],
-              )
-            : TextButton(
-                onPressed: signInWithGoogle,
-                child: Container(
-                  width: 240,
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).shadowColor,
-                        blurRadius: 3.0,
-                        spreadRadius: 1.0,
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          image: const DecorationImage(
-                            image: AssetImage(
-                                'lib/assets/images/common/google_logo.png'),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      Text(
-                        "구글로 시작하기",
-                        style: TextStyle(
-                          color: Theme.of(context).secondaryHeaderColor,
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+              child: Text(
+                displayName,
+                style: TextStyle(
+                  color: Colors.white,
                 ),
               ),
+            )
+          ],
+        )
+            : TextButton(
+          // onPressed: signInWithGoogle,
+          onPressed: () async {
+            await signInWithGoogle();
+            if (context.mounted) {
+              Navigator.pushReplacementNamed(context, '/home');
+            }
+          },
+          child: Container(
+            width: 240,
+            height: 40,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor,
+                  blurRadius: 3.0,
+                  spreadRadius: 1.0,
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    image: const DecorationImage(
+                      image: AssetImage(
+                          'lib/assets/images/common/google_logo.png'),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  "구글로 시작하기",
+                  style: TextStyle(
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
