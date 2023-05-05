@@ -9,8 +9,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.ssafy.daldong.exercise.presentation.ExerciseSampleApp
 import com.ssafy.daldong.exercise.presentation.ExerciseViewModel
+import com.ssafy.daldong.exercise.presentation.ExerciseWearApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,6 @@ class MainActivity : FragmentActivity() {
             Log.d("메인 액티비티", exerciseViewModel.toString())
 
             val destination = when (exerciseViewModel.isExerciseInProgress()) {
-
                 false -> Screens.StartingUp.route
                 true -> Screens.ExerciseScreen.route
             }
@@ -39,7 +38,7 @@ class MainActivity : FragmentActivity() {
             setContent {
                 navController = rememberSwipeDismissableNavController()
 
-                ExerciseSampleApp(
+                ExerciseWearApp(
                     navController,
                     startDestination = destination
                 )

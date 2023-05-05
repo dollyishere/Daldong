@@ -17,13 +17,16 @@
 package com.ssafy.daldong.exercise.presentation.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Text
 
 @Composable
 fun CaloriesText(calories: Double) {
-    Text(text = formatCalories(calories).toString())
-
+    Text(
+        text = formatCalories(calories).toString(),
+        color = Color(0xFFC4E8C2),
+    )
 }
 
 @Preview

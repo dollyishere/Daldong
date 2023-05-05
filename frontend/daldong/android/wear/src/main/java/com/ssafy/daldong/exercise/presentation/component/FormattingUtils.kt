@@ -31,19 +31,19 @@ fun formatElapsedTime(elapsedDuration: kotlin.time.Duration, includeSeconds: Boo
         if (hours > 0) {
             append(hours.toString())
             inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-                append("h")
+                append(":")
             }
         }
         val minutes = elapsedDuration.inWholeMinutes % MINUTES_PER_HOUR
         append("%02d".format(minutes))
         inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-            append("m")
+            append(":")
         }
         if (includeSeconds) {
             val seconds = elapsedDuration.inWholeSeconds % SECONDS_PER_MINUTE
             append("%02d".format(seconds))
             inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-                append("s")
+                append("")
             }
         }
     }
@@ -52,7 +52,7 @@ fun formatElapsedTime(elapsedDuration: kotlin.time.Duration, includeSeconds: Boo
 fun formatCalories(calories: Double) = buildSpannedString {
     append(calories.roundToInt().toString())
     inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-        append(" cal")
+        append(" kcal")
     }
 }
 
@@ -60,6 +60,6 @@ fun formatCalories(calories: Double) = buildSpannedString {
 fun formatDistanceKm(meters: Double) = buildSpannedString {
     append("%02.2f".format(meters / 1_000))
     inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-        append("km")
+        append(" km")
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.scrollBy
@@ -23,6 +24,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DirectionsRun
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -31,20 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ListHeader
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.ScalingLazyColumn
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.TimeTextDefaults
-import androidx.wear.compose.material.rememberScalingLazyListState
+import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.*
 import com.ssafy.daldong.R
 import com.ssafy.daldong.exercise.presentation.component.SummaryFormat
 import com.ssafy.daldong.exercise.theme.ExerciseTheme
@@ -68,7 +66,10 @@ fun SummaryScreen(
                 scalingLazyListState = listState
             )
         },
-            timeText = { TimeText(timeSource = TimeTextDefaults.timeSource(TimeTextDefaults.timeFormat())) }) {
+            timeText = {
+                TimeText(timeSource = TimeTextDefaults.timeSource(TimeTextDefaults.timeFormat()))
+            }
+        ) {
             val focusRequester = remember { FocusRequester() }
             ScalingLazyColumn(
                 modifier = Modifier
@@ -87,34 +88,83 @@ fun SummaryScreen(
 
                 ) {
                 item { ListHeader { Text(stringResource(id = R.string.workout_complete)) } }
+
                 item {
-                    SummaryFormat(
-                        value = elapsedTime,
-                        metric = stringResource(id = R.string.duration),
-                        modifier = Modifier.fillMaxWidth()
+                    Image(
+                        painter = painterResource(id = R.drawable.sparrow),
+                        contentDescription = ""
                     )
                 }
+
                 item {
-                    SummaryFormat(
-                        value = averageHeartRate,
-                        metric = stringResource(id = R.string.avgHR),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),) {
+                        Icon(
+                            imageVector = Icons.Default.WatchLater,
+                            contentDescription = stringResource(id = R.string.duration),
+                        )
+                        SummaryFormat(
+                            value = elapsedTime,
+                            metric = stringResource(id = R.string.duration),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
+
                 item {
-                    SummaryFormat(
-                        value = totalDistance,
-                        metric = stringResource(id = R.string.distance),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),) {
+                        Image(
+                            painter = painterResource(id = R.drawable.calorie),
+                            contentDescription = stringResource(id = R.string.calories)
+                        )
+                        SummaryFormat(
+                            value = totalCalories,
+                            metric = stringResource(id = R.string.calories),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
+
                 item {
-                    SummaryFormat(
-                        value = totalCalories,
-                        metric = stringResource(id = R.string.calories),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),) {
+                        Image(
+                            painter = painterResource(id = R.drawable.heart),
+                            contentDescription = stringResource(id = R.string.heart_rate)
+                        )
+
+                        SummaryFormat(
+                            value = averageHeartRate,
+                            metric = stringResource(id = R.string.avgHR),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
+
+                item {
+                    Row(horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),){
+                        Icon(
+                            imageVector = Icons.Default.DirectionsRun,
+                            contentDescription = stringResource(id = R.string.distance)
+                        )
+                        SummaryFormat(
+                            value = totalDistance,
+                            metric = stringResource(id = R.string.distance),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+
                 item {
                     Row(
                         horizontalArrangement = Arrangement.Center,
@@ -127,16 +177,14 @@ fun SummaryScreen(
                                 onRestartClick()
                             }, modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = stringResource(id = R.string.restart))
+                            Text(text = stringResource(id = R.string.HOME))
                         }
                     }
                 }
-
             }
             LaunchedEffect(Unit) { focusRequester.requestFocus() }
         }
     }
-
 }
 
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
@@ -147,6 +195,4 @@ fun SummaryScreenPreview() {
         totalCalories = "100",
         elapsedTime = "17m01",
         onRestartClick = {})
-
-
 }

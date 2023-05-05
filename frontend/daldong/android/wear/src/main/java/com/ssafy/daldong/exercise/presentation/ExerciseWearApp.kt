@@ -34,7 +34,7 @@ import com.ssafy.daldong.exercise.Screens
 /** Navigation for the exercise app. **/
 
 @Composable
-fun ExerciseSampleApp(
+fun ExerciseWearApp(
     navController: NavHostController,
     startDestination: String
 ) {
@@ -124,7 +124,7 @@ fun ExerciseSampleApp(
 @Composable
 fun ExerciseSampleAppPreview() {
     val navController = rememberNavController()
-    ExerciseSampleApp(navController = navController, startDestination = Screens.StartingUp.route)
+    ExerciseWearApp(navController = navController, startDestination = Screens.StartingUp.route)
 }
 
 
