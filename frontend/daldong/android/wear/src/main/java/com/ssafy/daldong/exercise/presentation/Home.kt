@@ -19,6 +19,7 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,11 +31,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,12 +51,9 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.TimeTextDefaults
 import com.ssafy.daldong.R
 import kotlinx.coroutines.launch
-import com.ssafy.daldong.exercise.presentation.component.AcquiredCheck
 import com.ssafy.daldong.exercise.presentation.component.ExerciseInProgressAlert
-import com.ssafy.daldong.exercise.presentation.component.NotAcquired
 import com.ssafy.daldong.exercise.theme.ExerciseTheme
 import com.ssafy.daldong.exercise.data.ServiceState
-import com.ssafy.daldong.exercise.presentation.component.ProgressBar
 
 /**
  * Screen that appears while the device is preparing the exercise.
@@ -72,30 +70,15 @@ fun PreparingExercise(
     if (isTrackingAnotherExercise) {
         ExerciseInProgressAlert(true)
     }
-    /** Request permissions prior to launching exercise.**/
-//    val LocalContext = staticCompositionLocalOf<Context?> { null }
 
+    /** Request permissions prior to launching exercise.**/
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
         if (result.all { it.value }) {
             Log.d(TAG, "All required permissions granted")
         }
-
     }
-
-//    val context = LocalContext.current
-//
-//    if (ContextCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED
-//    ) {
-//        // 권한이 이미 허용된 경우 실행할 코드
-//    } else {
-//        // 권한이 허용되지 않은 경우 권한 요청 실행
-//        permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-//    }
 
     when (serviceState) {
         is ServiceState.Connected -> {
@@ -116,41 +99,57 @@ fun PreparingExercise(
                             .fillMaxSize()
                             .background(MaterialTheme.colors.background),
                         verticalArrangement = Arrangement.Center
+
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.Top,
-                            modifier = Modifier.height(25.dp)
+//                            verticalAlignment = Alignment.Top,
+//                            modifier = Modifier.height(25.dp).padding(0.dp)
+                            modifier = Modifier.fillMaxWidth().padding(20.dp),
                         ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+//                                text = stringResource(id = R.string.app_name),
+                                text = "짹짹이",
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color(0xFFC4E8C2),
+                            )
+                        }
 
-                            Text(
-                                textAlign = TextAlign.Center,
-                                text = stringResource(id = R.string.preparing_exercise),
-                                modifier = Modifier.fillMaxWidth()
+                        Row( // 동물
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.sparrow),
+                                contentDescription = ""
                             )
                         }
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.height(40.dp)
-                        ) {
-                            Log.d("지역", location.toString())
-                            when (location) {
-                                LocationAvailability.ACQUIRING, LocationAvailability.UNKNOWN -> ProgressBar()
-                                LocationAvailability.ACQUIRED_TETHERED, LocationAvailability.ACQUIRED_UNTETHERED -> AcquiredCheck()
-                                else -> NotAcquired()
-                            }
-                        }
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Text(
-                                textAlign = TextAlign.Center,
-                                text = updatePrepareLocationStatus(locationAvailability = location),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        Row(
+
+//                        Row( // 로딩
+//                            horizontalArrangement = Arrangement.Center,
+//                            modifier = Modifier.height(40.dp)
+//                        ) {
+//                            Log.d("지역", location.toString())
+//                            when (location) {
+//                                LocationAvailability.ACQUIRING, LocationAvailability.UNKNOWN -> ProgressBar()
+//                                LocationAvailability.ACQUIRED_TETHERED, LocationAvailability.ACQUIRED_UNTETHERED -> AcquiredCheck()
+//                                else -> NotAcquired()
+//                            }
+//                        }
+
+//                        Row( // GPS 상태
+//                            horizontalArrangement = Arrangement.Center,
+//                            verticalAlignment = Alignment.Top
+//                        ) {
+//                            Text(
+//                                textAlign = TextAlign.Center,
+//                                text = updatePrepareLocationStatus(locationAvailability = location),
+//                                modifier = Modifier.fillMaxWidth()
+//                            )
+//                        }
+
+                        Row( //운동 시작 버튼
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(6.dp),

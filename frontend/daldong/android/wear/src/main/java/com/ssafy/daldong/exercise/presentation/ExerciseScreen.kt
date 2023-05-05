@@ -17,20 +17,8 @@ package com.ssafy.daldong.exercise.presentation
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.WatchLater
-import androidx.compose.material.icons.filled._360
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -66,6 +54,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 
 /**
  * Shows while an exercise is in progress
@@ -91,6 +87,9 @@ fun ExerciseScreen(
             val baseActiveDuration = remember { mutableStateOf(Duration.ZERO) }
             var activeDuration by remember { mutableStateOf(Duration.ZERO) }
             val exerciseStateChange by mutableStateOf(getExerciseServiceState.exerciseStateChange)
+            var startImage by remember { mutableStateOf(R.drawable.exercise_start) }
+            var endImage by remember { mutableStateOf(R.drawable.exercise_end) }
+            var pauseImage by remember { mutableStateOf(R.drawable.exercise_pause) }
 
             /** Collect [DataPoint]s from the aggregate and exercise metric flows. Because
              * collectAsStateWithLifecycle() is asynchronous, store the last known value from each flow,
@@ -119,11 +118,16 @@ fun ExerciseScreen(
 
             /** Update the Pause and End buttons according to [ExerciseState].**/
             val pauseOrResume = when (exerciseStateChange.exerciseState.isPaused) {
+//                true -> R.drawable.exercise_start
+//                false -> R.drawable.exercise_pause
+
                 true -> Icons.Default.PlayArrow
                 false -> Icons.Default.Pause
             }
             val startOrEnd =
                 when (exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding) {
+//                    true -> R.drawable.exercise_start
+//                    false -> R.drawable.exercise_end
                     true -> Icons.Default.PlayArrow
                     false -> Icons.Default.Stop
                 }
@@ -170,44 +174,41 @@ fun ExerciseScreen(
             }
 
             ExerciseTheme {
-                Scaffold(timeText = {
-                    TimeText(
-                        timeSource = TimeTextDefaults.timeSource(
-                            TimeTextDefaults.timeFormat()
-                        )
-                    )
-                }) {
+                Scaffold(
+//                    timeText = { TimeText( timeSource = TimeTextDefaults.timeSource(
+//                            TimeTextDefaults.timeFormat())) }
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colors.background),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Row(
+                        Row( // 시계
                             horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().padding(5.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.WatchLater,
-                                contentDescription = stringResource(id = R.string.duration)
+                                contentDescription = stringResource(id = R.string.duration),
+//                            modifier = Modifier.size(24.dp)
                             )
-                            Text(elapsedTime.value)
+                            Text(
+                                text = elapsedTime.value,
+                                color = Color(0xFFC4E8C2),
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
                         }
-                        Row(
+
+                        Row( // 칼로리
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = stringResource(id = R.string.heart_rate)
-                            )
-                            HRText(
-                                hr = tempHeartRate.value
-                            )
-                            Icon(
-                                imageVector = Icons.Default.LocalFireDepartment,
+                            Image(
+                                painter = painterResource(id = R.drawable.calorie),
                                 contentDescription = stringResource(id = R.string.calories)
                             )
+
                             if (calories != null) {
                                 CaloriesText(
                                     calories
@@ -220,12 +221,152 @@ fun ExerciseScreen(
                             }
 
                         }
+
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        ){
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.height(90.dp)
+//                                modifier = Modifier.padding(5.dp)
+                            ) {
+                                // 운동 종료
+                                if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
+                                    Log.d("운동 끝 ", exerciseStateChange.exerciseState.toString())
+
+                                    //In a production fitness app, you might upload workout metrics to your app
+                                    // either via network connection or to your mobile app via the Data Layer API.
+                                    navController.navigate(
+                                        Screens.SummaryScreen.route + "/${tempAverageHeartRate.value.toInt()} bpm/${
+                                            formatDistanceKm(
+                                                tempDistance.value
+                                            )
+                                        }/${formatCalories(tempCalories.value)}/" + formatElapsedTime(
+                                            activeDuration.toKotlinDuration(), true
+                                        ).toString()
+                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+
+//                                Button(onClick = { onStartClick() }) {
+//                                    Icon(
+//                                        imageVector = startOrEnd,
+//                                        contentDescription = stringResource(id = R.string.startOrEnd)
+//                                    )
+//                                }
+
+                                } else { // 운동 시작 중일 때
+                                    Button(
+                                        onClick = { onEndClick() },
+//                                    Modifier.size(40.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = startOrEnd,
+                                            contentDescription = stringResource(id = R.string.startOrEnd)
+                                        )
+//                                    Row(verticalAlignment = Alignment.CenterVertically) {
+//                                        Icon(
+//                                            imageVector = startOrEnd,
+//                                            contentDescription = stringResource(id = R.string.startOrEnd),
+//                                            modifier = Modifier.padding(end = 4.dp)
+//                                        )
+//                                        Text(
+//                                            text = "운동종료",
+//                                            style = MaterialTheme.typography.button
+//                                        )
+//                                    }
+                                    }
+                                }
+                            }
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+//                                modifier = Modifier.fillMaxHeight().padding(10.dp)
+                                modifier = Modifier.height(90.dp).padding(10.dp)
+                            ){
+                                Image(
+                                    painter = painterResource(id = R.drawable.sparrow),
+                                    contentDescription = ""
+                                )
+                            }
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.height(90.dp)
+//                                modifier = Modifier.padding(5.dp)
+                            ){
+                                //운동 정지
+                                if (exerciseStateChange.exerciseState.isPaused) {
+                                    Button(
+                                        onClick = { onResumeClick() },
+//                                    Modifier.size(40.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = pauseOrResume,
+                                            contentDescription = stringResource(id = R.string.pauseOrResume)
+                                        )
+//                                    Image(
+//                                        painter = painterResource(id = pauseOrResume),
+//                                        contentDescription = stringResource(id = R.string.pauseOrResume),
+////                                        modifier = Modifier.size(24.dp)
+//                                    )
+                                    }
+                                } else {
+                                    Button(
+                                        onClick = { onPauseClick() },
+//                                        Modifier.size(40.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = pauseOrResume,
+                                            contentDescription = stringResource(id = R.string.pauseOrResume)
+                                        )
+                                    }
+
+                                }
+                            }
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.Watch,
+//                                contentDescription = stringResource(id = R.string.duration)
+//                            )
+//                            Text(elapsedTime.value)
+                        }
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.heart),
+                                contentDescription = stringResource(id = R.string.heart_rate)
+                            )
+
+                            HRText(
+                                hr = tempHeartRate.value
+                            )
+
+//                            Icon(
+//                                imageVector = Icons.Default.WatchLater,
+//                                contentDescription = stringResource(id = R.string.duration)
+//                            )
+//                            Text(elapsedTime.value)
+//                            Icon(
+//                                imageVector = Icons.Default._360,
+//                                contentDescription = stringResource(id = R.string.laps)
+//                            )
+//                            Text(text = laps.toString())
+                            if (averageHeartRate != null) {
+                                tempAverageHeartRate.value = averageHeartRate
+                            }
+                        }
+
+                        Row( // 이동 거리
+                            modifier = Modifier.fillMaxWidth().padding(5.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
                             Icon(
-                                imageVector = Icons.Default.TrendingUp,
+                                imageVector = Icons.Default.DirectionsRun,
                                 contentDescription = stringResource(id = R.string.distance)
                             )
                             if (distance != null) {
@@ -237,75 +378,6 @@ fun ExerciseScreen(
                                 DistanceText(
                                     tempDistance.value
                                 )
-                            }
-                            Icon(
-                                imageVector = Icons.Default._360,
-                                contentDescription = stringResource(id = R.string.laps)
-                            )
-                            Text(text = laps.toString())
-                            if (averageHeartRate != null) {
-                                tempAverageHeartRate.value = averageHeartRate
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
-                                Log.d("운동 끝 ", exerciseStateChange.exerciseState.toString())
-
-                                //In a production fitness app, you might upload workout metrics to your app
-                                // either via network connection or to your mobile app via the Data Layer API.
-                                navController.navigate(
-                                    Screens.SummaryScreen.route + "/${tempAverageHeartRate.value.toInt()}/${
-                                        formatDistanceKm(
-                                            tempDistance.value
-                                        )
-                                    }/${formatCalories(tempCalories.value)}/" + formatElapsedTime(
-                                        activeDuration.toKotlinDuration(), true
-                                    ).toString()
-                                ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-
-                                Button(onClick = { onStartClick() }) {
-                                    Icon(
-                                        imageVector = startOrEnd,
-                                        contentDescription = stringResource(
-                                            id = R.string.startOrEnd
-                                        )
-                                    )
-                                }
-
-                            } else {
-                                Button(onClick = { onEndClick() }) {
-                                    Icon(
-                                        imageVector = startOrEnd,
-                                        contentDescription = stringResource(
-                                            id = R.string.startOrEnd
-                                        )
-                                    )
-                                }
-
-                            }
-                            if (exerciseStateChange.exerciseState.isPaused) {
-                                Button(onClick = {
-                                    onResumeClick()
-                                }) {
-                                    Icon(
-                                        imageVector = pauseOrResume,
-                                        contentDescription = stringResource(id = R.string.pauseOrResume)
-                                    )
-                                }
-                            } else {
-                                Button(onClick = {
-                                    onPauseClick()
-                                }) {
-                                    Icon(
-                                        imageVector = pauseOrResume,
-                                        contentDescription = stringResource(id = R.string.pauseOrResume)
-                                    )
-                                }
-
                             }
                         }
                     }

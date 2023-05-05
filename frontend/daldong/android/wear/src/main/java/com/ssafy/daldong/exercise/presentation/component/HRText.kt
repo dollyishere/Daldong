@@ -16,12 +16,16 @@
 package com.ssafy.daldong.exercise.presentation.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Text
 
 @Composable
 fun HRText(hr: Double) {
-    Text(text = "$hr")
+    Text(
+        text = "$hr" + " bpm",
+        color = Color(0xFFC4E8C2),
+    )
 }
 
 @Preview

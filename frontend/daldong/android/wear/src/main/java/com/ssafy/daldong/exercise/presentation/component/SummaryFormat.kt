@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SummaryFormat(
@@ -34,18 +35,18 @@ fun SummaryFormat(
     modifier: Modifier = Modifier
 ) {
     Column {
-        Row(horizontalArrangement = Arrangement.Center, modifier = modifier) {
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier) {
+            Text(
+                textAlign = TextAlign.Center, text = metric, fontSize = 18.sp,
+            )
+
             Text(
                 textAlign = TextAlign.Center,
                 text = value,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.secondary,
-                fontSize = 25.sp
-            )
-        }
-        Row(horizontalArrangement = Arrangement.Center, modifier = modifier) {
-            Text(
-                textAlign = TextAlign.Center, text = metric, fontSize = 10.sp
+//                color = MaterialTheme.colors.secondary,
+                color = Color(0xFFC4E8C2),
+                fontSize = 18.sp
             )
         }
     }
