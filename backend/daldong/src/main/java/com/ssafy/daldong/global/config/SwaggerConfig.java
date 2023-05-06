@@ -19,8 +19,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)) // basic-error-controller 제외
                 .paths(PathSelectors.any())
-                .build()
-                .pathMapping("/test/api");
+                .build();
+//                .pathMapping("/test/api");
     }
 
     private ApiInfo apiInfo() {
@@ -30,4 +30,5 @@ public class SwaggerConfig {
                 .description("달려동물 API 문서입니다")
                 .build();
     }
+
 }

@@ -37,6 +37,9 @@ dependencies {
     //swagger
     implementation "io.springfox:springfox-boot-starter:3.0.0"
 
+    //firebase
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
 }
 
 tasks.named('test') {

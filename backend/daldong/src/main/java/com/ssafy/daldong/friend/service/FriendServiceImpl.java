@@ -32,6 +32,7 @@ public class FriendServiceImpl implements FriendService{
     @Override
     @Transactional(readOnly = true)
     public List<FriendDto> getFriendList(long userId) {
+        log.info("whattttttttt");
         List<Friend> friends = friendRepository.findAllByUser_UserId(userId);
         List<FriendDto> friendsDto = new ArrayList<>();
         for (Friend friend : friends) {

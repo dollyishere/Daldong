@@ -32,6 +32,7 @@ public class FriendController {
     })
     @GetMapping("/{userId}")
     public ResponseEntity<?> friendList(@Parameter(description="userId", example = "1") @PathVariable long userId) {
+        System.out.println("whyyyyyyyyyy");
         try {
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
