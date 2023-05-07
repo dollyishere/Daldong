@@ -159,18 +159,26 @@ class _MissionBlockState extends State<MissionBlock> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: widget.done
-                        ? Theme.of(context).primaryColorDark
+                        ? widget.receive
+                            ? boxColor
+                            : Theme.of(context).primaryColorDark
                         : Theme.of(context).disabledColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black38,
+                        color: widget.receive
+                            ? Colors.transparent
+                            : Colors.black38,
                         blurRadius: 1.0,
                         spreadRadius: 1.0,
                       )
                     ],
                   ),
                   child: Text(
-                    widget.receive ? '완료' : '${widget.rewardPoint}P',
+                    widget.done
+                        ? widget.receive
+                            ? '완료'
+                            : '${widget.rewardPoint}P'
+                        : '미완',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10,

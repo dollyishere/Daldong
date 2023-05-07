@@ -81,9 +81,9 @@ class _FooterState extends State<Footer> {
               children: [
                 Icon(
                   Icons.directions_run_rounded,
-                  color: ModalRoute.of(context)?.settings.name != '/exercise'
-                      ? Colors.white
-                      : Theme.of(context).secondaryHeaderColor,
+                  color: (ModalRoute.of(context)?.settings.name == '/exercise_detail' || ModalRoute.of(context)?.settings.name == '/exercise')
+                      ? Theme.of(context).secondaryHeaderColor
+                      : Colors.white,
                   size: 24,
                 ),
                 SizedBox(
@@ -92,9 +92,9 @@ class _FooterState extends State<Footer> {
                 Text(
                   '운동',
                   style: TextStyle(
-                    color: ModalRoute.of(context)?.settings.name != '/exercise'
-                        ? Colors.white
-                        : Theme.of(context).secondaryHeaderColor,
+                    color: (ModalRoute.of(context)?.settings.name == '/exercise_detail' || ModalRoute.of(context)?.settings.name == '/exercise')
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white,
                     fontSize: 12,
                   ),
                 ),

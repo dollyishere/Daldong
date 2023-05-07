@@ -27,13 +27,13 @@ class _InfoBlockState extends State<InfoBlock> {
       padding: const EdgeInsets.all(4.0),
       child: Center(
         child: Container(
-          width: 350,
+          width: 360,
           height: 140,
           child: Stack(
             children: [
               Positioned(
                 left: 0,
-                top: 30,
+                top: 32,
                 child: Container(
                   width: 140,
                   height: 80,
@@ -42,14 +42,14 @@ class _InfoBlockState extends State<InfoBlock> {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor,
+                        color: Colors.black.withOpacity(0.5),
                         spreadRadius: 0.5,
                         blurRadius: 6,
                       ),
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 24, 8),
+                    padding: const EdgeInsets.fromLTRB(0, 8, 34, 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,8 +75,8 @@ class _InfoBlockState extends State<InfoBlock> {
                 ),
               ),
               Positioned(
-                left: 210,
-                top: 30,
+                left: 214,
+                top: 32,
                 child: Container(
                   width: 140,
                   height: 80,
@@ -85,14 +85,14 @@ class _InfoBlockState extends State<InfoBlock> {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor,
+                        color: Colors.black.withOpacity(0.5),
                         spreadRadius: 0.5,
                         blurRadius: 6,
                       ),
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 8, 8),
+                    padding: const EdgeInsets.fromLTRB(36, 8, 8, 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -118,7 +118,43 @@ class _InfoBlockState extends State<InfoBlock> {
                 ),
               ),
               Positioned(
-                left: 152,
+                left: 218,
+                top: 32,
+                child: Container(
+                  width: 30,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorDark,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 0.5,
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 104,
+                top: 32,
+                child: Container(
+                  width: 30,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorDark,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 0.5,
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 155,
                 child: Container(
                   width: 40,
                   height: 80,
@@ -127,7 +163,7 @@ class _InfoBlockState extends State<InfoBlock> {
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.5),
+                        color: Colors.black.withOpacity(0.5),
                         spreadRadius: 0.3,
                         blurRadius: 6,
                       ),
@@ -137,10 +173,29 @@ class _InfoBlockState extends State<InfoBlock> {
               ),
               Positioned(
                 left: 110,
-                top: 8,
+                top: 6,
                 child: Container(
-                  width: 124,
-                  height: 124,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFFF4F5E5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 0.3,
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                  width: 132,
+                  height: 132,
+                ),
+              ),
+              Positioned(
+                left: 126,
+                top: 22,
+                child: Container(
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
@@ -151,7 +206,7 @@ class _InfoBlockState extends State<InfoBlock> {
                     border: Border.all(
                       color: Theme.of(context).secondaryHeaderColor,
                       width: 10,
-                      strokeAlign: BorderSide.strokeAlignInside,
+                      strokeAlign: BorderSide.strokeAlignOutside,
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -168,8 +223,8 @@ class _InfoBlockState extends State<InfoBlock> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 44,
-                          height: 22,
+                          width: 42,
+                          height: 20,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.75),
                             borderRadius: BorderRadius.circular(20),
@@ -186,11 +241,11 @@ class _InfoBlockState extends State<InfoBlock> {
                           ),
                         ),
                         SizedBox(
-                          height: 36,
+                          height: 32,
                         ),
                         Container(
-                          width: 74,
-                          height: 22,
+                          width: 72,
+                          height: 20,
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.75),
                             borderRadius: BorderRadius.circular(20),

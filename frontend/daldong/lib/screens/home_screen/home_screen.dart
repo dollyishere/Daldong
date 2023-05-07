@@ -65,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
     var name = await storage.read(key: 'nickName');
     var img = await storage.read(key: 'picture');
     var email = await storage.read(key: 'googleEmail');
-    print(userName);
     setState(() {
       userName = name;
       userProfileImg = img;

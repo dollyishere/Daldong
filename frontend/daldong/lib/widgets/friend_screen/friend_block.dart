@@ -193,7 +193,7 @@ class _FriendBlockState extends State<FriendBlock> {
                 height: 80,
                 decoration: BoxDecoration(
                   color: Theme.of(context).disabledColor,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: Theme.of(context).shadowColor.withOpacity(0.5),
@@ -207,8 +207,27 @@ class _FriendBlockState extends State<FriendBlock> {
             Positioned(
               top: 6,
               child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFFF4F5E5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 0.3,
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
                 width: 110,
                 height: 110,
+              ),
+            ),
+            Positioned(
+              top: 21,
+              left: 15,
+              child: Container(
+                width: 80,
+                height: 80,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   image: DecorationImage(
@@ -220,7 +239,7 @@ class _FriendBlockState extends State<FriendBlock> {
                   border: Border.all(
                     color: Theme.of(context).secondaryHeaderColor,
                     width: 10,
-                    strokeAlign: BorderSide.strokeAlignInside,
+                    strokeAlign: BorderSide.strokeAlignOutside,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -234,26 +253,8 @@ class _FriendBlockState extends State<FriendBlock> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Container(
-                    //   width: 64,
-                    //   height: 20,
-                    //   decoration: BoxDecoration(
-                    //     // color: Colors.white.withOpacity(0.75),
-                    //     borderRadius: BorderRadius.circular(10),
-                    //   ),
-                    //   child: Center(
-                    //     child: Text(
-                    //       'LV.${widget.friendUserLevel}',
-                    //       style: TextStyle(
-                    //         fontWeight: FontWeight.w700,
-                    //         fontSize: 10,
-                    //         color: Theme.of(context).secondaryHeaderColor,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     SizedBox(
-                      height: 40,
+                      height: 30,
                     ),
                     Container(
                       width: 64,

@@ -1,19 +1,23 @@
-import 'dart:collection';
-
+import 'package:daldong/screens/exercise_detail_screen/exercise_detail_part.dart';
 import 'package:daldong/widgets/common/footer.dart';
+import 'package:daldong/widgets/exercise_detail_screen/exercise_detail_block.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:daldong/services/exercise_api.dart';
 import 'package:daldong/utilites/exercise_detail_screen/calendar_utilite.dart';
 import 'package:daldong/widgets/exercise_detail_screen/calendar_header.dart';
 
 class ExerciseDetailScreen extends StatefulWidget {
-  // static const String route = '/';
   @override
   State<ExerciseDetailScreen> createState() => _ExerciseDetailScreenState();
 }
 
 class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
+  int nowYearMonth = 202305;
+  List<Map<String, dynamic>> exerciseLogList = [];
+  List<int> yearMonthList = [];
+  dynamic events = [];
+  Map<DateTime, List<Event>> kEvents = {};
   late final ValueNotifier<List<Event>> _selectedEvents;
   // 처음 본 페이지 들어왔을 때 focused 날짜를 지정함(이후 사용자 선택 따라 변경)
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
@@ -29,6 +33,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
     _selectedEvents = ValueNotifier(
       _getEventsForDay(_focusedDay.value),
     );
+    getYearMonthValue();
   }
 
   @override
@@ -71,11 +76,94 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
     _selectedEvents.value = _getEventsForDay(_focusedDay.value);
   }
 
+  void getYearMonthValue() {
+    late int changeYearMonth;
+    if (_focusedDay.value.month < 10) {
+      changeYearMonth =
+          int.parse('${_focusedDay.value.year}0${_focusedDay.value.month}');
+    } else {
+      changeYearMonth =
+          int.parse('${_focusedDay.value.year}${_focusedDay.value.month}');
+    }
+    print(changeYearMonth);
+    if (!yearMonthList.contains(changeYearMonth)) {
+      yearMonthList.add(changeYearMonth);
+      setState(() {
+        nowYearMonth = changeYearMonth;
+      });
+      getMonthlyExerciseLog(
+        success: (dynamic response) {
+          setState(() {
+            events = response['data'];
+            print(events);
+            for (int i = 0; i < events.length; i++) {
+              var temp =
+                  "${(DateTime.parse(events[i]['date']).add(const Duration(hours: 9))).toString().substring(0, 11)}00:00:00.000Z";
+              var eventDate = DateTime.parse(temp);
+              var event = events[i]['exercise'];
+              print(event);
+
+              for (int j = 0; j < event.length; j++) {
+                print(event[j]);
+                var haha = DateTime.parse(event[j]['exerciseStartTime'])
+                        .add(const Duration(hours: 9)) ??
+                    'string';
+                print(haha);
+                if (kEvents.containsKey(eventDate)) {
+                  kEvents[eventDate]!.add(
+                    Event(
+                      '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
+                      DateTime.parse(event[j]['exerciseStartTime'])
+                          .add(const Duration(hours: 9)),
+                      DateTime.parse(event[j]['exerciseEndTime'])
+                          .add(const Duration(hours: 9)),
+                      event[j]['exerciseTime'],
+                      event[j]['exerciseKcal'],
+                      event[j]['exercisePoint'],
+                      event[j]['averageHeart'],
+                      event[j]['exercisePetExp'],
+                      event[j]['exerciseUserExp'],
+                      event[j]['maxHeart'],
+                    ),
+                  );
+                } else {
+                  kEvents.addAll({
+                    eventDate: [
+                      Event(
+                        '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
+                        DateTime.parse(event[j]['exerciseStartTime'])
+                            .add(const Duration(hours: 9)),
+                        DateTime.parse(event[j]['exerciseEndTime'])
+                            .add(const Duration(hours: 9)),
+                        event[j]['exerciseTime'],
+                        event[j]['exerciseKcal'],
+                        event[j]['exercisePoint'],
+                        event[j]['averageHeart'],
+                        event[j]['exercisePetExp'],
+                        event[j]['exerciseUserExp'],
+                        event[j]['maxHeart'],
+                      ),
+                    ]
+                  });
+                }
+              }
+            }
+          });
+        },
+        fail: (error) {
+          print('이번 달 운동 로그 호출 오류: $error');
+        },
+        userId: 1,
+        month: changeYearMonth,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // bottomNavigationBar: Footer(),
+        bottomNavigationBar: Footer(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -94,12 +182,14 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                         ),
                         curve: Curves.easeOut,
                       );
+                      getYearMonthValue();
                     },
                     onRightArrowTap: () {
                       _pageController.nextPage(
                         duration: Duration(milliseconds: 300),
                         curve: Curves.easeOut,
                       );
+                      getYearMonthValue();
                     },
                     nowCalendarFormat: nowCalendarFormat,
                     onFormatSelecter: () {
@@ -195,31 +285,21 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                 child: ValueListenableBuilder<List<Event>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _) {
+                    bool onPartClick = false;
                     return ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            onTap: () {},
-                            title: Text('${value[index]}'),
-                          ),
+                        return ExerciseDetailBlock(
+                          exerciseValue : value[index],
                         );
                       },
                     );
                   },
                 ),
               ),
-              const SizedBox(
-                height: 80,
-              ),
+              // const SizedBox(
+              //  height: 80,
+              // ),
             ],
           ),
         ),

@@ -1,8 +1,17 @@
+import 'dart:async';
+
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
+import 'package:daldong/utilites/common/common_utilite.dart';
+import 'package:daldong/utilites/exercise_detail_screen/exercise_chart.dart';
+import 'package:daldong/widgets/common/exercise_info_block.dart';
 import 'package:daldong/widgets/common/footer.dart';
+import 'package:daldong/utilites/common/chart utilite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:geolocator/geolocator.dart' as Geo;
+import 'package:daldong/services/exercise_api.dart';
+import 'package:daldong/services/exercise_api.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class ExerciseScreen extends StatefulWidget {
@@ -13,12 +22,11 @@ class ExerciseScreen extends StatefulWidget {
 }
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
+  Map<String, dynamic> todayExInfo = {};
+  Map<String, dynamic> weatherInfo = {};
   List<_SplineAreaData>? chartData;
   ChartSeriesController? _chartSeriesController1;
 
-  int todayPlayerKcal = 1050;
-  Duration todayExerciseTime = Duration(hours: 1, minutes: 50, seconds: 10);
-  int todayPoint = 80;
 
   String _durationToString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -28,8 +36,46 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
   }
 
+  Future<void> getCurrentLocation() async {
+    Geo.LocationPermission permission = await Geo.Geolocator.requestPermission();
+    Geo.Position position = await Geo.Geolocator.getCurrentPosition(
+        desiredAccuracy: Geo.LocationAccuracy.high);
+    var lat = position.latitude;
+    var lon = position.longitude;
+    getWeatherInfo(success: (dynamic response) {
+      setState(() {
+        weatherInfo = response;
+      });
+      print(weatherInfo);
+    },
+        fail: (error) {
+          print('오늘 날씨 로그 호출 오류: $error');
+        }, lat: lat, lon: lon,
+    );
+  }
+
   @override
   void initState() {
+    getCurrentLocation();
+    getTodayExerciseLog(
+      success: (dynamic response) {
+        setState(() {
+          todayExInfo = response['data'];
+        });
+      },
+      fail: (error) {
+        print('오늘 운동 로그 호출 오류: $error');
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   '/error',
+        //   arguments: {
+        //     'errorText': error,
+        //   },
+        //   ModalRoute.withName('/home'),
+        // );
+      },
+      userId: 1,
+    );
     chartData = <_SplineAreaData>[
       _SplineAreaData(0, 20),
       _SplineAreaData(1, 0),
@@ -151,168 +197,48 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     )
                   ],
                 ),
-                SizedBox(
-                  width: 10,
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
+                // SizedBox(
+                //   width: 10,
+                //   height: 10,
+                // ),
+                // ExerciseChart(dailyExTime: todayExInfo['dailyExTime'] ?? 0, dailyKcal: todayExInfo['dailyKcal'] ?? 0, dailyCount: todayExInfo['dailyCount'] ?? 0,),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ExerciseInfoBlock(
+                        infoName: '칼로리',
+                        infoIcon: Icon(
+                        Icons.local_fire_department,
+                        size: 24,
+                        color: Color.fromRGBO(246, 114, 128, 1),
+                      ),
+                        infoValue: todayExInfo['dailyKcal'] ?? 0,
+                        infoUnit: 'Kcal',
+                      ),
+                      ExerciseInfoBlock(
+                        infoName: '소비시간',
+                        infoIcon: Icon(
+                          Icons.timer,
+                          size: 20,
+                          color: Color.fromRGBO(192, 108, 132, 1),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          )
-                        ],
+                        infoValue: todayExInfo['dailyExTime'] ?? 0,
+                        infoUnit: '분',
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.local_fire_department,
-                                size: 18,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '칼로리',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '${todayPlayerKcal} Kcal',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
+                      ExerciseInfoBlock(
+                        infoName: '포인트',
+                        infoIcon: Icon(
+                          Icons.flag_circle,
+                          size: 22,
+                          color: Color.fromRGBO(75, 135, 185, 1),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          )
-                        ],
+                        infoValue: todayExInfo['dailyCount'] ?? 0,
+                        infoUnit: 'Point',
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.timer,
-                                size: 16,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '소비시간',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '${_durationToString(todayExerciseTime)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.money,
-                                size: 14,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                '포인트',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            '${todayPoint} point',
-                            style: TextStyle(
-                              fontSize: 14,
-                              // fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -381,62 +307,65 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   width: 10,
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          ),
-                        ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              spreadRadius: 0.3,
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          ),
-                        ],
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              spreadRadius: 0.3,
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.5),
-                            spreadRadius: 0.3,
-                            blurRadius: 6,
-                          ),
-                        ],
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              spreadRadius: 0.3,
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: 100,
-                ),
+                // SizedBox(
+                //   height: 100,
+                // ),
               ],
             ),
           ),
