@@ -28,7 +28,7 @@ class CalendarHeader extends StatelessWidget {
         children: [
           const SizedBox(width: 16.0),
           SizedBox(
-            width: 124.0,
+            width: 142.0,
             child: Text(
               headerText,
               style: TextStyle(
@@ -36,7 +36,7 @@ class CalendarHeader extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8.0),
+          const Spacer(),
           InkWell(
             onTap: onTodayButtonTap,
             child: Container(
@@ -98,7 +98,7 @@ class CalendarHeader extends StatelessWidget {
               ),
             ),
           ),
-          const Spacer(),
+          const SizedBox(width: 2.0),
           IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: onLeftArrowTap,

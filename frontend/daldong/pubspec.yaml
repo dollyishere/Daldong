@@ -46,6 +46,9 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   flutter_svg: ^2.0.5
   flutter_dotenv: ^5.0.2
+  http: ^0.13.6
+  flutter_appauth: ^5.0.0
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:
