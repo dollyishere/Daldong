@@ -53,6 +53,7 @@ public class User {
     @Column(name = "user_point", nullable = false)
     private int userPoint;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_back_id", nullable = false)
     private Asset mainBack;
@@ -66,5 +67,15 @@ public class User {
 
     public void payPoint(int rewardPoint) {
         userPoint += rewardPoint;
+    }
+
+    @PrePersist
+    public void setDefaultValues() {
+        if (nickname == null){
+            nickname = "-";
+        }
+        if (mainPetName == null) {
+            mainPetName = "참새";
+        }
     }
 }
