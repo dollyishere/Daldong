@@ -4,6 +4,7 @@ package com.ssafy.daldong.user.model.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
@@ -34,28 +35,26 @@ public class UserServiceImpl implements UserService{
     private final RedisService redisService;
     private final JwtTokenUtil jwtTokenUtil;
 
-        public UserLoginDTO login (String idToken) throws FirebaseAuthException {
+    public UserLoginDTO login (String idToken) throws FirebaseAuthException {
 
-            FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
-            String uId = decodedToken.getUid();
-
-            log.info(uId);
-            UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(userRepository.findByUserUid(uId));
-            return userLoginDTO;
-        }
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+        String uId = decodedToken.getUid();
+        log.info(uId);
+        UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(userRepository.findByUserUid(uId));
+        return userLoginDTO;
+    }
 
 
     @Override
     public void join(UserJoinDTO userJoinDTO) {
-            userJoinDTO.setMainBackId(1L);
-            userJoinDTO.setMainPetId(1L);//아직 몇번인지 모름 임의 세팅
-            Asset assetBack= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
-            Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
-            //UserAsset 추가부분 미완성 - 노션 댓글 참고
-            //userAssetRepository.save(new UserAssetDTO().toEntity(userAssetRepository.findByUserIdAndAssetId(assetBack.getAssetId(),assetPet.getAssetId())));
+        userJoinDTO.setMainBackId(1L);//참새
+        userJoinDTO.setMainPetId(3L);//아직 몇번인지 모름 임의 세팅
+        Asset assetBack= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
+        Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
-
-            userRepository.save(user);
+        userRepository.save(user);
+        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetPet.getAssetId()," sparrow","참새"));
+        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetBack.getAssetId(),"grassland","초원"));
     }
 
     @Override

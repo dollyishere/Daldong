@@ -22,6 +22,8 @@ public class Asset {
 
     @Column(name = "asset_name", nullable = false)
     private String assetName;
+    @Column(name = "asset_KRname",nullable = false)
+    private  String assetKRName;
 
     @Column(name = "asset_unlock_level", nullable = false)
     private int assetUnlockLevel;

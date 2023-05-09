@@ -38,6 +38,10 @@ public class UserAsset {
     @Column(name = "pet_exp", nullable = false)
     private int petExp;
 
+    //유저가 설정할 펫의 이름 첫 구매하면 Asset-assetKRName이 default로 입력됨
+    @Column(name="pet_name_custom")
+    private String petCustomName;
+
     @Column(name = "pet_name")
     private String petName;
 

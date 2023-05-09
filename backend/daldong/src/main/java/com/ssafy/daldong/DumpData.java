@@ -81,24 +81,28 @@ public class DumpData implements CommandLineRunner {
         Asset sparrow = Asset.builder()
                 .assetType(true)
                 .assetName("sparrow")
+                .assetKRName("참새")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset dog = Asset.builder()
                 .assetType(true)
                 .assetName("dog")
+                .assetKRName("강아지")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset bg1 = Asset.builder()
                 .assetType(false)
                 .assetName("bg1")
+                .assetKRName("초원")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset bg2 = Asset.builder()
                 .assetType(false)
                 .assetName("bg2")
+                .assetKRName("불지옥")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
@@ -207,6 +211,7 @@ public class DumpData implements CommandLineRunner {
                     .assetType(asset.isAssetType())
                     .petExp(0)
                     .petName(asset.getAssetName())
+                    .petCustomName(asset.getAssetKRName())
                     .build());
         }
         userAssetRepository.saveAll(userAssetList);
