@@ -58,8 +58,7 @@ dependencies {
 
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    //firebase
-    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.0.1'
+
 
 }
 

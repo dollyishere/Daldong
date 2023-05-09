@@ -34,7 +34,7 @@ public class UserController {
     private String clientSecretKey;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> login(@RequestParam(name = "idToken") String idToken) throws Exception {//@RequestBody codeDto codeDto
+    public ResponseEntity<?> login(@RequestHeader(name="idToken") String idToken) throws Exception {//@RequestBody codeDto codeDto
 
         HttpHeaders headers = new HttpHeaders();
         ResponseDefault responseDefault = null;
@@ -68,7 +68,7 @@ public class UserController {
                     .success(false)
                     .messege("ERROR")
                     .build();
-            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
         }
     }
     @PostMapping("/signup")
