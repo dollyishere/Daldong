@@ -1,3 +1,4 @@
+import 'package:daldong/services/friend_api.dart';
 import 'package:flutter/material.dart';
 
 class OtherUserBlock extends StatefulWidget {
@@ -5,7 +6,8 @@ class OtherUserBlock extends StatefulWidget {
   final String friendNickname;
   final int friendUserLevel;
   final String mainPetAssetName;
-  final int isSting;
+  final String useCase;
+  final void Function(int) stateFunction;
   // final void Function(BuildContext, Function, String, String, String, String,
   //     {dynamic data}) showConfirmationDialog;
 
@@ -15,7 +17,8 @@ class OtherUserBlock extends StatefulWidget {
     required this.friendNickname,
     required this.friendUserLevel,
     required this.mainPetAssetName,
-    required this.isSting,
+    required this.useCase,
+    required this.stateFunction,
     // required this.showConfirmationDialog,
   }) : super(key: key);
 
@@ -29,7 +32,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        width: 232,
+        width: 242,
         height: 70,
         child: Stack(
           children: [
@@ -37,7 +40,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
               top: 7,
               left: 20,
               child: Container(
-                width: 222,
+                width: 242,
                 height: 60,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
@@ -62,7 +65,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                         color: Theme.of(context).primaryColorDark,
                       ),
                       Container(
-                        width: 124,
+                        width: 92,
                         height: double.infinity,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -96,43 +99,41 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                       //       ? Colors.transparent
                       //       : Theme.of(context).primaryColorDark,
                       // ),
-                      // InkWell(
-                      //   onTap: () {
-                      //     print('하하');
-                      //   },
-                      //   splashColor: Colors.transparent,
-                      //   highlightColor: Colors.transparent,
-                      //   child: Container(
-                      //     width: 54,
-                      //     height: double.infinity,
-                      //     decoration: BoxDecoration(
-                      //       color: widget.isSting == 1
-                      //           ? Theme.of(context).shadowColor
-                      //           : Colors.transparent,
-                      //     ),
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       // crossAxisAlignment: CrossAxisAlignment.spaceEvenly,
-                      //       children: [
-                      //         Icon(
-                      //           Icons.push_pin,
-                      //           color: Colors.white,
-                      //           size: 20,
-                      //         ),
-                      //         SizedBox(
-                      //           height: 6,
-                      //         ),
-                      //         Text(
-                      //           '찌르기',
-                      //           style: TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 11,
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
+                      InkWell(
+                        onTap: () {
+                          print('하하');
+                        },
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: Container(
+                          width: 52,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColorLight,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // crossAxisAlignment: CrossAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.account_box,
+                                color: Theme.of(context).secondaryHeaderColor,
+                                size: 16,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                '상세보기',
+                                style: TextStyle(
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       Expanded(
                         flex: 2,
                         child: Stack(
@@ -150,14 +151,75 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  if (widget.useCase == 'search') {
+                                    postFriendRequest(
+                                        success: (dynamic response) {
+                                          print(response);
+                                          print('친구 요청 완료');
+                                          setState(() {
+                                            widget
+                                                .stateFunction(widget.friendId);
+                                            print(widget.friendId);
+                                          });
+                                        },
+                                        fail: (error) {
+                                          print('친구 요청 오류 : $error');
+                                          // Navigator.pushNamedAndRemoveUntil(
+                                          //   context,
+                                          //   '/error',
+                                          //   arguments: {
+                                          //     'errorText': error,
+                                          //   },
+                                          //   ModalRoute.withName('/home'),
+                                          // );
+                                        },
+                                        body: {
+                                          'receiverId':
+                                              widget.friendId.toString(),
+                                          'senderId': '1',
+                                        });
+                                  } else if (widget.useCase == 'send') {
+                                  } else {
+                                    postFriendRequestResult(
+                                        success: (dynamic response) {
+                                          print(response);
+                                          print('친구 요청 수락 완료');
+                                          setState(() {
+                                            widget
+                                                .stateFunction(widget.friendId);
+                                            print(widget.friendId);
+                                          });
+                                        },
+                                        fail: (error) {
+                                          print('친구 요청 수락 오류 : $error');
+                                          // Navigator.pushNamedAndRemoveUntil(
+                                          //   context,
+                                          //   '/error',
+                                          //   arguments: {
+                                          //     'errorText': error,
+                                          //   },
+                                          //   ModalRoute.withName('/home'),
+                                          // );
+                                        },
+                                        body: {
+                                          'accept': true,
+                                          'receiverId': 1,
+                                          'senderId': widget.friendId,
+                                        });
+                                  }
+                                },
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.send,
+                                      widget.useCase == 'search'
+                                          ? Icons.send
+                                          : widget.useCase == 'send'
+                                              ? Icons.cut
+                                              : Icons.handshake,
                                       color: Colors.white,
                                       size: 16,
                                     ),
@@ -165,7 +227,11 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                       height: 4,
                                     ),
                                     Text(
-                                      '친구신청',
+                                      widget.useCase == 'search'
+                                          ? '친구 신청'
+                                          : widget.useCase == 'send'
+                                              ? '요청 취소'
+                                              : '요청 수락',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
@@ -210,7 +276,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                   color: Colors.white,
                   image: DecorationImage(
                     image: AssetImage(
-                        "lib/assets/images/samples/${widget.mainPetAssetName}.PNG"),
+                        "lib/assets/images/animals/${widget.mainPetAssetName}.PNG"),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(10),

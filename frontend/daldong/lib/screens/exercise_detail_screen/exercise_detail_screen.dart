@@ -285,7 +285,6 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                 child: ValueListenableBuilder<List<Event>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _) {
-                    bool onPartClick = false;
                     return ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) {

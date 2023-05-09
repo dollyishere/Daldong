@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/utilites/common/common_utilite.dart';
-import 'package:daldong/utilites/exercise_detail_screen/exercise_chart.dart';
+import 'package:daldong/widgets/exercise_detail_screen/exercise_chart.dart';
 import 'package:daldong/widgets/common/exercise_info_block.dart';
 import 'package:daldong/widgets/common/footer.dart';
-import 'package:daldong/utilites/common/chart utilite.dart';
+import 'package:daldong/utilites/common/chart_utilite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -27,7 +27,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   List<_SplineAreaData>? chartData;
   ChartSeriesController? _chartSeriesController1;
 
-
   String _durationToString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitHours = twoDigits(duration.inHours.remainder(60));
@@ -37,20 +36,24 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   }
 
   Future<void> getCurrentLocation() async {
-    Geo.LocationPermission permission = await Geo.Geolocator.requestPermission();
+    Geo.LocationPermission permission =
+        await Geo.Geolocator.requestPermission();
     Geo.Position position = await Geo.Geolocator.getCurrentPosition(
         desiredAccuracy: Geo.LocationAccuracy.high);
     var lat = position.latitude;
     var lon = position.longitude;
-    getWeatherInfo(success: (dynamic response) {
-      setState(() {
-        weatherInfo = response;
-      });
-      print(weatherInfo);
-    },
-        fail: (error) {
-          print('오늘 날씨 로그 호출 오류: $error');
-        }, lat: lat, lon: lon,
+    getWeatherInfo(
+      success: (dynamic response) {
+        setState(() {
+          weatherInfo = response;
+        });
+        print(weatherInfo);
+      },
+      fail: (error) {
+        print('오늘 날씨 로그 호출 오류: $error');
+      },
+      lat: lat,
+      lon: lon,
     );
   }
 
@@ -210,10 +213,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ExerciseInfoBlock(
                         infoName: '칼로리',
                         infoIcon: Icon(
-                        Icons.local_fire_department,
-                        size: 24,
-                        color: Color.fromRGBO(246, 114, 128, 1),
-                      ),
+                          Icons.local_fire_department,
+                          size: 24,
+                          color: Color.fromRGBO(246, 114, 128, 1),
+                        ),
                         infoValue: todayExInfo['dailyKcal'] ?? 0,
                         infoUnit: 'Kcal',
                       ),
@@ -320,8 +323,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              color: Theme.of(context)
+                                  .shadowColor
+                                  .withOpacity(0.5),
                               spreadRadius: 0.3,
                               blurRadius: 6,
                             ),
@@ -336,8 +340,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              color: Theme.of(context)
+                                  .shadowColor
+                                  .withOpacity(0.5),
                               spreadRadius: 0.3,
                               blurRadius: 6,
                             ),
@@ -352,8 +357,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Theme.of(context).shadowColor.withOpacity(0.5),
+                              color: Theme.of(context)
+                                  .shadowColor
+                                  .withOpacity(0.5),
                               spreadRadius: 0.3,
                               blurRadius: 6,
                             ),

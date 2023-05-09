@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:daldong/services/friend_api.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/friend_screen/friend_block.dart';
 import 'package:daldong/widgets/friend_screen/my_progress_bar.dart';
@@ -12,111 +13,87 @@ class FriendScreen extends StatefulWidget {
 }
 
 class _FriendScreenState extends State<FriendScreen> {
-  void showConfirmationDialog(BuildContext context, Function func, String title,
-      String content, String yesText, String noText,
-      {dynamic data}) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                yesText,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              onPressed: () {
-                // Yes 버튼을 눌렀을 때 수행할 작업
-                Navigator.of(context).pop(true);
-              },
-            ),
-            TextButton(
-              child: Text(
-                noText,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              onPressed: () {
-                // No 버튼을 눌렀을 때 수행할 작업
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
+  bool isLoading = true;
+  List<dynamic> friendList = [
+    {
+      "friendId": 1,
+      "friendNickname": '팩ㄺ팍페규ㅖ',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'dog',
+      "sting": false,
+    },
+    {
+      "friendId": 1,
+      "friendNickname": 'YouKno',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'frog',
+      "sting": true,
+    },
+    {
+      "friendId": 1,
+      "friendNickname": '핡핡핡핵핽핽',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'snow_weasel',
+      "sting": false,
+    },
+    {
+      "friendId": 1,
+      "friendNickname": 'Naver',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'crocodile',
+      "sting": true,
+    },
+    {
+      "friendId": 1,
+      "friendNickname": '판다조하조하',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'red_panda',
+      "sting": false,
+    },
+    {
+      "friendId": 1,
+      "friendNickname": '짹쨰그거ㅏㅣ',
+      "friendUserLevel": 12,
+      "mainPetAssetName": 'tortoise',
+      "sting": true,
+    },
+  ];
+
+  void changeUserState(dynamic targetId) {
+    friendList.removeWhere((user) => user['friendId'] == targetId);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getMyFriendList(
+      success: (dynamic response) {
+        setState(() {
+          print(response['data']);
+          friendList = response['data'];
+          print(friendList);
+          isLoading = false;
+        });
       },
-    ).then((value) {
-      if (value == true) {
-        if (data != null) {
-          func(data);
-        } else {
-          // Navigator.pushNamed(context, routeName);
-        }
-      } else if (value == false) {
-        // No 버튼을 눌렀을 때 수행할 작업
-      }
-    });
+      fail: (error) {
+        print('친구 목록 호출 오류 : $error');
+        // Navigator.pushNamedAndRemoveUntil(
+        //   context,
+        //   '/error',
+        //   arguments: {
+        //     'errorText': error,
+        //   },
+        //   ModalRoute.withName('/home'),
+        // );
+      },
+      userId: 1,
+    );
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> friendList = [
-      {
-        "friendId": 1,
-        "friendNickname": '팩ㄺ팍페규ㅖ',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Dog',
-        "isSting": 0,
-      },
-      {
-        "friendId": 1,
-        "friendNickname": 'YouKno',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Frog',
-        "isSting": 0,
-      },
-      {
-        "friendId": 1,
-        "friendNickname": '핡핡핡핵핽핽',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Snow_Weasel',
-        "isSting": 0,
-      },
-      {
-        "friendId": 1,
-        "friendNickname": 'Naver',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Crocodile',
-        "isSting": 1,
-      },
-      {
-        "friendId": 1,
-        "friendNickname": '판다조하조하',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Red_Panda',
-        "isSting": 0,
-      },
-      {
-        "friendId": 1,
-        "friendNickname": '짹쨰그거ㅏㅣ',
-        "friendUserLevel": 12,
-        "mainPetAssetName": 'Bat',
-        "isSting": 0,
-      },
-    ];
-    print(friendList.length);
     return SafeArea(
         child: Scaffold(
       bottomNavigationBar: Footer(),
@@ -164,37 +141,55 @@ class _FriendScreenState extends State<FriendScreen> {
                 ],
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: RawScrollbar(
-                  thumbVisibility: true,
-                  radius: const Radius.circular(10),
-                  thumbColor:
-                      Theme.of(context).primaryColorDark.withOpacity(0.5),
-                  thickness: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+            isLoading
+                ? Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
-                    child: ListView(
-                      children: friendList
-                          .map(
-                            (friend) => FriendBlock(
-                              friendId: friend["friendId"],
-                              friendNickname: friend["friendNickname"],
-                              friendUserLevel: friend["friendUserLevel"],
-                              mainPetAssetName: friend["mainPetAssetName"],
-                              isSting: friend["isSting"],
-                              showConfirmationDialog: showConfirmationDialog,
+                  )
+                : friendList.length > 0
+                    ? Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: RawScrollbar(
+                            thumbVisibility: true,
+                            radius: const Radius.circular(10),
+                            thumbColor: Theme.of(context)
+                                .primaryColorDark
+                                .withOpacity(0.5),
+                            thickness: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              child: ListView(
+                                children: friendList
+                                    .map(
+                                      (friend) => FriendBlock(
+                                        friendId: friend["friendId"],
+                                        friendNickname:
+                                            friend["friendNickname"],
+                                        friendUserLevel:
+                                            friend["friendUserLevel"],
+                                        mainPetAssetName:
+                                            friend["mainPetAssetName"],
+                                        isSting: friend["sting"],
+                                        stateFunction: changeUserState,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
                             ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: Center(
+                          child: Text('현재 친구가 없습니다.'),
+                        ),
+                      )
           ],
         ),
       ),

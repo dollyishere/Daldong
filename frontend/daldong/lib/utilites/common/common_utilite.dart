@@ -1,7 +1,8 @@
+import 'package:daldong/services/friend_api.dart';
 import 'package:flutter/material.dart';
 
-void showConfirmationDialog(BuildContext context, Function func, String title,
-    String content, String yesText, String noText,
+void showConfirmationDialog(BuildContext context, void func, String title,
+    String content, String yesText, String noText, String confirmCase,
     {dynamic data}) {
   showDialog(
     context: context,
@@ -20,10 +21,11 @@ void showConfirmationDialog(BuildContext context, Function func, String title,
             child: Text(
               yesText,
               style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).primaryColor),
+                  fontSize: 14, color: Theme.of(context).primaryColor,),
             ),
             onPressed: () {
               // Yes 버튼을 눌렀을 때 수행할 작업
+              print('gd');
               Navigator.of(context).pop(true);
             },
           ),
@@ -43,10 +45,29 @@ void showConfirmationDialog(BuildContext context, Function func, String title,
     },
   ).then((value) {
     if (value == true) {
+      print('하하');
       if (data != null) {
-        func(data);
+        if (confirmCase == 'deleteMyFriendApi') {
+          deleteMyFriend(
+            success: (dynamic response) {
+              data['success'](data['friendId']);
+            },
+            fail: (error) {
+              print('친구 삭제 오류 : $error');
+              // Navigator.pushNamedAndRemoveUntil(
+              //   context,
+              //   '/error',
+              //   arguments: {
+              //     'errorText': error,
+              //   },
+              //   ModalRoute.withName('/home'),
+              // );
+            },
+            userId: data['userId'],
+            friendId: data['friendId'],
+          );
+        }
       } else {
-        //
       }
     } else if (value == false) {
       // No 버튼을 눌렀을 때 수행할 작업
