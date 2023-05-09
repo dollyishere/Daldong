@@ -90,6 +90,10 @@ class ExerciseViewModel @Inject constructor(
     fun pauseExercise() = viewModelScope.launch { healthServicesRepository.pauseExercise() }
     fun endExercise() = viewModelScope.launch { healthServicesRepository.endExercise() }
     fun resumeExercise() = viewModelScope.launch { healthServicesRepository.resumeExercise() }
+
+    override fun toString(): String {
+        return "ExerciseViewModel(uiState=$uiState, exerciseServiceState=$exerciseServiceState)"
+    }
 }
 
 

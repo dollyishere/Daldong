@@ -13,7 +13,11 @@ org-jetbrains-kotlinx = "1.6.0"
 health-services = "1.0.0-beta02"
 dagger = "2.43.2"
 
-wear-input = "1.2.0-alpha02"
+wear-input = "1.1.0"
+wear-input-testing = "1.1.0"
+wear-ongoing = "1.0.0"
+wear-phone-interactions = "1.0.1"
+wear-remote-interactions = "1.0.0"
 
 [libraries]
 android-lint-gradle = "com.android.tools.lint:lint-gradle:30.2.1"
@@ -45,10 +49,17 @@ dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref =
 dagger-hilt-android-compiler = {module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger"}
 guava = "com.google.guava:guava:30.1.1-android"
 androidx-concurrent = "androidx.concurrent:concurrent-futures-ktx:1.1.0"
-androidx-wear = "androidx.wear:wear:1.2.0"
-wear-input = { module = "androidx.wear:wear-input", version.ref = "wear-input" }
 
 playservices-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
+
+#app와 wear 연동을 위한 종속 항목 선언
+androidx-wear = "androidx.wear:wear:1.2.0"
+wear-input = { module = "androidx.wear:wear-input", version.ref = "wear-input" }
+wear-input-testing ={module = "androidx.wear:wear-input-testing", version.ref = "wear-input-testing"}
+wear-ongoing ={module = "androidx.wear:wear-ongoing", version.ref = "wear-ongoing"}
+wear-phone-interactions = {module = "androidx.wear:wear-phone-interactions", version.ref = "wear-phone-interactions"}
+wear-remote-interactions = {module = "androidx.wear:wear-remote-interactions", version.ref = "wear-remote-interactions"}
+
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
