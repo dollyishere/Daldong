@@ -1,0 +1,25 @@
+# MySQL ?? ??
+spring:
+  datasource:
+    url: jdbc:mysql://k8a104.p.ssafy.io:3306/daldong?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: ssafy
+    password: wkdbfA104
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # database pool ??
+  datasource.hikari:
+    minimum-idle: 5
+    maximum-pool-size: 20
+    idle-timeout: 30000
+    pool-name: HikariCP
+
+    # ???? spring.io?? doc?? ??? ??????.
+    # jpa??
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
