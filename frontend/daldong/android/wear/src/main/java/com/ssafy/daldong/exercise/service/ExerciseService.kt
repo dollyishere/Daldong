@@ -102,6 +102,7 @@ class ForegroundService : LifecycleService() {
      */
     fun startExercise() {
         lifecycleScope.launch {
+            Log.d(TAG, "startExercise 언제 실행되지?")
             exerciseClientManager.startExercise()
         }
         postOngoingActivityNotification()
@@ -142,7 +143,6 @@ class ForegroundService : LifecycleService() {
             exerciseClientManager.markLap()
         }
     }
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)

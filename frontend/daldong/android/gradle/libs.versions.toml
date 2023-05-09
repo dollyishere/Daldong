@@ -13,6 +13,8 @@ org-jetbrains-kotlinx = "1.6.0"
 health-services = "1.0.0-beta02"
 dagger = "2.43.2"
 
+wear-input = "1.2.0-alpha02"
+
 [libraries]
 android-lint-gradle = "com.android.tools.lint:lint-gradle:30.2.1"
 compose-wear-navigation = "androidx.wear.compose:compose-navigation:1.2.0-alpha02"
@@ -44,7 +46,9 @@ dagger-hilt-android-compiler = {module = "com.google.dagger:hilt-android-compile
 guava = "com.google.guava:guava:30.1.1-android"
 androidx-concurrent = "androidx.concurrent:concurrent-futures-ktx:1.1.0"
 androidx-wear = "androidx.wear:wear:1.2.0"
+wear-input = { module = "androidx.wear:wear-input", version.ref = "wear-input" }
 
+playservices-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }

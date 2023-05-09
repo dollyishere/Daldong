@@ -66,10 +66,11 @@ class ExerciseViewModel @Inject constructor(
     val exerciseServiceState = _exerciseServiceState
 
     init {
+        Log.d("ExerciseViewModel 처음", permissions.joinToString())
         viewModelScope.launch {
             healthServicesRepository.createService()
         }
-        Log.d("운동 화면의 init permissions.toString()", permissions.toString())
+
     }
 
     suspend fun isExerciseInProgress(): Boolean {

@@ -15,8 +15,11 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import android.app.RemoteInput
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -80,6 +83,18 @@ fun PreparingExercise(
         }
     }
 
+//    val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
+//    val remoteInputs: List<RemoteInput> = listOf(
+//        RemoteInput.Builder(type.inputKey)
+//            .setLabel(stringResource(type.stringResId))
+//            .wearableExtender {
+//                setInputActionType(EditorInfo.IME_ACTION_DONE)
+//                setEmojisAllowed(false)
+//            }.build()
+//    )
+//
+//    RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
+
     when (serviceState) {
         is ServiceState.Connected -> {
             LaunchedEffect(Unit) {
@@ -88,7 +103,7 @@ fun PreparingExercise(
                     prepareExercise()
                 }
             }
-            Log.d("위치 서비스 상태", serviceState.toString())
+            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
             val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
