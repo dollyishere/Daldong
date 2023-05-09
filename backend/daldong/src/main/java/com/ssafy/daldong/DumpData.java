@@ -10,6 +10,7 @@ import com.ssafy.daldong.friend.model.repository.FriendRepository;
 import com.ssafy.daldong.friend.model.repository.FriendRequestRepository;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.entity.UserAsset;
+import com.ssafy.daldong.main.model.entity.UserAssetId;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
 import com.ssafy.daldong.mission.model.entity.DailyMission;
@@ -198,13 +199,11 @@ public class DumpData implements CommandLineRunner {
 
     private void createUserAsset(){
         User user = userRepository.findById((long) 1).get();
-
         List<Asset> assetList = assetRepository.findAll();
         List<UserAsset> userAssetList = new ArrayList<>();
         for (Asset asset: assetList) {
             userAssetList.add(UserAsset.builder()
-                    .user(user)
-                    .asset(asset)
+                    .userAssetId(new UserAssetId().from(user.getUserId(), asset.getAssetId()))
                     .assetType(asset.isAssetType())
                     .petExp(0)
                     .petName(asset.getAssetName())
