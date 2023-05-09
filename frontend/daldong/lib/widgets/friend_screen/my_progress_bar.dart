@@ -200,12 +200,57 @@ class _MyProgressBarState extends State<MyProgressBar> {
               ),
               Positioned(
                 top: 7,
-                left: 12,
+                left: 16,
                 child: Container(
                   margin: const EdgeInsets.only(
                     top: 10,
                   ),
-                  width: (300 * min((widget.progressNum / 20), 1)).toDouble(),
+                  width: (14 * (widget.progressNum.clamp(0, 6)).toDouble()),
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 7,
+                left: 92,
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    top: 10,
+                  ),
+                  width: widget.progressNum >= 6 ? (12 * (widget.progressNum - 4).clamp(0, 6).toDouble()) : 0,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 7,
+                left: 167,
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    top: 10,
+                  ),
+                  width: widget.progressNum >= 10 ? (12 * (widget.progressNum - 9).clamp(0, 6).toDouble()) : 0,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 7,
+                left: 242,
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    top: 10,
+                  ),
+                  width: widget.progressNum >= 15 ? (12 * (widget.progressNum - 14).clamp(0, 6).toDouble()) : 0,
                   height: 7,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),

@@ -199,7 +199,7 @@ class _InfoBlockState extends State<InfoBlock> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
-                      image: AssetImage("lib/assets/images/samples/Dog.PNG"),
+                      image: AssetImage("lib/assets/images/animals/dog.PNG"),
                       fit: BoxFit.cover,
                     ),
                     shape: BoxShape.circle,

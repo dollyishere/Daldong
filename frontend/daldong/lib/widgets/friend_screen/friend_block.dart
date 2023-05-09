@@ -1,3 +1,5 @@
+import 'package:daldong/services/friend_api.dart';
+import 'package:daldong/utilites/common/common_utilite.dart';
 import 'package:flutter/material.dart';
 
 class FriendBlock extends StatefulWidget {
@@ -5,9 +7,8 @@ class FriendBlock extends StatefulWidget {
   final String friendNickname;
   final int friendUserLevel;
   final String mainPetAssetName;
-  final int isSting;
-  final void Function(BuildContext, Function, String, String, String, String,
-      {dynamic data}) showConfirmationDialog;
+  final bool isSting;
+  final void Function(dynamic) stateFunction;
 
   const FriendBlock({
     Key? key,
@@ -16,7 +17,7 @@ class FriendBlock extends StatefulWidget {
     required this.friendUserLevel,
     required this.mainPetAssetName,
     required this.isSting,
-    required this.showConfirmationDialog,
+    required this.stateFunction,
   }) : super(key: key);
 
   @override
@@ -96,7 +97,7 @@ class _FriendBlockState extends State<FriendBlock> {
                       Container(
                         height: 52,
                         width: 2,
-                        color: widget.isSting == 1
+                        color: widget.isSting
                             ? Colors.transparent
                             : Theme.of(context).primaryColorDark,
                       ),
@@ -110,7 +111,7 @@ class _FriendBlockState extends State<FriendBlock> {
                           width: 77,
                           height: double.infinity,
                           decoration: BoxDecoration(
-                            color: widget.isSting == 1
+                            color: widget.isSting
                                 ? Theme.of(context).shadowColor
                                 : Colors.transparent,
                           ),
@@ -153,7 +154,25 @@ class _FriendBlockState extends State<FriendBlock> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  showConfirmationDialog(
+                                    context,
+                                    print('api 실행'),
+                                    '이별하기',
+                                    '정말 이별하시겠습니까?',
+                                    '예',
+                                    '아니오',
+                                      'deleteMyFriendApi',
+                                    data: {
+                                      'userId': 1,
+                                      "friendId": widget.friendId,
+                                      'success': widget.stateFunction,
+                                      'fail': (error) {
+                                        print('친구 삭제 오류: $error');
+                                      },
+                                    }
+                                  );
+                                },
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 child: Column(
@@ -232,7 +251,7 @@ class _FriendBlockState extends State<FriendBlock> {
                   color: Colors.white,
                   image: DecorationImage(
                     image: AssetImage(
-                        "lib/assets/images/samples/${widget.mainPetAssetName}.PNG"),
+                        "lib/assets/images/animals/${widget.mainPetAssetName}.PNG"),
                     fit: BoxFit.cover,
                   ),
                   shape: BoxShape.circle,
