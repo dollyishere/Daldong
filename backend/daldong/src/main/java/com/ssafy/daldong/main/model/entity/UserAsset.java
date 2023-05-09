@@ -9,24 +9,28 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "userAsset")
-@IdClass(UserAssetId.class)
+//@IdClass(UserAssetId.class)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UserAsset {
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "asset_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Asset asset;
+//    @Id
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private User user;
+//
+//    @Id
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "asset_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Asset asset;
+
+    @EmbeddedId
+    private UserAssetId userAssetId;
 
     @Column(name = "asset_type", nullable = false)
     private boolean assetType;

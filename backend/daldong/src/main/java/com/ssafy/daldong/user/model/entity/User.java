@@ -1,6 +1,10 @@
 package com.ssafy.daldong.user.model.entity;
 
+import com.ssafy.daldong.main.model.dto.AssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
+import com.ssafy.daldong.main.model.repository.AssetRepository;
+import com.ssafy.daldong.user.model.dto.UserJoinDTO;
+import com.ssafy.daldong.user.model.dto.UserUpdateDTO;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -66,5 +70,33 @@ public class User {
 
     public void payPoint(int rewardPoint) {
         userPoint += rewardPoint;
+    }
+    public void setUpdate(UserUpdateDTO userUpdateDTO){
+        this.height=userUpdateDTO.getHeight();
+        this.weight= userUpdateDTO.getWeight();
+        this.gender=userUpdateDTO.isGender();
+        this.age= userUpdateDTO.getAge();
+        this.ability=userUpdateDTO.getAbility();
+    }
+    public void setNickname(String nickname){
+        this.nickname=nickname;
+    }
+    public static User from(UserJoinDTO userJoinDTO,Asset assetBack,Asset assetPet) {
+        return User.builder()
+                .userUid(userJoinDTO.getUserUId())
+                .nickname(userJoinDTO.getNickname())
+                .height(userJoinDTO.getHeight())
+                .weight(userJoinDTO.getWeight())
+                .gender(userJoinDTO.isGender())
+                .age(userJoinDTO.getAge())
+                .ability(userJoinDTO.getAbility())
+                .userLevel(1)
+                .userExp(0)
+                .requiredExp(100)//아직 미정
+                .userPoint(100)//0 시작 OR 기본 포인트 100 주고 시작
+                .mainBack(assetBack)
+                .mainPet(assetPet)
+                .mainPetName("참새")
+                .build();
     }
 }

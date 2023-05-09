@@ -33,7 +33,14 @@ public class JwtTokenUtil {
     }
 
     public String getUsername(String token){
-        return extratAllClaims(token).get("username", String.class);
+
+//        Claims jws = Jwts.parser()
+//                .setSigningKey(SECRET_KEY.getBytes())
+//                .parseClaimsJws(token).getBody();
+//
+//        String userNickname = jws.get("nickname").toString();
+//        return userNickname;
+        return extratAllClaims(token).get("userUid", String.class);
     }
 
     private Key getSigningKey(String secretKey){
@@ -46,12 +53,12 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
-    public String generateAccessToken(long userId){
-        return doGenerateToken("access token",ACCESS_TOKEN_EXPIRE_MINUTES,userId);
+    public String generateAccessToken(String userUId,long userId){
+        return doGenerateToken(userUId,ACCESS_TOKEN_EXPIRE_MINUTES,userId);
     }
 
-    public String generateRefreshToken(long userId){
-        return doGenerateToken("refresh token",REFRESH_TOKEN_EXPIRE_MINUTES,userId);
+    public String generateRefreshToken(String userUId,long userId){
+        return doGenerateToken(userUId,REFRESH_TOKEN_EXPIRE_MINUTES,userId);
     }
 
 
@@ -59,14 +66,14 @@ public class JwtTokenUtil {
      * 토큰 생성 매서드
      * JWT 구성 ( header.payload.signature )
      * username,발급날짜,만료기간을 payload 에 넣고 application.yml 에 설정한 secretkey 로 서명 후 HS256알고리즘으로 암호화한다.
-     * @param token
+     * @param userUId
      * @param expireTime
      * @return
      */
 
-    private String doGenerateToken(String token,long expireTime,long userId) {
+    private String doGenerateToken(String userUId,long expireTime,long userId) {
         Claims claims = Jwts.claims();
-        claims.put("token", token);
+        claims.put("userUid", userUId);
         claims.put("userId",userId);
         return Jwts.builder()
                 .setClaims(claims)
@@ -77,7 +84,11 @@ public class JwtTokenUtil {
     }
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey(SECRET_KEY))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
