@@ -6,11 +6,6 @@ COPY . /app
 
 # Set the working directory for subsequent instructions
 RUN cd /app
-
-CMD ["ls", "-al"]
-
-CMD ["pwd"]
-
 # Copy the requirements file into the container
 COPY requirements.txt /app
 
