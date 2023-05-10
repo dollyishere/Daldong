@@ -6,12 +6,13 @@ COPY . /app
 
 # Set the working directory for subsequent instructions
 RUN cd /app
-# Copy the requirements file into the container
-COPY requirements.txt /app
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
+RUN ls -al
+
+RUN pwd
 # Expose port 8000 for the application
 EXPOSE 8000
 
