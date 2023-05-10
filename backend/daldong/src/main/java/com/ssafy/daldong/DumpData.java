@@ -79,28 +79,28 @@ public class DumpData implements CommandLineRunner {
     private void createAsset(){
         List<Asset> assetList = new ArrayList<>();
         Asset sparrow = Asset.builder()
-                .assetType(true)
+                .isPet(true)
                 .assetName("sparrow")
                 .assetKRName("참새")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset dog = Asset.builder()
-                .assetType(true)
+                .isPet(true)
                 .assetName("dog")
                 .assetKRName("강아지")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset bg1 = Asset.builder()
-                .assetType(false)
+                .isPet(false)
                 .assetName("bg1")
                 .assetKRName("초원")
                 .assetUnlockLevel(1)
                 .assetPrice(100)
                 .build();
         Asset bg2 = Asset.builder()
-                .assetType(false)
+                .isPet(false)
                 .assetName("bg2")
                 .assetKRName("불지옥")
                 .assetUnlockLevel(1)
@@ -208,10 +208,9 @@ public class DumpData implements CommandLineRunner {
         for (Asset asset: assetList) {
             userAssetList.add(UserAsset.builder()
                     .userAssetId(new UserAssetId().from(user.getUserId(), asset.getAssetId()))
-                    .assetType(asset.isAssetType())
+                    .assetType(asset.isPet())
                     .petExp(0)
-                    .petName(asset.getAssetName())
-                    .petCustomName(asset.getAssetKRName())
+                    .petName(asset.getAssetKRName())
                     .build());
         }
         userAssetRepository.saveAll(userAssetList);
