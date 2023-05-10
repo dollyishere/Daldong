@@ -37,9 +37,8 @@ public class UserServiceImpl implements UserService{
 
     public UserLoginDTO login (String idToken) throws FirebaseAuthException {
 
-//        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
-//        String uId = decodedToken.getUid();
-        String uId="user1uid";
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+        String uId = decodedToken.getUid();
         log.info(uId);
         UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(userRepository.findByUserUid(uId));
         return userLoginDTO;
