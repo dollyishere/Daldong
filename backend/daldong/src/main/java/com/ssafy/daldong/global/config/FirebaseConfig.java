@@ -6,10 +6,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
@@ -17,10 +15,10 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseAuth firebaseAuth() throws IOException {
-        File file = ResourceUtils.getFile("classpath:daldong-firebase-adminsdk.json");
-        FileInputStream serviceAccount = new FileInputStream(file);
+        final String FILE = "daldong-firebase-adminsdk.json";
+        ClassPathResource classPathResource = new ClassPathResource(FILE);
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(GoogleCredentials.fromStream(classPathResource.getInputStream()))
                 .build();
         FirebaseApp.initializeApp(options);
         return FirebaseAuth.getInstance();
