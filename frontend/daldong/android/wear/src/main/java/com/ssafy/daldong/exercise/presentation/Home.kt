@@ -62,7 +62,7 @@ import com.ssafy.daldong.exercise.data.ServiceState
  * Screen that appears while the device is preparing the exercise.
  */
 @Composable
-fun PreparingExercise(
+fun Home(
     onStartClick: () -> Unit = {},
     prepareExercise: () -> Unit,
     onStart: () -> Unit = {},
@@ -83,18 +83,6 @@ fun PreparingExercise(
         }
     }
 
-//    val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
-//    val remoteInputs: List<RemoteInput> = listOf(
-//        RemoteInput.Builder(type.inputKey)
-//            .setLabel(stringResource(type.stringResId))
-//            .wearableExtender {
-//                setInputActionType(EditorInfo.IME_ACTION_DONE)
-//                setEmojisAllowed(false)
-//            }.build()
-//    )
-//
-//    RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
-
     when (serviceState) {
         is ServiceState.Connected -> {
             LaunchedEffect(Unit) {
@@ -103,7 +91,7 @@ fun PreparingExercise(
                     prepareExercise()
                 }
             }
-            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
+//            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
             val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
@@ -175,7 +163,10 @@ fun PreparingExercise(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
-                                    onClick = { onStartClick(); onStart() },
+                                    onClick = { 
+                                        onStartClick();
+                                        onStart()
+                                              },
                                     modifier = Modifier.size(ButtonDefaults.SmallButtonSize)
                                 ) {
                                     Icon(

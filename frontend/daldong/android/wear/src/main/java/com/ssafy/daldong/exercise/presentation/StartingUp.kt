@@ -48,7 +48,9 @@ import com.ssafy.daldong.exercise.theme.ExerciseTheme
 
 @Composable
 fun StartingUp(
-    onAvailable: () -> Unit = {}, onUnavailable: () -> Unit = {}, hasCapabilities: Boolean
+    onAvailable: () -> Unit = {},
+    onUnavailable: () -> Unit = {},
+    hasCapabilities: Boolean
 ) {
     if (hasCapabilities) {
         onAvailable()

@@ -84,7 +84,7 @@ class ExerciseClientManager @Inject constructor(
     }
 
     suspend fun startExercise() {
-        Log.d(TAG, "Starting exercise")
+        Log.d(TAG, "운동 시작")
         // Types for which we want to receive metrics. Only ask for ones that are supported.
         val capabilities = getExerciseCapabilities() ?: return
         val dataTypes = setOf(
@@ -136,7 +136,7 @@ class ExerciseClientManager @Inject constructor(
      * when acquiring calories or distance.
      */
     suspend fun prepareExercise() {
-        Log.d(TAG, "Preparing an exercise")
+        Log.d(TAG, "운동 준비")
         val warmUpConfig = WarmUpConfig(
             ExerciseType.RUNNING, setOf(
                 DataType.HEART_RATE_BPM, DataType.LOCATION
@@ -144,30 +144,30 @@ class ExerciseClientManager @Inject constructor(
         )
         try {
             exerciseClient.prepareExerciseAsync(warmUpConfig).await()
-            Log.e(TAG, "Prepare exercise successed ")
+            Log.e(TAG, "운동 준비 완료 ")
         } catch (e: Exception) {
-            Log.e(TAG, "Prepare exercise failed - ${e.message}")
+            Log.e(TAG, "운동 준비 실패 - ${e.message}")
         }
     }
 
     suspend fun endExercise() {
         try {
             exerciseClient.endExerciseAsync().await()
-            Log.d(TAG, "Ending exercise")
+            Log.d(TAG, "운동 종료 성공")
         } catch (e: Exception) {
-            Log.e(TAG, "Error ending exercise: ${e.message}")
+            Log.e(TAG, "운동 종료 실패: ${e.message}")
             throw e
         }
     }
 
     suspend fun pauseExercise() {
         exerciseClient.pauseExerciseAsync().await()
-        Log.d(TAG, "Pausing exercise")
+        Log.d(TAG, "운동 정지")
     }
 
     suspend fun resumeExercise() {
         exerciseClient.resumeExerciseAsync().await()
-        Log.d(TAG, "Resuming exercise")
+        Log.d(TAG, "운동 재개")
     }
 
     /** Wear OS 3.0 reserves two buttons for the OS. For devices with more than 2 buttons,
@@ -225,7 +225,7 @@ class ExerciseClientManager @Inject constructor(
     private companion object {
         const val CALORIES_THRESHOLD = 250.0
         const val DISTANCE_THRESHOLD = 1_000.0 // meters
-        val TAG: String? = this::class.qualifiedName
+        val TAG = "클라이언트 매니저"
 
     }
 }

@@ -54,7 +54,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class ForegroundService : LifecycleService() {
 
@@ -85,7 +84,6 @@ class ForegroundService : LifecycleService() {
     private val _exerciseServiceState = MutableStateFlow(ExerciseServiceState())
     val exerciseServiceState: StateFlow<ExerciseServiceState> = _exerciseServiceState.asStateFlow()
 
-
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     /**
@@ -102,9 +100,9 @@ class ForegroundService : LifecycleService() {
      */
     fun startExercise() {
         lifecycleScope.launch {
-            Log.d(TAG, "startExercise 언제 실행되지?")
             exerciseClientManager.startExercise()
         }
+        Log.d(TAG, "운동 시작")
         postOngoingActivityNotification()
     }
 
@@ -179,8 +177,19 @@ class ForegroundService : LifecycleService() {
                 }
             }
         }
+
+        /**
+        이 부분은 서비스가 중단되었을 때, 활성화된 운동이 있을 수 있기 때문에,
+        시스템이 서비스를 재생성하여 계속적으로 알림을 제공할 수 있도록 하기 위해 사용됩니다.
+
+        서비스가 시작되고, 새로운 인텐트가 도착할 때마다 onStartCommand() 메소드가 호출되며, Service.START_STICKY 플래그가 반환됩니다.
+        이 플래그는 시스템이 서비스를 강제로 중지시킨 후, 리소스가 해제되어도 서비스를 다시 시작하도록 하는 역할을 합니다.
+        따라서, 운동 정보 수집 등의 작업을 수행하던 서비스가 중단되었다가 다시 시작될 때,
+        이전에 활성화되었던 운동 정보를 재사용하여 이어서 작업을 수행할 수 있게 됩니다.
+         **/
         // If our process is stopped, we might have an active exercise. We want the system to
         // recreate our service so that we can present the ongoing notification in that case.
+
         return Service.START_STICKY
     }
 
@@ -405,6 +414,7 @@ class ForegroundService : LifecycleService() {
         private const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
         private const val UNBIND_DELAY_MILLIS = 3_000L
 
+        val TAG = "운동 서비스"
     }
 }
 

@@ -45,7 +45,7 @@ fun ExerciseWearApp(
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             StartingUp(onAvailable = {
-                navController.navigate(Screens.PreparingExercise.route) {
+                navController.navigate(Screens.Home.route) {
                     popUpTo(navController.graph.id) {
                         inclusive = true
                     }
@@ -60,12 +60,12 @@ fun ExerciseWearApp(
 
             )
         }
-        composable(Screens.PreparingExercise.route) {
+        composable(Screens.Home.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
             val permissions = viewModel.permissions
             val uiState by viewModel.uiState.collectAsState()
-            PreparingExercise(
+            Home(
                 onStartClick = {
                     navController.navigate(Screens.ExerciseScreen.route) {
                         popUpTo(navController.graph.id) {
