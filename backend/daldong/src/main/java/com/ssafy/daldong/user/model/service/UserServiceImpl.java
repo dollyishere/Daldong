@@ -37,8 +37,9 @@ public class UserServiceImpl implements UserService{
 
     public UserLoginDTO login (String idToken) throws FirebaseAuthException {
 
-        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
-        String uId = decodedToken.getUid();
+//        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+//        String uId = decodedToken.getUid();
+        String uId="user1uid";
         log.info(uId);
         UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(userRepository.findByUserUid(uId));
         return userLoginDTO;
@@ -53,8 +54,8 @@ public class UserServiceImpl implements UserService{
         Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
         userRepository.save(user);
-        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetPet.getAssetId()," sparrow","참새"));
-        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetBack.getAssetId(),"grassland","초원"));
+        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetPet.getAssetId(),"참새"));
+        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetBack.getAssetId(),"초원"));
     }
 
     @Override

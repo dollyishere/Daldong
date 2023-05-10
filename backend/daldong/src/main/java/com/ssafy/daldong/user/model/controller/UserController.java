@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
     private final JwtTokenUtil jwtTokenUtil;
@@ -92,7 +92,7 @@ public class UserController {
         }
     }
     @GetMapping("/nameCheck")
-    public ResponseEntity<?> nameCheck(@RequestParam(name = "nickname")String nickname){
+    public ResponseEntity<?> nameCheck(@RequestBody String nickname){
         userService.nameCheck(nickname);
         return new ResponseEntity<>(HttpStatus.OK);
     }
