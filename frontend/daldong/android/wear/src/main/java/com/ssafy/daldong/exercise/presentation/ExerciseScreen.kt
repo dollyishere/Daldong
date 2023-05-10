@@ -15,6 +15,7 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
@@ -39,8 +40,6 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.TimeTextDefaults
 import com.ssafy.daldong.exercise.Screens
 import com.ssafy.daldong.exercise.service.ExerciseStateChange
 import com.ssafy.daldong.R
@@ -56,12 +55,14 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.health.services.client.HealthServices
+import com.ssafy.daldong.exercise.data.Room.ExerciseResult
+import com.ssafy.daldong.exercise.data.Room.ExerciseResultRepository
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Shows while an exercise is in progress
@@ -76,6 +77,7 @@ fun ExerciseScreen(
     navController: NavHostController,
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
 
     /** Only collect metrics while we are connected to the Foreground Service. **/
     when (serviceState) {
@@ -90,6 +92,7 @@ fun ExerciseScreen(
             var startImage by remember { mutableStateOf(R.drawable.exercise_start) }
             var endImage by remember { mutableStateOf(R.drawable.exercise_end) }
             var pauseImage by remember { mutableStateOf(R.drawable.exercise_pause) }
+            var startTime = LocalDateTime.now().format(formatter);
 
             /** Collect [DataPoint]s from the aggregate and exercise metric flows. Because
              * collectAsStateWithLifecycle() is asynchronous, store the last known value from each flow,
@@ -237,6 +240,24 @@ fun ExerciseScreen(
 
                                     //In a production fitness app, you might upload workout metrics to your app
                                     // either via network connection or to your mobile app via the Data Layer API.
+
+
+
+                                    val endTime = LocalDateTime.now().format(formatter)
+                                    // Room에 저장
+                                    val exerciseResult = ExerciseResult(
+                                        startTime = startTime,
+                                        endTime = endTime,
+                                        distance = formatDistanceKm(tempDistance.value),
+                                        heartRate = tempAverageHeartRate.value.toInt(),
+                                        calories = formatCalories(tempCalories.value),
+                                        timestamp = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString(),
+                                    )
+
+                                    val exerciseResultDao = ExerciseResultDatabase.getDatabase(context).exerciseResultDao()
+
+                                    val exerciseResultRepository = ExerciseResultRepository(context)
+
                                     navController.navigate(
                                         Screens.SummaryScreen.route + "/${tempAverageHeartRate.value.toInt()} bpm/${
                                             formatDistanceKm(

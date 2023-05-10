@@ -70,7 +70,6 @@ class ExerciseViewModel @Inject constructor(
         viewModelScope.launch {
             healthServicesRepository.createService()
         }
-
     }
 
     suspend fun isExerciseInProgress(): Boolean {

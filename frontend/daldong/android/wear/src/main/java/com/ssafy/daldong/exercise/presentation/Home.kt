@@ -95,8 +95,12 @@ fun Home(
             val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
-                Scaffold(timeText =
-                { TimeText(timeSource = TimeTextDefaults.timeSource(TimeTextDefaults.timeFormat())) }) {
+                Scaffold(
+                    timeText = {
+                        TimeText( timeSource = TimeTextDefaults.timeSource(
+                            TimeTextDefaults.timeFormat()))
+                    }
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()

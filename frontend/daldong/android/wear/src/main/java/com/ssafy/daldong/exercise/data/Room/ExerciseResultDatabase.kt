@@ -8,7 +8,6 @@ import androidx.room.RoomDatabase
 @Database(entities = [ExerciseResult::class], version = 1)
 abstract class ExerciseResultDatabase : RoomDatabase() {
     abstract fun exerciseResultDao(): ExerciseResultDao
-
     companion object {
         @Volatile
         private var INSTANCE: ExerciseResultDatabase? = null
@@ -25,4 +24,10 @@ abstract class ExerciseResultDatabase : RoomDatabase() {
             }
         }
     }
+}
+
+@Database(entities = [User::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+
 }
