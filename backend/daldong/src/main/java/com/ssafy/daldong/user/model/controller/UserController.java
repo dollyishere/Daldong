@@ -38,8 +38,6 @@ public class UserController {
 
         HttpHeaders headers = new HttpHeaders();
         ResponseDefault responseDefault = null;
-
-
         try{
             UserLoginDTO userLoginDTO = userService.login(idToken);
             if (userLoginDTO != null) {//가입된 유저다
@@ -112,7 +110,7 @@ public class UserController {
                 return new ResponseEntity<>(responseDefault, HttpStatus.CONFLICT);
             }
         } catch (Exception e) {
-            log.error("회원 가입 실패");
+            log.error("비정상적인 접근");
             responseDefault = ResponseDefault.builder()
                     .success(false)
                     .messege(e.getMessage())

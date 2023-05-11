@@ -68,9 +68,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean nameCheck(String nickname) {
-        User user = userRepository.findByNickname(nickname);
-        if(user!=null)return true;
-        else return false;
+        User user = userRepository.findByNickname(nickname).orElse(null);
+        if(user!=null)return false;
+        else return true;
     }
     public UserDetailDTO mypage(long uid) {
 
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean updateNickname(long uid, String nickname) {
-        User user = userRepository.findByNickname(nickname);
+        User user = userRepository.findByNickname(nickname).orElse(null);
         if(user!=null){
             return false;
         }

@@ -1,6 +1,7 @@
 package com.ssafy.daldong.friend.service;
 
 import com.ssafy.daldong.friend.model.dto.FriendDto;
+import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public interface FriendService {
     void updateFriend(long userId, long friendId);
     boolean deleteFriend(long userId, long friendId) throws Exception;
 
+    FriendSearchDTO searchFriend(long userId,String nickname);
 }

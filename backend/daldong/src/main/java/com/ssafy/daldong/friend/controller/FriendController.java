@@ -2,6 +2,7 @@ package com.ssafy.daldong.friend.controller;
 
 import com.ssafy.daldong.friend.model.dto.FriendDto;
 import com.ssafy.daldong.friend.model.dto.request.FriendRequestHandleDto;
+import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import com.ssafy.daldong.friend.service.FriendRequestService;
 import com.ssafy.daldong.friend.service.FriendService;
 import com.ssafy.daldong.global.response.ResponseDefault;
@@ -221,6 +222,40 @@ public class FriendController {
             return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
         }
     }
+    @Operation(summary = "user가 friend 검색하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND"),
+    })
+    @GetMapping("/search")
+    public ResponseEntity<?> friendSearch(@RequestHeader(name = "accessToken") String accessToken,@RequestBody String friendNicknmame){
+        long userId = jwtTokenUtil.getUserId(accessToken);
+        try {
+            FriendSearchDTO friendSearchDTO=friendService.searchFriend(userId,friendNicknmame);
+            if(friendSearchDTO!=null) {
+                ResponseDefault responseDefault = ResponseDefault.builder()
+                        .success(true)
+                        .messege("유저 검색 성공")
+                        .data(friendSearchDTO)
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.OK);
+            }else{
+                ResponseDefault responseDefault = ResponseDefault.builder()
+                        .success(false)
+                        .messege("유저 조회 실패 : 없는 유저")
+                        .data(null)
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
+            }
+        }  catch (Exception e){
+            ResponseDefault responseDefault = ResponseDefault.builder()
+                    .success(false)
+                    .messege("비정상적인 접근")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
+        }
 
+    }
 
 }
