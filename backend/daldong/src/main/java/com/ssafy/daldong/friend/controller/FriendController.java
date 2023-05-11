@@ -1,11 +1,11 @@
 package com.ssafy.daldong.friend.controller;
 
 import com.ssafy.daldong.friend.model.dto.FriendDto;
-import com.ssafy.daldong.friend.model.dto.request.FriendRequestDto;
-import com.ssafy.daldong.friend.model.dto.request.FriendRequestResponseDto;
+import com.ssafy.daldong.friend.model.dto.request.FriendRequestHandleDto;
 import com.ssafy.daldong.friend.service.FriendRequestService;
 import com.ssafy.daldong.friend.service.FriendService;
 import com.ssafy.daldong.global.response.ResponseDefault;
+import com.ssafy.daldong.jwt.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,14 +24,16 @@ import java.util.NoSuchElementException;
 public class FriendController {
     private final FriendService friendService;
     private final FriendRequestService friendRequestService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Operation(summary = "user의 친구 목록 가져오기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> friendList(@Parameter(description="userId", example = "1") @PathVariable long userId) {
+    @GetMapping("/")
+    public ResponseEntity<?> friendList(@RequestHeader(name = "accessToken") String accessToken) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
@@ -55,9 +57,10 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @PutMapping("/sting/{userId}/{friendId}")
-    public ResponseEntity<?> friendSting(@Parameter(description="userId", example = "1") @PathVariable long userId,
+    @PutMapping("/sting/{friendId}")
+    public ResponseEntity<?> friendSting(@RequestHeader(name = "accessToken") String accessToken,
                                          @Parameter(description="friendId", example = "2") @PathVariable long friendId){
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             friendService.updateFriend(userId, friendId);
             ResponseDefault responseDefault = ResponseDefault.builder()
@@ -82,9 +85,10 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @DeleteMapping("/{userId}/{friendId}")
-    public ResponseEntity<?> friendRemove(@Parameter(description="userId", example = "1") @PathVariable long userId,
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<?> friendRemove(@RequestHeader(name = "accessToken") String accessToken,
                                           @Parameter(description="friendId", example = "2") @PathVariable long friendId){
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             friendService.deleteFriend(userId, friendId);
             ResponseDefault responseDefault = ResponseDefault.builder()
@@ -116,10 +120,12 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @PostMapping("/request")
-    public ResponseEntity<?> friendRequest(@RequestBody FriendRequestDto friendRequestDto) {
+    @PostMapping("/request/{friendId}")
+    public ResponseEntity<?> friendRequest(@RequestHeader(name = "accessToken") String accessToken,
+                                           @Parameter(description="friendId", example = "2") @PathVariable long friendId) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
-            friendRequestService.createFriendRequest(friendRequestDto);
+            friendRequestService.createFriendRequest(userId, friendId);
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("친구 요청 성공")
@@ -142,9 +148,11 @@ public class FriendController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
     @PostMapping("/request/result")
-    public ResponseEntity<?> friendRequestResult(@RequestBody FriendRequestResponseDto responseDto) {
+    public ResponseEntity<?> friendRequestResult(@RequestHeader(name = "accessToken") String accessToken,
+                                                 @RequestBody FriendRequestHandleDto friendRequestHandleDto) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
-            friendRequestService.handleFriendRequest(responseDto);
+            friendRequestService.handleFriendRequest(userId, friendRequestHandleDto);
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("친구 요청 처리 완료")
@@ -167,8 +175,9 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @GetMapping("request/received/{userId}")
-    public ResponseEntity<?> getReceivedFriendRequest(@Parameter(description="userId", example = "3") @PathVariable long userId){
+    @GetMapping("/request/received")
+    public ResponseEntity<?> getReceivedFriendRequest(@RequestHeader(name = "accessToken") String accessToken){
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             List<FriendDto> friendDtoList = friendRequestService.getReceivedFriendRequestList(userId);
             ResponseDefault responseDefault = ResponseDefault.builder()
@@ -192,8 +201,9 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @GetMapping("request/send/{userId}")
-    public ResponseEntity<?> getSendFriendRequest(@Parameter(description="userId", example = "1") @PathVariable long userId){
+    @GetMapping("/request/send")
+    public ResponseEntity<?> getSendFriendRequest(@RequestHeader(name = "accessToken") String accessToken){
+        long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             List<FriendDto> friendDtoList = friendRequestService.getSendFriendRequestList(userId);
             ResponseDefault responseDefault = ResponseDefault.builder()
