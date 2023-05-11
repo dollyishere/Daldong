@@ -55,6 +55,11 @@ def ex_get(db, user_id: int, whether: str, template: float):
     daily_end_ex_video = end_ex_rec[random.randint(0, len(end_ex_rec) - 1)].rec_video_url
 
 
-    Exercise = [daily_pre_ex_recommend, daily_pre_ex_video, daily_main_ex_recommend, daily_main_ex_video, daily_end_ex_recommend, daily_end_ex_video]
+    Exercise = {"daily_pre_ex_recommend": daily_pre_ex_recommend,
+                "daily_pre_ex_video": daily_pre_ex_video,
+                "daily_main_ex_recommend": daily_main_ex_recommend,
+                "daily_main_ex_video": daily_main_ex_video,
+                "daily_end_ex_recommend": daily_end_ex_recommend,
+                "daily_end_ex_video": daily_end_ex_video}
 
-    return {"Exercise": Exercise}
+    return Exercise

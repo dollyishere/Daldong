@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService{
 
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
         String uId = decodedToken.getUid();
-        log.info(uId);
         User user =userRepository.findByUserUid(uId).orElse(null);
         if(user!=null){
             UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(user);

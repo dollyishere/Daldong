@@ -2,12 +2,9 @@ package com.ssafy.daldong.user.model.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.daldong.user.model.dto.UserDetailDTO;
-import com.ssafy.daldong.user.model.dto.UserJoinDTO;
-import com.ssafy.daldong.user.model.dto.UserUpdateDTO;
+import com.ssafy.daldong.user.model.dto.*;
 import com.ssafy.daldong.user.model.service.UserService;
 import com.ssafy.daldong.global.response.ResponseDefault;
-import com.ssafy.daldong.user.model.dto.UserLoginDTO;
 import com.ssafy.daldong.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +89,8 @@ public class UserController {
         }
     }
     @GetMapping("/nameCheck")
-    public ResponseEntity<?> nameCheck(@RequestBody String nickname){
+    public ResponseEntity<?> nameCheck(@RequestParam(name="nickname")String nickname){
+
         ResponseDefault responseDefault = null;
         try {
             if(userService.nameCheck(nickname)) {
@@ -106,6 +104,7 @@ public class UserController {
                 responseDefault = ResponseDefault.builder()
                         .success(false)
                         .messege("FAIL")
+                        .data(null)
                         .build();
                 return new ResponseEntity<>(responseDefault, HttpStatus.CONFLICT);
             }
