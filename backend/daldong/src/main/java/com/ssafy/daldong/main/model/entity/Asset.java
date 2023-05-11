@@ -17,8 +17,8 @@ public class Asset {
     @Column(name = "asset_id", nullable = false)
     private long assetId;
 
-    @Column(name = "asset_type", nullable = false)
-    private boolean assetType;
+    @Column(name = "is_pet", nullable = false)
+    private boolean isPet;
 
     @Column(name = "asset_name", nullable = false)
     private String assetName;

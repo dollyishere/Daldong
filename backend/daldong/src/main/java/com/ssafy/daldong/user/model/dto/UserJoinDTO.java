@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserJoinDTO {
-    private  Long userId;
     private String userUId;
     private String nickname;
     private float height;
@@ -32,7 +31,6 @@ public class UserJoinDTO {
 
     public User toEntity(User user){
         return User.builder()
-                .userId(user.getUserId())
                 .userUid(user.getUserUid())
                 .nickname(user.getNickname())
                 .height(user.getHeight())

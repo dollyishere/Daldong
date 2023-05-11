@@ -1,9 +1,11 @@
 package com.ssafy.daldong.mission.controller;
 
+import com.ssafy.daldong.jwt.JwtTokenUtil;
 import com.ssafy.daldong.mission.model.dto.MissionResDTO;
 import com.ssafy.daldong.mission.model.service.MissionService;
 import com.ssafy.daldong.global.response.ResponseDefault;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +18,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/mission")
+@RequiredArgsConstructor
 public class MissionController {
 
     private static final Logger logger = LogManager.getLogger(MissionController.class);
     private final MissionService missionService;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    public MissionController(MissionService missionService) {
-        this.missionService = missionService;
-    }
 
     /**
      * 미션 메인 페이지 조회
-     * @param userId 유저ID
+     * @param accessToken
      * @return ResponseEntity
      */
     @Operation(summary = "미션 메인 페이지 조회")
-    @GetMapping("/{userid}")
-    public ResponseEntity<?> getUserMission(@PathVariable(name = "userid") Long userId) {
+    @GetMapping("/")
+    public ResponseEntity<?> getUserMission(@RequestHeader(name = "accessToken") String accessToken) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         logger.info("MissionController.getMission({})",userId);
-
 
         ResponseDefault responseDefault;
         try{
@@ -58,14 +58,15 @@ public class MissionController {
 
     /**
      * 미션 리워드 얻기
-     * @param userId
+     * @param accessToken 액세스토큰
      * @param MissionId
      * @return
      */
     @Operation(summary = "미션 리워드 얻기")
     @PostMapping("/{userid}/{missionid}")
-    public ResponseEntity<?> getExerciseMonthly(@PathVariable(name = "userid") Long userId,
-                                                    @PathVariable(name = "missionid") Long MissionId) {
+    public ResponseEntity<?> getExerciseMonthly(@RequestHeader(name = "accessToken") String accessToken,
+                                                @PathVariable(name = "missionid") Long MissionId) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         logger.info("ExerciseController.getExerciseMonthly({}, {})",userId, MissionId);
 
         ResponseDefault responseDefault;

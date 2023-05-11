@@ -1,11 +1,14 @@
 package com.ssafy.daldong.main.model.entity;
 
+import com.ssafy.daldong.main.model.dto.AssetDTO;
+import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.user.model.entity.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "userAsset")
@@ -38,11 +41,11 @@ public class UserAsset {
     @Column(name = "pet_exp", nullable = false)
     private int petExp;
 
-    //유저가 설정할 펫의 이름 첫 구매하면 Asset-assetKRName이 default로 입력됨
-    @Column(name="pet_name_custom")
-    private String petCustomName;
-
     @Column(name = "pet_name")
     private String petName;
 
+
+    public void setPetName(String newName){
+        this.petName=newName;
+    }
 }

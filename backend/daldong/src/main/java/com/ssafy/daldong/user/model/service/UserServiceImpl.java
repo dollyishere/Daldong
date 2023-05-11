@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
+import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
 import com.ssafy.daldong.user.model.dto.UserDetailDTO;
@@ -40,33 +41,47 @@ public class UserServiceImpl implements UserService{
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
         String uId = decodedToken.getUid();
         log.info(uId);
-        UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(userRepository.findByUserUid(uId));
-        return userLoginDTO;
+        User user =userRepository.findByUserUid(uId).orElse(null);
+        if(user!=null){
+            UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(user);
+            return userLoginDTO;
+        }else return null;
+
+
     }
 
 
     @Override
-    public void join(UserJoinDTO userJoinDTO) {
+    @Transactional
+    public void join(String uid,UserJoinDTO userJoinDTO) {
         userJoinDTO.setMainBackId(1L);//참새
         userJoinDTO.setMainPetId(3L);//아직 몇번인지 모름 임의 세팅
+        userJoinDTO.setUserUId(uid);
         Asset assetBack= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
         userRepository.save(user);
-        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetPet.getAssetId()," sparrow","참새"));
-        userAssetRepository.save(new UserAssetDTO().newUser(userRepository.findByUserUid(userJoinDTO.getUserUId()).getUserId(),assetBack.getAssetId(),"grassland","초원"));
+        user=userRepository.findByUserUid(userJoinDTO.getUserUId()).orElse(null);
+        userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),"참새"));
+        userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetBack.getAssetId(),"초원"));
     }
 
     @Override
     public Boolean nameCheck(String nickname) {
-        User user = userRepository.findByNickname(nickname);
-        if(user!=null)return true;
-        else return false;
+        User user = userRepository.findByNickname(nickname).orElse(null);
+        if(user!=null)return false;
+        else return true;
     }
     public UserDetailDTO mypage(long uid) {
 
         return new UserDetailDTO().fromEntity(userRepository.findByUserId(uid));
 
+    }
+
+    @Override
+    public String getUid(String idToken) throws FirebaseAuthException {
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+        return  decodedToken.getUid();
     }
 
     @Override
@@ -78,7 +93,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean updateNickname(long uid, String nickname) {
-        User user = userRepository.findByNickname(nickname);
+        User user = userRepository.findByNickname(nickname).orElse(null);
         if(user!=null){
             return false;
         }

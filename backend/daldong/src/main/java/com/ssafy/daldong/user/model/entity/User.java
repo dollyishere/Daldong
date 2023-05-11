@@ -27,7 +27,7 @@ public class User {
     @Column(name = "user_uid", nullable = false)
     private String userUid;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
     @Column(name = "height")
@@ -80,6 +80,19 @@ public class User {
     }
     public void setNickname(String nickname){
         this.nickname=nickname;
+    }
+    public void setRemainedPoint(int Point){
+        this.userPoint=Point;
+    }
+
+    public void setMainBack(Asset assetBack){
+        this.mainBack=assetBack;
+    }
+    public void setMainPet(Asset assetPet){
+        this.mainPet=assetPet;
+    }
+    public void setMainPetName(String assetPetName){
+        this.mainPetName=assetPetName;
     }
     public static User from(UserJoinDTO userJoinDTO,Asset assetBack,Asset assetPet) {
         return User.builder()

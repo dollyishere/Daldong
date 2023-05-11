@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @Slf4j
 public class UserController {
     private final JwtTokenUtil jwtTokenUtil;
@@ -38,8 +38,6 @@ public class UserController {
 
         HttpHeaders headers = new HttpHeaders();
         ResponseDefault responseDefault = null;
-
-
         try{
             UserLoginDTO userLoginDTO = userService.login(idToken);
             if (userLoginDTO != null) {//가입된 유저다
@@ -56,11 +54,13 @@ public class UserController {
                         .build();
                 return new ResponseEntity<>(responseDefault,headers,HttpStatus.OK);
             } else {
+                String uid= userService.getUid(idToken);
+                headers.set("uid", uid);
                 responseDefault = ResponseDefault.builder()
                         .success(false)
                         .messege("FAIL")
                         .build();
-                return new ResponseEntity<>(responseDefault,HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(responseDefault,headers,HttpStatus.NOT_FOUND);
             }
         }catch (Exception e) {
             System.err.println(e.getMessage());
@@ -68,14 +68,14 @@ public class UserController {
                     .success(false)
                     .messege("ERROR")
                     .build();
-            return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
         }
     }
     @PostMapping("/signup")
-    public ResponseEntity<?> signup( @RequestBody UserJoinDTO userJoinDTO) {
+    public ResponseEntity<?> signup( @RequestHeader(name = "uid") String uid,@RequestBody UserJoinDTO userJoinDTO) {
         ResponseDefault responseDefault = null;
         try {
-            userService.join(userJoinDTO);
+            userService.join(uid,userJoinDTO);
             responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("SUCCESS")
@@ -92,9 +92,31 @@ public class UserController {
         }
     }
     @GetMapping("/nameCheck")
-    public ResponseEntity<?> nameCheck(@RequestParam(name = "nickname")String nickname){
-        userService.nameCheck(nickname);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> nameCheck(@RequestBody String nickname){
+        ResponseDefault responseDefault = null;
+        try {
+            if(userService.nameCheck(nickname)) {
+                responseDefault = ResponseDefault.builder()
+                        .success(true)
+                        .messege("SUCCESS")
+                        .data(null)
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.OK);
+            }else{
+                responseDefault = ResponseDefault.builder()
+                        .success(false)
+                        .messege("FAIL")
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.CONFLICT);
+            }
+        } catch (Exception e) {
+            log.error("비정상적인 접근");
+            responseDefault = ResponseDefault.builder()
+                    .success(false)
+                    .messege(e.getMessage())
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
+        }
     }
     @GetMapping("/mypage")
     public ResponseEntity<?> mypage(@RequestHeader(name="accessToken")String accessToken){

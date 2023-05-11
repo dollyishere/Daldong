@@ -4,12 +4,13 @@ import com.ssafy.daldong.user.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUserId(Long userId);
-    User findByUserUid(String userUid);
-
-    User findByNickname(String nickname);
+    Optional <User> findByUserUid(String userUid);
+    Optional <User> findByNickname(String nickname);
 
 }
