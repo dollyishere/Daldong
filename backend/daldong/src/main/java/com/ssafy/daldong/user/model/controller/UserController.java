@@ -56,11 +56,13 @@ public class UserController {
                         .build();
                 return new ResponseEntity<>(responseDefault,headers,HttpStatus.OK);
             } else {
+                String uid= userService.getUid(idToken);
+                headers.set("uid", uid);
                 responseDefault = ResponseDefault.builder()
                         .success(false)
                         .messege("FAIL")
                         .build();
-                return new ResponseEntity<>(responseDefault,HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(responseDefault,headers,HttpStatus.NOT_FOUND);
             }
         }catch (Exception e) {
             System.err.println(e.getMessage());
@@ -68,14 +70,14 @@ public class UserController {
                     .success(false)
                     .messege("ERROR")
                     .build();
-            return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
         }
     }
     @PostMapping("/signup")
-    public ResponseEntity<?> signup( @RequestBody UserJoinDTO userJoinDTO) {
+    public ResponseEntity<?> signup( @RequestHeader(name = "uid") String uid,@RequestBody UserJoinDTO userJoinDTO) {
         ResponseDefault responseDefault = null;
         try {
-            userService.join(userJoinDTO);
+            userService.join(uid,userJoinDTO);
             responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("SUCCESS")
@@ -93,8 +95,30 @@ public class UserController {
     }
     @GetMapping("/nameCheck")
     public ResponseEntity<?> nameCheck(@RequestBody String nickname){
-        userService.nameCheck(nickname);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ResponseDefault responseDefault = null;
+        try {
+            if(userService.nameCheck(nickname)) {
+                responseDefault = ResponseDefault.builder()
+                        .success(true)
+                        .messege("SUCCESS")
+                        .data(null)
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.OK);
+            }else{
+                responseDefault = ResponseDefault.builder()
+                        .success(false)
+                        .messege("FAIL")
+                        .build();
+                return new ResponseEntity<>(responseDefault, HttpStatus.CONFLICT);
+            }
+        } catch (Exception e) {
+            log.error("회원 가입 실패");
+            responseDefault = ResponseDefault.builder()
+                    .success(false)
+                    .messege(e.getMessage())
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.BAD_REQUEST);
+        }
     }
     @GetMapping("/mypage")
     public ResponseEntity<?> mypage(@RequestHeader(name="accessToken")String accessToken){

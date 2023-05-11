@@ -21,9 +21,11 @@ public interface UserService {
  @Transactional
  void saveRefreshToken( String principal, String refreshToken);
 
- void join(UserJoinDTO userJoinDTO);
+ void join(String uid,UserJoinDTO userJoinDTO);
 
  Boolean nameCheck(String nickname);
 
  UserDetailDTO mypage(long uid);
+
+ String getUid(String idToken) throws FirebaseAuthException;
 }
