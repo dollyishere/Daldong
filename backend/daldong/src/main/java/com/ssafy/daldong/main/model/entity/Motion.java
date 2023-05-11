@@ -23,4 +23,10 @@ public class Motion {
 
     @Column(name = "motion_unlock_exp", nullable = false)
     private int motionUnlockExp;
+
+    @Column(name = "motion_kr_name", nullable = false)
+    private String motionKrName;
+
+    @Column(name = "motion_asset_id", nullable = false)
+    private int motionAssetId;
 }
