@@ -46,9 +46,11 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public void join(UserJoinDTO userJoinDTO) {
+    @Transactional
+    public void join(String uid,UserJoinDTO userJoinDTO) {
         userJoinDTO.setMainBackId(1L);//참새
         userJoinDTO.setMainPetId(3L);//아직 몇번인지 모름 임의 세팅
+        userJoinDTO.setUserUId(uid);
         Asset assetBack= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
@@ -67,6 +69,12 @@ public class UserServiceImpl implements UserService{
 
         return new UserDetailDTO().fromEntity(userRepository.findByUserId(uid));
 
+    }
+
+    @Override
+    public String getUid(String idToken) throws FirebaseAuthException {
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+        return  decodedToken.getUid();
     }
 
     @Override

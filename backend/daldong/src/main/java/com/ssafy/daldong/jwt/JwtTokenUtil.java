@@ -16,8 +16,8 @@ public class JwtTokenUtil {
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
-    private static final long ACCESS_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60*3; // 시간 단위
-    private static final long REFRESH_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60 * 24 * 7; // 주단위
+    private static final long ACCESS_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60*24*365; // 1년
+    private static final long REFRESH_TOKEN_EXPIRE_MINUTES = 1000L * 60 * 60 * 24 *1000 ; // 1000일
     /**
      * 토큰 추출 메서드
      * 서명했을때 secretkey 로 서명하고 토큰을 만들때 username,발급날짜,만료기간을 넣었단 payload를 가져온다.
