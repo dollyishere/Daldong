@@ -81,6 +81,15 @@ android {
             // end of proguard 코드난독화 및 사이즈 축소
         }
     }
+
+    dataBinding {
+        // 데이터 바인딩 활성화
+        enabled true
+    }
+    buildFeatures {
+        // 뷰 바인딩 활성화
+        viewBinding true
+    }
 }
 
 flutter {
@@ -90,12 +99,24 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation libs.playservices.wearable
+    implementation libs.play.services.wearable
 
     // Use to implement support for interactions from the Wearables to Phones
     implementation libs.wear.phone.interactions
 
     // Use to implement support for interactions between the Wearables and Phones
     implementation libs.wear.remote.interactions
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.squareup.okhttp)
+    implementation(libs.squareup.okhttp.urlconnection)
+    implementation(libs.squareup.okhttp.logging)
+    implementation(libs.squareup.retrofit)
+
+    // Gson 변환기 라이브러리
+    implementation(libs.squareup.retrofit.converter.gson)
+
+    // Gson 라이브러리
+    implementation 'com.google.code.gson:gson:2.8.8'
 
 }

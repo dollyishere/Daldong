@@ -39,7 +39,8 @@ fun ExerciseWearApp(
     startDestination: String
 ) {
     SwipeDismissableNavHost(
-        navController = navController, startDestination = startDestination
+        navController = navController,
+        startDestination = startDestination
     ) {
         composable(Screens.StartingUp.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
@@ -60,6 +61,7 @@ fun ExerciseWearApp(
 
             )
         }
+
         composable(Screens.Home.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
@@ -69,7 +71,7 @@ fun ExerciseWearApp(
                 onStartClick = {
                     navController.navigate(Screens.ExerciseScreen.route) {
                         popUpTo(navController.graph.id) {
-                            inclusive = false
+                            inclusive = false //이전의 프래그먼트들은 제거되지만 ExerciseScreen은 스택에 남아있음
                         }
                     }
                 },
@@ -109,9 +111,9 @@ fun ExerciseWearApp(
                 totalCalories = it.arguments?.getString("totalCalories")!!,
                 elapsedTime = it.arguments?.getString("elapsedTime")!!,
                 onRestartClick = {
-                    navController.navigate(Screens.StartingUp.route) {
+                    navController.navigate(Screens.StartingUp.route) { //여기가 startingUp이었음
                         popUpTo(navController.graph.id) {
-                            inclusive = true
+                            inclusive = true //이전의 프래그먼트들은 제거되지만 Home도 스택에서 제거
                         }
                     }
                 }
@@ -124,7 +126,7 @@ fun ExerciseWearApp(
 @Composable
 fun ExerciseSampleAppPreview() {
     val navController = rememberNavController()
-    ExerciseWearApp(navController = navController, startDestination = Screens.StartingUp.route)
+    ExerciseWearApp(navController = navController, startDestination = Screens.Home.route)
 }
 
 

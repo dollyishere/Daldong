@@ -1,11 +1,12 @@
 package com.ssafy.daldong.exercise.data.Room
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import android.text.SpannedString
+import androidx.room.*
+
 
 @Database(entities = [ExerciseResult::class], version = 1)
+@TypeConverters(SpannedStringConverter::class)
 abstract class ExerciseResultDatabase : RoomDatabase() {
     abstract fun exerciseResultDao(): ExerciseResultDao
     companion object {
@@ -26,8 +27,14 @@ abstract class ExerciseResultDatabase : RoomDatabase() {
     }
 }
 
-@Database(entities = [User::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+class SpannedStringConverter {
+    @TypeConverter
+    fun fromSpannedString(value: SpannedString?): String? {
+        return value?.toString()
+    }
 
+    @TypeConverter
+    fun toSpannedString(value: String?): SpannedString? {
+        return value?.let { SpannedString(it) }
+    }
 }

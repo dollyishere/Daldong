@@ -15,7 +15,6 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
@@ -58,11 +57,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
-import androidx.health.services.client.HealthServices
 import com.ssafy.daldong.exercise.data.Room.ExerciseResult
-import com.ssafy.daldong.exercise.data.Room.ExerciseResultRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.LinkedList
+import java.util.Queue
+import java.util.*
+
 
 /**
  * Shows while an exercise is in progress
@@ -119,6 +120,9 @@ fun ExerciseScreen(
                 exerciseMetrics?.getData(DataType.HEART_RATE_BPM_STATS)?.average
             val tempAverageHeartRate = remember { mutableStateOf(0.0) }
 
+            val queueCalories : Queue<Int> = LinkedList()
+            val queueHeartRate : Queue<Int> = LinkedList()
+
             /** Update the Pause and End buttons according to [ExerciseState].**/
             val pauseOrResume = when (exerciseStateChange.exerciseState.isPaused) {
 //                true -> R.drawable.exercise_start
@@ -128,9 +132,8 @@ fun ExerciseScreen(
                 false -> Icons.Default.Pause
             }
             val startOrEnd =
-                when (exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding) {
-//                    true -> R.drawable.exercise_start
-//                    false -> R.drawable.exercise_end
+//                when (exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding) {
+                when (exerciseStateChange.exerciseState.isEnded) {
                     true -> Icons.Default.PlayArrow
                     false -> Icons.Default.Stop
                 }
@@ -217,6 +220,7 @@ fun ExerciseScreen(
                                     calories
                                 )
                                 tempCalories.value = calories
+                                queueCalories.offer(tempCalories.value.toInt())
                             } else {
                                 CaloriesText(
                                     tempCalories.value
@@ -235,38 +239,59 @@ fun ExerciseScreen(
 //                                modifier = Modifier.padding(5.dp)
                             ) {
                                 // 운동 종료
-                                if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
+//                                if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
+                                if (exerciseStateChange.exerciseState.isEnded) {
                                     Log.d("운동 스크린", "운동 끝")
 
                                     //In a production fitness app, you might upload workout metrics to your app
                                     // either via network connection or to your mobile app via the Data Layer API.
 
-
-
                                     val endTime = LocalDateTime.now().format(formatter)
-                                    // Room에 저장
+                                    val distance = formatDistanceKm(tempDistance.value)
+                                    val calories = formatCalories(tempCalories.value)
+                                    val elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+
                                     val exerciseResult = ExerciseResult(
                                         startTime = startTime,
                                         endTime = endTime,
-                                        distance = formatDistanceKm(tempDistance.value),
+                                        distance = distance,
                                         heartRate = tempAverageHeartRate.value.toInt(),
-                                        calories = formatCalories(tempCalories.value),
-                                        timestamp = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString(),
+                                        calories = calories,
+                                        timestamp = elapsedTime,
                                     )
+                                    printResult(queueCalories, queueHeartRate, exerciseResult)
 
-                                    val exerciseResultDao = ExerciseResultDatabase.getDatabase(context).exerciseResultDao()
+                                    // 1. 폰과 연결되어 있는 경우
+                                    // DataLayer API로 app에 운동 결과 전송
 
-                                    val exerciseResultRepository = ExerciseResultRepository(context)
+                                    // 2.Room에 저장
+
+//                                    val exerciseResultDao = ExerciseResultDatabase.getDatabase(context).exerciseResultDao()
+//                                    val exerciseResultRepository = ExerciseResultRepository(context)
+
+//                                    navController.navigate(
+//                                        Screens.SummaryScreen.route + "/" +
+//                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                "${formatCalories(tempCalories.value)} kcal/"
+//                                                + formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                    ) {
+//                                        popUpTo(Screens.ExerciseScreen.route) {
+//                                            inclusive = true
+//                                        }
+//                                    }
 
                                     navController.navigate(
-                                        Screens.SummaryScreen.route + "/${tempAverageHeartRate.value.toInt()} bpm/${
-                                            formatDistanceKm(
-                                                tempDistance.value
-                                            )
-                                        }/${formatCalories(tempCalories.value)}/" + formatElapsedTime(
-                                            activeDuration.toKotlinDuration(), true
-                                        ).toString()
-                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                        Screens.SummaryScreen.route + "/" +
+                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                "${formatDistanceKm(tempDistance.value)} km/" +
+                                                "${formatCalories(tempCalories.value)} kcal/"
+                                                + formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                    ) {
+                                        popUpTo(Screens.ExerciseScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
 
 //                                Button(onClick = { onStartClick() }) {
 //                                    Icon(
@@ -379,6 +404,8 @@ fun ExerciseScreen(
 //                            Text(text = laps.toString())
                             if (averageHeartRate != null) {
                                 tempAverageHeartRate.value = averageHeartRate
+                                println("심박수1 : ${tempAverageHeartRate.value.toString()}, 심박수2:${averageHeartRate.toDouble()}")
+                                queueHeartRate.offer(tempAverageHeartRate.value.toInt())
                             }
                         }
 
@@ -431,3 +458,30 @@ private fun startTick(
 }
 
 const val CHRONO_TICK_MS = 200L
+
+//출력
+private fun printResult(
+    queueCalories : Queue<Int>,
+    queueHeartRate : Queue<Int>,
+    exerciseResult : ExerciseResult){
+
+    println("칼로리 결과 출력")
+
+    var iterator = queueCalories.iterator()
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        print("${element} ")
+    }
+
+    println()
+
+    println("심박수 결과 출력")
+    iterator = queueHeartRate.iterator()
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        print("${element} ")
+    }
+
+    println("exerciseResult 출력")
+    exerciseResult.toString()
+}

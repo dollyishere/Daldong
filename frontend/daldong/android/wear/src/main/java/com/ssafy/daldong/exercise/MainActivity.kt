@@ -25,25 +25,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
+        setContent {
+            navController = rememberSwipeDismissableNavController()
 
-            /** Check if we have an active exercise. If true, set our destination as the
-             * Exercise Screen. If false, route to preparing a new exercise. **/
-            Log.d("메인 액티비티", exerciseViewModel.toString())
-
-            val destination = when (exerciseViewModel.isExerciseInProgress()) {
-                false -> Screens.StartingUp.route
-                true -> Screens.ExerciseScreen.route
-            }
-
-            setContent {
-                navController = rememberSwipeDismissableNavController()
-
-                ExerciseWearApp(
-                    navController,
-                    startDestination = destination
-                )
-            }
+            ExerciseWearApp(
+                navController,
+                startDestination = Screens.Home.route
+            )
         }
+
+//        lifecycleScope.launch {
+//
+//            /** Check if we have an active exercise. If true, set our destination as the
+//             * Exercise Screen. If false, route to preparing a new exercise. **/
+//            Log.d("메인 액티비티", exerciseViewModel.toString())
+//
+////            val destination = when (exerciseViewModel.isExerciseInProgress()) {
+////                false -> Screens.StartingUp.route
+////                true -> Screens.ExerciseScreen.route
+////            }
+//
+//
+//        }
     }
 }

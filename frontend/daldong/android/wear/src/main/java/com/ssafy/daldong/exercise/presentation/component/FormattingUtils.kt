@@ -51,15 +51,19 @@ fun formatElapsedTime(elapsedDuration: kotlin.time.Duration, includeSeconds: Boo
 /** Format calories burned to an integer with a "cal" suffix. */
 fun formatCalories(calories: Double) = buildSpannedString {
     append(calories.roundToInt().toString())
-    inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-        append(" kcal")
-    }
+//    inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
+//        append(" kcal")
+//    }
 }
 
 /** Format a distance to two decimals with a "km" suffix. */
 fun formatDistanceKm(meters: Double) = buildSpannedString {
     append("%02.2f".format(meters / 1_000))
-    inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
-        append(" km")
-    }
+//    inSpans(RelativeSizeSpan(UNITS_RELATIVE_SIZE)) {
+//        append(" km")
+//    }
 }
+
+//fun formatCalories(calories: Double) = String.format("%.0f", calories.roundToInt())
+//
+//fun formatDistanceKm(meters: Double) = String.format("%.2f", meters / 1_000)

@@ -416,6 +416,18 @@ class ForegroundService : LifecycleService() {
 
         val TAG = "운동 서비스"
     }
+
+//    override fun onCreate() {
+//        super.onCreate()
+//        Log.d(TAG, "onCreate")
+//        //Foreground service를 실행하기 위한 코드 작성
+//    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        Log.d(TAG, "onDestroy")
+//        //Foreground service를 종료하기 위한 코드 작성
+//    }
 }
 
 

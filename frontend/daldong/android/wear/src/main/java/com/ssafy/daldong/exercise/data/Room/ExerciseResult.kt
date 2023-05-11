@@ -1,7 +1,6 @@
 package com.ssafy.daldong.exercise.data.Room
 
 import android.text.SpannedString
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -16,10 +15,10 @@ data class ExerciseResult(
     val calories: SpannedString,
     val timestamp: String
 )
-
-@Entity
-data class User(
-    @PrimaryKey val uid: Int,
-    @ColumnInfo(name = "first_name") val firstName: String?,
-    @ColumnInfo(name = "last_name") val lastName: String?
-)
+//
+//@Entity
+//data class User(
+//    @PrimaryKey val uid: Int,
+//    @ColumnInfo(name = "first_name") val firstName: String?,
+//    @ColumnInfo(name = "last_name") val lastName: String?
+//)
