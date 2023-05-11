@@ -1,8 +1,7 @@
 package com.ssafy.daldong.friend.service;
 
 import com.ssafy.daldong.friend.model.dto.FriendDto;
-import com.ssafy.daldong.friend.model.dto.request.FriendRequestDto;
-import com.ssafy.daldong.friend.model.dto.request.FriendRequestResponseDto;
+import com.ssafy.daldong.friend.model.dto.request.FriendRequestHandleDto;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.entity.FriendRequest;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
@@ -28,10 +27,8 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     private final FriendRequestRepository friendRequestRepository;
     @Override
     @Transactional
-    public boolean createFriendRequest(FriendRequestDto friendRequestDto) {
+    public boolean createFriendRequest(long senderId, long receiverId) {
         //TODO: 예외처리
-        long senderId = friendRequestDto.getSenderId();
-        long receiverId = friendRequestDto.getReceiverId();
         if (friendRepository.existsByUser_UserIdAndFriend_UserId(senderId, receiverId)) return false;
         if (friendRequestRepository.existsBySender_UserIdAndReceiver_UserId(senderId, receiverId)) return false;
         FriendRequest friendRequest = FriendRequest.builder()
@@ -86,10 +83,9 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Override
     @Transactional
-    public void handleFriendRequest(FriendRequestResponseDto responseDto) {
-        System.out.println(responseDto.isAccept());
-        long senderId = responseDto.getSenderId();
-        long receiverId = responseDto.getReceiverId();
+    public void handleFriendRequest(long senderId, FriendRequestHandleDto friendRequestHandleDto) {
+        System.out.println(friendRequestHandleDto.isAccept());
+        long receiverId = friendRequestHandleDto.getReceiverId();
         // 요청 삭제
         Optional<FriendRequest> optionalFriendRequest = friendRequestRepository.findBySender_UserIdAndReceiver_UserId(senderId, receiverId);
         if (optionalFriendRequest.isEmpty()){
@@ -98,7 +94,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         FriendRequest friendRequest = optionalFriendRequest.get();
         friendRequestRepository.delete(friendRequest);
         // 수락/거절 처리
-        if (responseDto.isAccept()){
+        if (friendRequestHandleDto.isAccept()){
             Friend senderFriend = Friend.builder()
                     .user(userRepository.getReferenceById(senderId))
                     .friend(userRepository.getReferenceById(receiverId))

@@ -3,7 +3,9 @@ package com.ssafy.daldong.exercise.controller;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseResDTO;
 import com.ssafy.daldong.exercise.model.service.ExerciseService;
 import com.ssafy.daldong.global.response.ResponseDefault;
+import com.ssafy.daldong.jwt.JwtTokenUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +19,22 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/exercise")
+@RequiredArgsConstructor
 public class ExerciseController {
 
     private static final Logger logger = LogManager.getLogger(ExerciseController.class);
     private final ExerciseService exerciseService;
-
-    @Autowired
-    public ExerciseController(ExerciseService exerciseService) {
-        this.exerciseService = exerciseService;
-    }
+    private final JwtTokenUtil jwtTokenUtil;
 
     /**
      * 운동 메인 페이지 조회
-     * @param userId 유저ID
+     * @param accessToken
      * @return ResponseEntity
      */
     @Operation(summary = "운동 메인 페이지 조회")
-    @GetMapping("/{userid}")
-    public ResponseEntity<?> getExercise(@PathVariable(name = "userid") Long userId) {
+    @GetMapping("/")
+    public ResponseEntity<?> getExercise(@RequestHeader(name = "accessToken") String accessToken) {
+        long userId = jwtTokenUtil.getUserId(accessToken);
         logger.info("ExerciseController.getExercise({})",userId);
 
         ResponseDefault responseDefault;
@@ -58,20 +58,21 @@ public class ExerciseController {
 
     /**
      * 해당 월 운동 조회
-     * @param userid
+     * @param accessToken
      * @param month
      * @return
      */
     @Operation(summary = "해당 월 운동 조회")
-    @GetMapping("/monthly/{userid}/{year-month}")
-    public ResponseEntity<?> getExerciseMonthly(@PathVariable(name = "userid") Long userid,
+    @GetMapping("/monthly/{year-month}")
+    public ResponseEntity<?> getExerciseMonthly(@RequestHeader(name = "accessToken") String accessToken,
                                                     @PathVariable(name = "year-month") String month) {
-        logger.info("ExerciseController.getExerciseMonthly({}, {})",month, userid);
+        long userId = jwtTokenUtil.getUserId(accessToken);
+        logger.info("ExerciseController.getExerciseMonthly({}, {})",month, userId);
 
 
         ResponseDefault responseDefault;
         try{
-            List<Map<String, Object>> exerciseMonthlyResDTOList = exerciseService.getExerciseMonthly(userid, month);
+            List<Map<String, Object>> exerciseMonthlyResDTOList = exerciseService.getExerciseMonthly(userId, month);
             responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("SUCCESS")
