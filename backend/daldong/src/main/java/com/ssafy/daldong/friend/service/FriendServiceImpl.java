@@ -1,6 +1,7 @@
 package com.ssafy.daldong.friend.service;
 
 import com.ssafy.daldong.friend.model.dto.FriendDto;
+import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
 import com.ssafy.daldong.user.model.entity.User;
@@ -94,6 +95,18 @@ public class FriendServiceImpl implements FriendService{
         friendRepository.delete(friendship1);
         friendRepository.delete(friendship2);
         return true;
+    }
+
+    @Override
+    public FriendSearchDTO searchFriend(long userId,String nickname) {
+        User user=userRepository.findByNickname(nickname).orElse(null);
+        if(user==null){//해당하는 유저가 없다
+            return null;
+        }
+        long friendId=user.getUserId();
+        FriendSearchDTO friendSearchDTO= new FriendSearchDTO().fromEntity(user);
+        friendSearchDTO.setFriend(friendRepository.existsByUser_UserIdAndFriend_UserId(userId,friendId));
+        return friendSearchDTO;
     }
 
 }
