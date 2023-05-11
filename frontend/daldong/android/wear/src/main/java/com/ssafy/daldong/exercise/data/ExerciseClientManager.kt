@@ -15,6 +15,7 @@
  */
 package com.ssafy.daldong.exercise.data
 
+import android.drm.DrmStore.Action.OUTPUT
 import android.util.Log
 import androidx.concurrent.futures.await
 import androidx.health.services.client.ExerciseUpdateCallback
@@ -83,7 +84,7 @@ class ExerciseClientManager @Inject constructor(
     }
 
     suspend fun startExercise() {
-        Log.d(OUTPUT, "Starting exercise")
+        Log.d(TAG, "운동 시작")
         // Types for which we want to receive metrics. Only ask for ones that are supported.
         val capabilities = getExerciseCapabilities() ?: return
         val dataTypes = setOf(
@@ -135,38 +136,38 @@ class ExerciseClientManager @Inject constructor(
      * when acquiring calories or distance.
      */
     suspend fun prepareExercise() {
-        Log.d(OUTPUT, "Preparing an exercise")
+        Log.d(TAG, "운동 준비")
         val warmUpConfig = WarmUpConfig(
             ExerciseType.RUNNING, setOf(
                 DataType.HEART_RATE_BPM, DataType.LOCATION
             )
         )
         try {
-            Log.e(OUTPUT, "Prepare exercise successed ")
             exerciseClient.prepareExerciseAsync(warmUpConfig).await()
+            Log.e(TAG, "운동 준비 완료 ")
         } catch (e: Exception) {
-            Log.e(OUTPUT, "Prepare exercise failed - ${e.message}")
+            Log.e(TAG, "운동 준비 실패 - ${e.message}")
         }
     }
 
     suspend fun endExercise() {
         try {
-            Log.d(OUTPUT, "Ending exercise")
             exerciseClient.endExerciseAsync().await()
+            Log.d(TAG, "운동 종료 성공")
         } catch (e: Exception) {
-            Log.e(OUTPUT, "Error ending exercise: ${e.message}")
+            Log.e(TAG, "운동 종료 실패: ${e.message}")
             throw e
         }
     }
 
     suspend fun pauseExercise() {
-        Log.d(OUTPUT, "Pausing exercise")
         exerciseClient.pauseExerciseAsync().await()
+        Log.d(TAG, "운동 정지")
     }
 
     suspend fun resumeExercise() {
-        Log.d(OUTPUT, "Resuming exercise")
         exerciseClient.resumeExerciseAsync().await()
+        Log.d(TAG, "운동 재개")
     }
 
     /** Wear OS 3.0 reserves two buttons for the OS. For devices with more than 2 buttons,
@@ -224,11 +225,10 @@ class ExerciseClientManager @Inject constructor(
     private companion object {
         const val CALORIES_THRESHOLD = 250.0
         const val DISTANCE_THRESHOLD = 1_000.0 // meters
-        const val OUTPUT = "Output"
+        val TAG = "클라이언트 매니저"
 
     }
 }
-
 
 sealed class ExerciseMessage {
     class ExerciseUpdateMessage(val exerciseUpdate: ExerciseUpdate) : ExerciseMessage()
