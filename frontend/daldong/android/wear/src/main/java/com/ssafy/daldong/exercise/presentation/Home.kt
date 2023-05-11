@@ -15,8 +15,11 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import android.app.RemoteInput
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -59,7 +62,7 @@ import com.ssafy.daldong.exercise.data.ServiceState
  * Screen that appears while the device is preparing the exercise.
  */
 @Composable
-fun PreparingExercise(
+fun Home(
     onStartClick: () -> Unit = {},
     prepareExercise: () -> Unit,
     onStart: () -> Unit = {},
@@ -88,7 +91,7 @@ fun PreparingExercise(
                     prepareExercise()
                 }
             }
-            Log.d("위치 서비스 상태", serviceState.toString())
+//            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
             val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
@@ -160,7 +163,10 @@ fun PreparingExercise(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
-                                    onClick = { onStartClick(); onStart() },
+                                    onClick = { 
+                                        onStartClick();
+                                        onStart()
+                                              },
                                     modifier = Modifier.size(ButtonDefaults.SmallButtonSize)
                                 ) {
                                     Icon(

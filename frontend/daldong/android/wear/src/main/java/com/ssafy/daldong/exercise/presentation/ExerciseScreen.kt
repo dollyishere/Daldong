@@ -233,7 +233,7 @@ fun ExerciseScreen(
                             ) {
                                 // 운동 종료
                                 if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
-                                    Log.d("운동 끝 ", exerciseStateChange.exerciseState.toString())
+                                    Log.d("운동 스크린", "운동 끝")
 
                                     //In a production fitness app, you might upload workout metrics to your app
                                     // either via network connection or to your mobile app via the Data Layer API.

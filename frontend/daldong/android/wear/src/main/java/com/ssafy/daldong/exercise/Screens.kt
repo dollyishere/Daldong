@@ -21,6 +21,6 @@ sealed class Screens(
     object ExerciseScreen : Screens("exercise")
     object ExerciseNotAvailable : Screens("exerciseNotAvail")
     object StartingUp : Screens("startingUp")
-    object PreparingExercise : Screens("preparingExercise")
+    object Home : Screens("home")
     object SummaryScreen : Screens("summaryScreen")
 }
