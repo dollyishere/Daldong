@@ -12,14 +12,19 @@ import com.ssafy.daldong.user.model.dto.UserDetailDTO;
 import com.ssafy.daldong.user.model.dto.UserJoinDTO;
 import com.ssafy.daldong.user.model.dto.UserLoginDTO;
 import com.ssafy.daldong.user.model.dto.UserUpdateDTO;
+import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
+import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import com.ssafy.daldong.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -27,6 +32,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService{
+    private final StatisticsRepository statisticsRepository;
     private final UserRepository userRepository;
     private final AssetRepository assetRepository;
 
@@ -120,5 +126,13 @@ public class UserServiceImpl implements UserService{
       redisService.deleteValues(userId);
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void initStatistics(){
+        log.info("{} | Statistics 초기화 시작", LocalDateTime.now());
+        List<Statistics> statistics = statisticsRepository.findAll();
+        statistics.forEach(Statistics::initTable);
+        statisticsRepository.saveAll(statistics);
+        log.info("{} | Statistics 초기화 종료", LocalDateTime.now());
+    }
 
 }
