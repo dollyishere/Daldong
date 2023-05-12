@@ -182,10 +182,10 @@ dependencies {
 
     implementation 'androidx.activity:activity-compose:1.3.1'
 
-    implementation libs.playservices.wearable
-
     / *** waer - app 간 연동을 위한 종속 항목 선언 **** /
     implementation libs.androidx.wear
+
+    implementation libs.play.services.wearable
 
     // Add support for wearable specific inputs
     implementation libs.wear.input
@@ -212,11 +212,9 @@ dependencies {
     annotationProcessor libs.room.compiler
     kapt libs.room.compiler
 
-//    def room_version = "2.5.0"
-//
-//    implementation("androidx.room:room-runtime:$room_version")
-//    annotationProcessor("androidx.room:room-compiler:$room_version")
-//
-//    // To use Kotlin annotation processing tool (kapt)
-//    kapt("androidx.room:room-compiler:$room_version")
+    // Gson 변환기 라이브러리
+    implementation(libs.squareup.retrofit.converter.gson)
+
+    // Gson 라이브러리
+    implementation 'com.google.code.gson:gson:2.8.8'
 }

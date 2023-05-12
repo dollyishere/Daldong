@@ -61,7 +61,7 @@ class ForegroundService : LifecycleService() {
     lateinit var exerciseClientManager: ExerciseClientManager
 
     private var isBound = false
-    private var isStarted = false
+    private var isStarted = false // 운동 시작 의미 x, wear가 실행되었다는 말
     private val localBinder = LocalBinder()
     private var serviceRunningInForeground = false
 
@@ -144,7 +144,7 @@ class ForegroundService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.d(TAG, "onStartCommand")
+        Log.d(TAG, "onStartCommand, 앱이 실행할 때")
 
         if (!isStarted) {
             isStarted = true
