@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final InAppLocalhostServer localhostServer = new InAppLocalhostServer();
-  bool loading = true;
+  bool loading = false;
 
   // final controller = WebViewController()
   //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -78,10 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    // getLocalHost();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkUserState();
     });
+    getLocalHost();
     super.initState();
   }
 
@@ -111,31 +112,51 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5,
             ),
             Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
               width: double.infinity,
-              height: 420,
+              height: 360,
               child: loading
-                  ? Center(
-                      child: Text(
-                        'Welcome!',
-                      ),
+                  ? CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor,
                     )
-                  : Center(
-                      child: Text(
-                        'Welcome!',
+                  : InAppWebView(
+                      initialUrlRequest: URLRequest(
+                        url: Uri.parse(
+                            "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+                      ),
+                      onWebViewCreated: (controller) {},
+                      onLoadStart: (controller, url) {},
+                      onLoadStop: (controller, url) {},
+                    ),
+            ),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  fixedSize: const Size(180, 30),
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/inventory');
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      '인벤토리',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-              // : InAppWebView(
-              //     initialUrlRequest: URLRequest(
-              //       url: Uri.parse(
-              //           "http://localhost:8080/lib/assets/htmls/index.html"),
-              //     ),
-              //     onWebViewCreated: (controller) {},
-              //     onLoadStart: (controller, url) {},
-              //     onLoadStop: (controller, url) {},
-              //   ),
-              // WebViewWidget(
-              //   controller: controller,
-              // ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

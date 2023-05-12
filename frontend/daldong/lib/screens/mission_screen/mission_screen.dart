@@ -64,13 +64,16 @@ class _MissionScreenState extends State<MissionScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
+              Text(
+                '(매일 12시에 초기화 됩니다.)',
+                style: TextStyle(
+                  color: Colors.white,
                 ),
+              ),
+              Expanded(
                 child: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
                         height: 42,
@@ -85,146 +88,176 @@ class _MissionScreenState extends State<MissionScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 42,
+                        height: 24,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
-                          MissionBlock(
-                            missionId: missionList[0]['missionId'],
-                            missionName: missionList[0]['missionName'],
-                            missionContent: missionList[0]['missionContent'],
-                            qualificationName: missionList[0]
-                                ['qualificationName'],
-                            qualificationNum: missionList[0]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[0]['rewardPoint'],
-                            done: missionList[0]['done'],
-                            receive: missionList[0]['receive'],
-                            blockLine: 1,
-                            blockPosition: 1,
+                          Container(
+                            width: 330,
+                            height: 330,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.fitHeight,
+                                image: AssetImage(
+                                    'lib/assets/images/animals/Duck.png'),
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
-                          MissionBlock(
-                            missionId: missionList[1]['missionId'],
-                            missionName: missionList[1]['missionName'],
-                            missionContent: missionList[1]['missionContent'],
-                            qualificationName: missionList[1]
-                                ['qualificationName'],
-                            qualificationNum: missionList[1]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[1]['rewardPoint'],
-                            done: missionList[1]['done'],
-                            receive: missionList[1]['receive'],
-                            blockLine: 1,
-                            blockPosition: 2,
-                          ),
-                          MissionBlock(
-                            missionId: missionList[2]['missionId'],
-                            missionName: missionList[2]['missionName'],
-                            missionContent: missionList[2]['missionContent'],
-                            qualificationName: missionList[2]
-                                ['qualificationName'],
-                            qualificationNum: missionList[2]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[2]['rewardPoint'],
-                            done: missionList[2]['done'],
-                            receive: missionList[2]['receive'],
-                            blockLine: 1,
-                            blockPosition: 3,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MissionBlock(
-                            missionId: missionList[0]['missionId'],
-                            missionName: missionList[0]['missionName'],
-                            missionContent: missionList[0]['missionContent'],
-                            qualificationName: missionList[0]
-                                ['qualificationName'],
-                            qualificationNum: missionList[0]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[0]['rewardPoint'],
-                            done: missionList[0]['done'],
-                            receive: missionList[0]['receive'],
-                            blockLine: 2,
-                            blockPosition: 1,
-                          ),
-                          MissionBlock(
-                            missionId: missionList[1]['missionId'],
-                            missionName: missionList[1]['missionName'],
-                            missionContent: missionList[1]['missionContent'],
-                            qualificationName: missionList[1]
-                                ['qualificationName'],
-                            qualificationNum: missionList[1]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[1]['rewardPoint'],
-                            done: missionList[1]['done'],
-                            receive: missionList[1]['receive'],
-                            blockLine: 2,
-                            blockPosition: 2,
-                          ),
-                          MissionBlock(
-                            missionId: missionList[2]['missionId'],
-                            missionName: missionList[2]['missionName'],
-                            missionContent: missionList[2]['missionContent'],
-                            qualificationName: missionList[2]
-                                ['qualificationName'],
-                            qualificationNum: missionList[2]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[2]['rewardPoint'],
-                            done: missionList[2]['done'],
-                            receive: missionList[2]['receive'],
-                            blockLine: 2,
-                            blockPosition: 3,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MissionBlock(
-                            missionId: missionList[0]['missionId'],
-                            missionName: missionList[0]['missionName'],
-                            missionContent: missionList[0]['missionContent'],
-                            qualificationName: missionList[0]
-                                ['qualificationName'],
-                            qualificationNum: missionList[0]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[0]['rewardPoint'],
-                            done: missionList[0]['done'],
-                            receive: missionList[0]['receive'],
-                            blockLine: 3,
-                            blockPosition: 1,
-                          ),
-                          MissionBlock(
-                            missionId: missionList[1]['missionId'],
-                            missionName: missionList[1]['missionName'],
-                            missionContent: missionList[1]['missionContent'],
-                            qualificationName: missionList[1]
-                                ['qualificationName'],
-                            qualificationNum: missionList[1]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[1]['rewardPoint'],
-                            done: missionList[1]['done'],
-                            receive: missionList[1]['receive'],
-                            blockLine: 3,
-                            blockPosition: 2,
-                          ),
-                          MissionBlock(
-                            missionId: missionList[2]['missionId'],
-                            missionName: missionList[2]['missionName'],
-                            missionContent: missionList[2]['missionContent'],
-                            qualificationName: missionList[2]
-                                ['qualificationName'],
-                            qualificationNum: missionList[2]
-                                ['qualificationNum'],
-                            rewardPoint: missionList[2]['rewardPoint'],
-                            done: missionList[2]['done'],
-                            receive: missionList[2]['receive'],
-                            blockLine: 3,
-                            blockPosition: 3,
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MissionBlock(
+                                    missionId: missionList[0]['missionId'],
+                                    missionName: missionList[0]['missionName'],
+                                    missionContent: missionList[0]
+                                        ['missionContent'],
+                                    qualificationName: missionList[0]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[0]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[0]['rewardPoint'],
+                                    done: missionList[0]['done'],
+                                    receive: missionList[0]['receive'],
+                                    blockLine: 1,
+                                    blockPosition: 1,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[1]['missionId'],
+                                    missionName: missionList[1]['missionName'],
+                                    missionContent: missionList[1]
+                                        ['missionContent'],
+                                    qualificationName: missionList[1]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[1]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[1]['rewardPoint'],
+                                    done: missionList[1]['done'],
+                                    receive: missionList[1]['receive'],
+                                    blockLine: 1,
+                                    blockPosition: 2,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[2]['missionId'],
+                                    missionName: missionList[2]['missionName'],
+                                    missionContent: missionList[2]
+                                        ['missionContent'],
+                                    qualificationName: missionList[2]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[2]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[2]['rewardPoint'],
+                                    done: missionList[2]['done'],
+                                    receive: missionList[2]['receive'],
+                                    blockLine: 1,
+                                    blockPosition: 3,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MissionBlock(
+                                    missionId: missionList[0]['missionId'],
+                                    missionName: missionList[0]['missionName'],
+                                    missionContent: missionList[0]
+                                        ['missionContent'],
+                                    qualificationName: missionList[0]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[0]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[0]['rewardPoint'],
+                                    done: missionList[0]['done'],
+                                    receive: missionList[0]['receive'],
+                                    blockLine: 2,
+                                    blockPosition: 1,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[1]['missionId'],
+                                    missionName: missionList[1]['missionName'],
+                                    missionContent: missionList[1]
+                                        ['missionContent'],
+                                    qualificationName: missionList[1]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[1]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[1]['rewardPoint'],
+                                    done: missionList[1]['done'],
+                                    receive: missionList[1]['receive'],
+                                    blockLine: 2,
+                                    blockPosition: 2,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[2]['missionId'],
+                                    missionName: missionList[2]['missionName'],
+                                    missionContent: missionList[2]
+                                        ['missionContent'],
+                                    qualificationName: missionList[2]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[2]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[2]['rewardPoint'],
+                                    done: missionList[2]['done'],
+                                    receive: missionList[2]['receive'],
+                                    blockLine: 2,
+                                    blockPosition: 3,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  MissionBlock(
+                                    missionId: missionList[0]['missionId'],
+                                    missionName: missionList[0]['missionName'],
+                                    missionContent: missionList[0]
+                                        ['missionContent'],
+                                    qualificationName: missionList[0]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[0]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[0]['rewardPoint'],
+                                    done: missionList[0]['done'],
+                                    receive: missionList[0]['receive'],
+                                    blockLine: 3,
+                                    blockPosition: 1,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[1]['missionId'],
+                                    missionName: missionList[1]['missionName'],
+                                    missionContent: missionList[1]
+                                        ['missionContent'],
+                                    qualificationName: missionList[1]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[1]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[1]['rewardPoint'],
+                                    done: missionList[1]['done'],
+                                    receive: missionList[1]['receive'],
+                                    blockLine: 3,
+                                    blockPosition: 2,
+                                  ),
+                                  MissionBlock(
+                                    missionId: missionList[2]['missionId'],
+                                    missionName: missionList[2]['missionName'],
+                                    missionContent: missionList[2]
+                                        ['missionContent'],
+                                    qualificationName: missionList[2]
+                                        ['qualificationName'],
+                                    qualificationNum: missionList[2]
+                                        ['qualificationNum'],
+                                    rewardPoint: missionList[2]['rewardPoint'],
+                                    done: missionList[2]['done'],
+                                    receive: missionList[2]['receive'],
+                                    blockLine: 3,
+                                    blockPosition: 3,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),

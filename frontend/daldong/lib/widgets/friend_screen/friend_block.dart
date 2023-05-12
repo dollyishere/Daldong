@@ -1,5 +1,5 @@
 import 'package:daldong/services/friend_api.dart';
-import 'package:daldong/utilites/common/common_utilite.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:flutter/material.dart';
 
 class FriendBlock extends StatefulWidget {
@@ -156,22 +156,21 @@ class _FriendBlockState extends State<FriendBlock> {
                               child: InkWell(
                                 onTap: () {
                                   showConfirmationDialog(
-                                    context,
-                                    print('api 실행'),
-                                    '이별하기',
-                                    '정말 이별하시겠습니까?',
-                                    '예',
-                                    '아니오',
+                                      context,
+                                      print('api 실행'),
+                                      '이별하기',
+                                      '정말 이별하시겠습니까?',
+                                      '예',
+                                      '아니오',
                                       'deleteMyFriendApi',
-                                    data: {
-                                      'userId': 1,
-                                      "friendId": widget.friendId,
-                                      'success': widget.stateFunction,
-                                      'fail': (error) {
-                                        print('친구 삭제 오류: $error');
-                                      },
-                                    }
-                                  );
+                                      data: {
+                                        'userId': 1,
+                                        "friendId": widget.friendId,
+                                        'success': widget.stateFunction,
+                                        'fail': (error) {
+                                          print('친구 삭제 오류: $error');
+                                        },
+                                      });
                                 },
                                 splashColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
@@ -251,7 +250,7 @@ class _FriendBlockState extends State<FriendBlock> {
                   color: Colors.white,
                   image: DecorationImage(
                     image: AssetImage(
-                        "lib/assets/images/animals/${widget.mainPetAssetName}.PNG"),
+                        "lib/assets/images/animals/${widget.mainPetAssetName}.png"),
                     fit: BoxFit.cover,
                   ),
                   shape: BoxShape.circle,

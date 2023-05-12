@@ -1,4 +1,4 @@
-import 'package:daldong/utilites/exercise_detail_screen/calendar_utilite.dart';
+import 'package:daldong/utilites/exercise_detail_screen/calendar_util.dart';
 import 'package:daldong/widgets/exercise_detail_screen/exercise_info_line.dart';
 import 'package:flutter/material.dart';
 
@@ -46,8 +46,7 @@ class _ExerciseDetailBlockState extends State<ExerciseDetailBlock> {
     // TODO: implement dispose
     setState(() {
       _isExpanded = false;
-      setState(() {
-      });
+      setState(() {});
     });
     super.dispose();
   }

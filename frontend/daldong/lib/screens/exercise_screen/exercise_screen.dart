@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
-import 'package:daldong/utilites/common/common_utilite.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:daldong/widgets/exercise_detail_screen/exercise_chart.dart';
 import 'package:daldong/widgets/common/exercise_info_block.dart';
 import 'package:daldong/widgets/common/footer.dart';
-import 'package:daldong/utilites/common/chart_utilite.dart';
+import 'package:daldong/utilites/common/chart_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

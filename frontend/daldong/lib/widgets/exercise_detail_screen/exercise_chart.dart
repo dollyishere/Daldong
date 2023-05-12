@@ -1,4 +1,4 @@
-import 'package:daldong/utilites/common/chart_utilite.dart';
+import 'package:daldong/utilites/common/chart_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

@@ -66,29 +66,30 @@ class _FriendSendScreenState extends State<FriendSendScreen> {
           SizedBox(
             height: 20,
           ),
-          Text('현재 요청한 유저 수: ${sendUserList.length}'),
+          Text('현재 보낸 요청 수: ${sendUserList.length}'),
           SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: RawScrollbar(
-              thumbVisibility: true,
-              radius: const Radius.circular(10),
-              thumbColor: Theme.of(context).primaryColorDark.withOpacity(0.5),
-              thickness: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                ),
-                child: sendUserList.length == 0
-                    ? Expanded(
-                        child: Center(
-                          child: Text(
-                            '현재 보낸 요청이 없습니다',
-                          ),
-                        ),
-                      )
-                    : ListView(
+          sendUserList.length == 0
+              ? Expanded(
+                  child: Center(
+                    child: Text(
+                      '현재 보낸 요청이 없습니다',
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: RawScrollbar(
+                    thumbVisibility: true,
+                    radius: const Radius.circular(10),
+                    thumbColor:
+                        Theme.of(context).primaryColorDark.withOpacity(0.5),
+                    thickness: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                      ),
+                      child: ListView(
                         children: sendUserList
                             .map(
                               (user) => OtherUserBlock(
@@ -102,8 +103,11 @@ class _FriendSendScreenState extends State<FriendSendScreen> {
                             )
                             .toList(),
                       ),
-              ),
-            ),
+                    ),
+                  ),
+                ),
+          SizedBox(
+            height: 50,
           ),
         ],
       ),

@@ -69,11 +69,11 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                   onChanged: (text) {
                     setState(
                       () {
-                        searchInput = text;
+                        searchInput = text.trim();
                       },
                     );
                   },
-                  maxLength: 7,
+                  maxLength: 6,
                   scrollPadding: EdgeInsets.zero,
                   cursorColor: Theme.of(context).primaryColorDark,
                   style: TextStyle(fontSize: 12),
@@ -199,6 +199,9 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                         ),
                       ),
                     ),
+          SizedBox(
+            height: 50,
+          ),
         ],
       ),
     );

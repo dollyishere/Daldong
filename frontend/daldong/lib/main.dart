@@ -1,6 +1,7 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_screen.dart';
+import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
 import 'package:daldong/screens/profile_screen/profile_screen.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 import 'package:daldong/screens/home_screen/home_screen.dart';
 
@@ -75,6 +75,7 @@ void main() async {
         '/': (context) => SplashScreen(),
         '/root': (context) => RootScreen(),
         '/home': (context) => HomeScreen(),
+        '/inventory': (context) => InventoryScreen(),
         '/login': (context) => LoginScreen(),
         '/signin': (context) => SigninScreen(),
         '/profile': (context) => ProfileScreen(),
