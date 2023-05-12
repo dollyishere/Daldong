@@ -52,16 +52,16 @@ public class MissionServiceImpl implements MissionService{
         for (MissionResDTO missionResDTO : missionResDTOS) {
             switch (missionResDTO.getMission().getQualificationName()) {
                 case "KCAL":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).getDailyKcal());
+                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyKcal());
                     break;
                 case "EX_TIME":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).getDailyExTime());
+                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyExTime().getSecond());
                     break;
                 case "COUNT":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).getDailyCount());
+                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyCount());
                     break;
                 case "FRIEND":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).getDailyFriend());
+                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyFriend());
                     break;
             }
         }
