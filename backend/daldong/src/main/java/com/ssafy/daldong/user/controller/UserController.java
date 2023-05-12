@@ -175,4 +175,9 @@ public class UserController {
         }
 
     }
+    @PostMapping("/logout")
+    public void logout(@RequestHeader(name="accessToken")String accessToken){
+        long uid=jwtTokenUtil.getUserId(accessToken);
+        userService.logout(uid);
+    }
 }

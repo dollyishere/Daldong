@@ -6,7 +6,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
-import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
 import com.ssafy.daldong.user.model.dto.UserDetailDTO;
@@ -114,7 +113,12 @@ public class UserServiceImpl implements UserService{
                 jwtTokenUtil.getTokenExpirationTime(refreshToken)); // timeout(milliseconds)
     }
 
-
+    @Override
+    public void logout(long uid){
+       User user =userRepository.findByUserId(uid);
+       String userId=user.getUserUid();
+      redisService.deleteValues(userId);
+    }
 
 
 }
