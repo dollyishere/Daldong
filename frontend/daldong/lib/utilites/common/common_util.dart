@@ -21,7 +21,9 @@ void showConfirmationDialog(BuildContext context, void func, String title,
             child: Text(
               yesText,
               style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).primaryColor,),
+                fontSize: 14,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             onPressed: () {
               // Yes 버튼을 눌렀을 때 수행할 작업
@@ -63,12 +65,10 @@ void showConfirmationDialog(BuildContext context, void func, String title,
               //   ModalRoute.withName('/home'),
               // );
             },
-            userId: data['userId'],
             friendId: data['friendId'],
           );
         }
-      } else {
-      }
+      } else {}
     } else if (value == false) {
       // No 버튼을 눌렀을 때 수행할 작업
     }

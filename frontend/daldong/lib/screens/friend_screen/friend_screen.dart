@@ -13,7 +13,7 @@ class FriendScreen extends StatefulWidget {
 }
 
 class _FriendScreenState extends State<FriendScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
   List<dynamic> friendList = [
     {
       "friendId": 1,
@@ -87,7 +87,6 @@ class _FriendScreenState extends State<FriendScreen> {
         //   ModalRoute.withName('/home'),
         // );
       },
-      userId: 1,
     );
     super.initState();
   }

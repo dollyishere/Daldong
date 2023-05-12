@@ -153,8 +153,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
         fail: (error) {
           print('이번 달 운동 로그 호출 오류: $error');
         },
-        userId: 1,
-        month: changeYearMonth,
+        yearMonth: changeYearMonth,
       );
     }
   }

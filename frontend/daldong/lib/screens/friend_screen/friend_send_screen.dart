@@ -43,7 +43,6 @@ class _FriendSendScreenState extends State<FriendSendScreen> {
         //   ModalRoute.withName('/home'),
         // );
       },
-      userId: 1,
     );
     super.initState();
   }
