@@ -36,4 +36,11 @@ public class Statistics implements Serializable {
 
     @Column(name = "daily_friend")
     private int dailyFriend;
+
+    public void initTable() {
+        this.dailyExTime = 0;
+        this.dailyKcal = 0;
+        this.dailyCount = 0;
+        this.dailyFriend = 0;
+    }
 }

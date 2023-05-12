@@ -38,4 +38,8 @@ public class Friend {
         this.isSting = true;
         return this;
     }
+
+    public void initSting(){
+        this.isSting = false;
+    }
 }

@@ -8,13 +8,13 @@ import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -109,4 +109,12 @@ public class FriendServiceImpl implements FriendService{
         return friendSearchDTO;
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void initSting(){
+        log.info("{} | 찌르기 초기화 시작", LocalDateTime.now());
+        List<Friend> friends = friendRepository.findAll();
+        friends.forEach(Friend::initSting);
+        friendRepository.saveAll(friends);
+        log.info("{} | 찌르기 초기화 종료", LocalDateTime.now());
+    }
 }
