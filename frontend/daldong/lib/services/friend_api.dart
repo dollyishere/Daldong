@@ -7,10 +7,9 @@ String? baseUrl = dotenv.env['SPRING_API_URL'];
 void getMyFriendList({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  required int userId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/${userId}',
+    path: '${baseUrl}/friend/',
     method: Method.get,
     success: success,
     fail: fail,
@@ -26,7 +25,7 @@ void putStingFriend({
   required int friendId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/sting/${userId}/${friendId}',
+    path: '${baseUrl}/friend/sting/${userId}/${friendId}',
     method: Method.put,
     body: body,
     success: success,
@@ -41,7 +40,7 @@ void getFriendDetail({
   required int friendId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/${friendId}',
+    path: '${baseUrl}/friend/${friendId}',
     method: Method.get,
     success: success,
     fail: fail,
@@ -55,7 +54,7 @@ void postFriendRequest({
   Map<String, String>? body,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/request',
+    path: '${baseUrl}/friend/request',
     method: Method.post,
     body: body,
     success: success,
@@ -70,7 +69,7 @@ void postFriendRequestResult({
   Map<String, dynamic>? body,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/request/result',
+    path: '${baseUrl}/friend/request/result',
     method: Method.post,
     body: body,
     success: success,
@@ -82,10 +81,9 @@ void postFriendRequestResult({
 void getReceivedList({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  required int userId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/request/received/${userId}',
+    path: '${baseUrl}/friend/request/received/',
     method: Method.get,
     success: success,
     fail: fail,
@@ -96,10 +94,9 @@ void getReceivedList({
 void getSendList({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  required int userId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/request/send/${userId}',
+    path: '${baseUrl}/friend/request/send/',
     method: Method.get,
     success: success,
     fail: fail,
@@ -110,10 +107,9 @@ void getSendList({
 void getSearchFriendList({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  required int userId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/search',
+    path: '${baseUrl}/friend/search',
     method: Method.get,
     success: success,
     fail: fail,
@@ -125,11 +121,10 @@ void deleteMyFriend({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
   Map<String, String>? body,
-  required int userId,
   required int friendId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/friend/${userId}/${friendId}',
+    path: '${baseUrl}/friend/${friendId}',
     method: Method.delete,
     body: body,
     success: success,

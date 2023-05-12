@@ -68,16 +68,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       },
       fail: (error) {
         print('오늘 운동 로그 호출 오류: $error');
-        // Navigator.pushNamedAndRemoveUntil(
-        //   context,
-        //   '/error',
-        //   arguments: {
-        //     'errorText': error,
-        //   },
-        //   ModalRoute.withName('/home'),
-        // );
       },
-      userId: 1,
     );
     chartData = <_SplineAreaData>[
       _SplineAreaData(0, 20),

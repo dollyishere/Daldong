@@ -112,25 +112,26 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 5,
             ),
             Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              width: double.infinity,
-              height: 360,
-              child: loading
-                  ? CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
-                    )
-                  : InAppWebView(
-                      initialUrlRequest: URLRequest(
-                        url: Uri.parse(
-                            "http://localhost:8080/lib/assets/models/daldong_webview.html"),
-                      ),
-                      onWebViewCreated: (controller) {},
-                      onLoadStart: (controller, url) {},
-                      onLoadStop: (controller, url) {},
-                    ),
-            ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                width: double.infinity,
+                height: 360,
+                child:
+                    // loading
+                    CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                )
+                // : InAppWebView(
+                //     initialUrlRequest: URLRequest(
+                //       url: Uri.parse(
+                //           "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+                //     ),
+                //     onWebViewCreated: (controller) {},
+                //     onLoadStart: (controller, url) {},
+                //     onLoadStop: (controller, url) {},
+                //   ),
+                ),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

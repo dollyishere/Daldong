@@ -45,7 +45,6 @@ class _FriendReceivedScreenState extends State<FriendReceivedScreen> {
         //   ModalRoute.withName('/home'),
         // );
       },
-      userId: 1,
     );
     super.initState();
   }

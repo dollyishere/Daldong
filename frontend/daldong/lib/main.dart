@@ -48,13 +48,12 @@ void main() async {
         shadowColor: const Color(0xFFEFEFEF),
         disabledColor: const Color(0xFF999999),
         textTheme: TextTheme(
-          titleLarge:  TextStyle(
+          titleLarge: TextStyle(
             fontSize: 30.0,
             fontWeight: FontWeight.normal,
             color: Colors.black,
           ),
         ),
-
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,

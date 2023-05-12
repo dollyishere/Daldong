@@ -9,13 +9,10 @@ String? weatherApiKey = dotenv.env['WEATHER_API_KEY'];
 void getTodayExerciseLog({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  Map<String, String>? body,
-  required int userId,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/exercise/${userId}',
+    path: '${baseUrl}/exercise/',
     method: Method.get,
-    body: body,
     success: success,
     fail: fail,
   );
@@ -25,14 +22,11 @@ void getTodayExerciseLog({
 void getMonthlyExerciseLog({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  Map<String, String>? body,
-  required int userId,
-  required int month,
+  required int yearMonth,
 }) {
   apiInstance(
-    path: '${baseUrl}/test/api/exercise/monthly/${userId}/${month}',
+    path: '${baseUrl}/exercise/monthly/${yearMonth}',
     method: Method.get,
-    body: body,
     success: success,
     fail: fail,
   );
@@ -47,11 +41,11 @@ void getWeatherInfo({
   required double lon,
 }) {
   apiInstance(
-    path: '${weatherUrl}?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=metric&lang=kr',
+    path:
+        '${weatherUrl}?lat=${lat}&lon=${lon}&appid=${weatherApiKey}&units=metric&lang=kr',
     method: Method.get,
     body: body,
     success: success,
     fail: fail,
   );
 }
-
