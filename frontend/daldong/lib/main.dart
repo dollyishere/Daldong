@@ -5,6 +5,7 @@ import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
 import 'package:daldong/screens/profile_screen/profile_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
+import 'package:daldong/screens/signin_screen/signin_screen.dart';
 import 'package:daldong/screens/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,6 +47,14 @@ void main() async {
         secondaryHeaderColor: const Color(0xFF453F52),
         shadowColor: const Color(0xFFEFEFEF),
         disabledColor: const Color(0xFF999999),
+        textTheme: TextTheme(
+          titleLarge:  TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+        ),
+
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
@@ -67,6 +76,7 @@ void main() async {
         '/root': (context) => RootScreen(),
         '/home': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
+        '/signin': (context) => SigninScreen(),
         '/profile': (context) => ProfileScreen(),
         '/exercise': (context) => ExerciseScreen(),
         '/exercise_detail': (context) => ExerciseDetailScreen(),

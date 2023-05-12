@@ -70,9 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
       userProfileImg = img;
       userEmail = email;
     });
-    if (name == null) {
-      Navigator.pushReplacementNamed(context, '/login');
-    }
+    // if (name == null) {
+    //   Navigator.pushReplacementNamed(context, '/login');
+    // }
   }
 
   @override
