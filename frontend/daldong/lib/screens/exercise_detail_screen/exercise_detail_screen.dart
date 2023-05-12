@@ -4,7 +4,7 @@ import 'package:daldong/widgets/exercise_detail_screen/exercise_detail_block.dar
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:daldong/services/exercise_api.dart';
-import 'package:daldong/utilites/exercise_detail_screen/calendar_utilite.dart';
+import 'package:daldong/utilites/exercise_detail_screen/calendar_util.dart';
 import 'package:daldong/widgets/exercise_detail_screen/calendar_header.dart';
 
 class ExerciseDetailScreen extends StatefulWidget {
@@ -289,7 +289,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                       itemCount: value.length,
                       itemBuilder: (context, index) {
                         return ExerciseDetailBlock(
-                          exerciseValue : value[index],
+                          exerciseValue: value[index],
                         );
                       },
                     );

@@ -3,7 +3,7 @@ import 'package:daldong/services/friend_api.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/friend_screen/friend_block.dart';
 import 'package:daldong/widgets/friend_screen/my_progress_bar.dart';
-import 'package:daldong/utilites/friend_screen/friend_utilite.dart';
+import 'package:daldong/utilites/friend_screen/friend_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,48 +13,48 @@ class FriendScreen extends StatefulWidget {
 }
 
 class _FriendScreenState extends State<FriendScreen> {
-  bool isLoading = true;
+  bool isLoading = false;
   List<dynamic> friendList = [
     {
       "friendId": 1,
       "friendNickname": '팩ㄺ팍페규ㅖ',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'dog',
+      "mainPetAssetName": 'Dog',
       "sting": false,
     },
     {
       "friendId": 1,
       "friendNickname": 'YouKno',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'frog',
+      "mainPetAssetName": 'Frog',
       "sting": true,
     },
     {
       "friendId": 1,
       "friendNickname": '핡핡핡핵핽핽',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'snow_weasel',
+      "mainPetAssetName": 'SnowWeasel',
       "sting": false,
     },
     {
       "friendId": 1,
       "friendNickname": 'Naver',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'crocodile',
+      "mainPetAssetName": 'Crocodile',
       "sting": true,
     },
     {
       "friendId": 1,
       "friendNickname": '판다조하조하',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'red_panda',
+      "mainPetAssetName": 'RedPanda',
       "sting": false,
     },
     {
       "friendId": 1,
       "friendNickname": '짹쨰그거ㅏㅣ',
       "friendUserLevel": 12,
-      "mainPetAssetName": 'tortoise',
+      "mainPetAssetName": 'Tortoise',
       "sting": true,
     },
   ];
@@ -128,7 +128,7 @@ class _FriendScreenState extends State<FriendScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      showDetailCalender(1, 'gg', 'gg', false, context);
+                      showDetailFriend(context);
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,

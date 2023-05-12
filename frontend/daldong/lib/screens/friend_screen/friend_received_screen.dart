@@ -72,25 +72,26 @@ class _FriendReceivedScreenState extends State<FriendReceivedScreen> {
           SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: RawScrollbar(
-              thumbVisibility: true,
-              radius: const Radius.circular(10),
-              thumbColor: Theme.of(context).primaryColorDark.withOpacity(0.5),
-              thickness: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                ),
-                child: receivedUserList.length == 0
-                    ? Expanded(
-                        child: Center(
-                          child: Text(
-                            '현재 받은 요청이 없습니다',
-                          ),
-                        ),
-                      )
-                    : ListView(
+          receivedUserList.length == 0
+              ? Expanded(
+                  child: Center(
+                    child: Text(
+                      '현재 받은 요청이 없습니다',
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: RawScrollbar(
+                    thumbVisibility: true,
+                    radius: const Radius.circular(10),
+                    thumbColor:
+                        Theme.of(context).primaryColorDark.withOpacity(0.5),
+                    thickness: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                      ),
+                      child: ListView(
                         children: receivedUserList
                             .map(
                               (user) => OtherUserBlock(
@@ -104,8 +105,11 @@ class _FriendReceivedScreenState extends State<FriendReceivedScreen> {
                             )
                             .toList(),
                       ),
-              ),
-            ),
+                    ),
+                  ),
+                ),
+          SizedBox(
+            height: 50,
           ),
         ],
       ),

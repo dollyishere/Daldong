@@ -73,124 +73,91 @@ class _MissionBlockState extends State<MissionBlock> {
 
     Color boxColor = getBoxColorFunc();
 
-    return Stack(
-      children: [
-        Positioned(
-          left: widget.blockPosition == 3 ? 0 : 20,
-          child: Container(
-            width: 20,
-            height: boxLength.toDouble(),
-            decoration: BoxDecoration(
-              color: boxColor,
-            ),
+    return Container(
+      width: boxLength.toDouble(),
+      height: boxLength.toDouble(),
+      decoration: BoxDecoration(
+        color: widget.receive ? Colors.transparent : boxColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            (widget.blockLine == 1 && widget.blockPosition == 1) ? 10.0 : 0.0,
+          ),
+          topRight: Radius.circular(
+            (widget.blockLine == 1 && widget.blockPosition == 3) ? 10.0 : 0.0,
+          ),
+          bottomLeft: Radius.circular(
+            (widget.blockLine == 3 && widget.blockPosition == 1) ? 10.0 : 0.0,
+          ),
+          bottomRight: Radius.circular(
+            (widget.blockLine == 3 && widget.blockPosition == 3) ? 10.0 : 0.0,
           ),
         ),
-        Positioned(
-          right: widget.blockPosition == 1 ? 0 : 20,
-          child: Container(
-            width: 10,
-            height: boxLength.toDouble(),
-            decoration: BoxDecoration(
-              color: boxColor,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
             ),
-          ),
-        ),
-        Positioned(
-          top: widget.blockLine == 3 ? 0 : 20,
-          child: Container(
-            width: boxLength.toDouble(),
-            height: 10,
-            decoration: BoxDecoration(
-              color: boxColor,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: widget.blockLine == 1 ? 0 : 20,
-          child: Container(
-            width: boxLength.toDouble(),
-            height: 10,
-            decoration: BoxDecoration(
-              color: boxColor,
-            ),
-          ),
-        ),
-        Container(
-          width: boxLength.toDouble(),
-          height: boxLength.toDouble(),
-          decoration: BoxDecoration(
-            color: boxColor,
-            borderRadius: (widget.blockLine == 2 || widget.blockPosition == 2)
-                ? BorderRadius.circular(0)
-                : BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                ),
-                child: Text(
-                  widget.missionName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: (boxColor == Theme.of(context).shadowColor ||
+            child: Text(
+              widget.missionName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: widget.receive
+                    ? Colors.transparent
+                    : (boxColor == Theme.of(context).shadowColor ||
                             boxColor == Theme.of(context).primaryColorLight)
                         ? Theme.of(context).secondaryHeaderColor
                         : Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
+                fontSize: 12,
               ),
-              SizedBox(
-                height: 4,
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              InkWell(
-                onTap: () {},
-                splashColor: Colors.transparent,
-                child: Container(
-                  alignment: Alignment.center,
-                  width: 40,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: widget.done
-                        ? widget.receive
-                            ? boxColor
-                            : Theme.of(context).primaryColorDark
-                        : Theme.of(context).disabledColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.receive
-                            ? Colors.transparent
-                            : Colors.black38,
-                        blurRadius: 1.0,
-                        spreadRadius: 1.0,
-                      )
-                    ],
-                  ),
-                  child: Text(
-                    widget.done
-                        ? widget.receive
-                            ? '완료'
-                            : '${widget.rewardPoint}P'
-                        : '미완',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+          SizedBox(
+            height: 4,
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          InkWell(
+            onTap: () {},
+            splashColor: Colors.transparent,
+            child: Container(
+              alignment: Alignment.center,
+              width: 40,
+              height: 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: widget.done
+                    ? widget.receive
+                        ? Colors.transparent
+                        : Theme.of(context).primaryColorDark
+                    : Theme.of(context).disabledColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.receive ? Colors.transparent : Colors.black38,
+                    blurRadius: 1.0,
+                    spreadRadius: 1.0,
+                  )
+                ],
+              ),
+              child: Text(
+                widget.done
+                    ? widget.receive
+                        ? '완료'
+                        : '${widget.rewardPoint}P'
+                    : '미완',
+                style: TextStyle(
+                  color: widget.receive ? Colors.transparent : Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
