@@ -43,6 +43,7 @@ public class ExerciseServiceImpl implements ExerciseService{
                 .dailyKcal(statistics.getDailyKcal())
                 .dailyCount(statistics.getDailyCount())
                 .dailyFriend(statistics.getDailyFriend())
+                .dailyPoint(statistics.getDailyPoint())
                 .build();
     }
 
