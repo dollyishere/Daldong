@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +33,8 @@ public class MissionServiceImpl implements MissionService{
 
     @Override
     public List<MissionResDTO> getUserMissions(Long userId) {
-        logger.info("MissionServiceImpl.getUserMission({})",userId);
-        List<UserMission> userMissionList = userMissionRepository.findUserMissionsByUser_UserId(userId);
+        logger.info("MissionServiceImpl.getUserMission({}, {})",userId, LocalDate.now());
+        List<UserMission> userMissionList = userMissionRepository.findUserMissionsByUser_UserIdAndMissionDate(userId, LocalDate.now());
         logger.info("userMissionList : {}",userMissionList);
 
         List<MissionResDTO> missionResDTOS = userMissionList.stream()
@@ -65,7 +66,7 @@ public class MissionServiceImpl implements MissionService{
     public boolean getReward(Long userId, Long missionId) throws Exception {
         logger.info("MissionServiceImpl.getUserMissions({},{})", userId, missionId);
         //미션조회
-        UserMission userMission = userMissionRepository.findUserMissionByUser_UserIdAndMission_MissionId(userId, missionId);
+        UserMission userMission = userMissionRepository.findUserMissionByUserMissionIdAndUser_UserId(missionId, userId);
 
         //수령조회
         if (userMission.isReceive())
