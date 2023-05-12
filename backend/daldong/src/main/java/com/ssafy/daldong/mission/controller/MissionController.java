@@ -32,7 +32,7 @@ public class MissionController {
      * @return ResponseEntity
      */
     @Operation(summary = "미션 메인 페이지 조회")
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<?> getUserMission(@RequestHeader(name = "accessToken") String accessToken) {
         long userId = jwtTokenUtil.getUserId(accessToken);
         logger.info("MissionController.getMission({})",userId);

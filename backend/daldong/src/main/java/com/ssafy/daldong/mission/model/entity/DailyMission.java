@@ -33,7 +33,4 @@ public class DailyMission {
 
     @Column(name = "reward_point", nullable = false)
     private int rewardPoint;
-
-    @Column(name = "missoin_date", nullable = false)
-    private Timestamp missoinDate;
 }
