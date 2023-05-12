@@ -28,4 +28,6 @@ public interface UserService {
  UserDetailDTO mypage(long uid);
 
  String getUid(String idToken) throws FirebaseAuthException;
+
+ void logout(long uid);
 }

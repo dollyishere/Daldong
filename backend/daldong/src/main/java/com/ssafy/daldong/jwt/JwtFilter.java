@@ -35,14 +35,20 @@ import java.util.Arrays;
 
             // 2. validateToken 으로 토큰 유효성 검사
             // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-            if (StringUtils.hasText(accessToken) && jwtTokenUtil.validateToken(accessToken)) {
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(jwtTokenUtil.getUsername(accessToken));
-                equalsUsernameFromTokenAndUserDetails(userDetails.getUsername(), jwtTokenUtil.getUsername(accessToken));
-                processSecurity(request, userDetails);
-                filterChain.doFilter(request, response);
+            if (StringUtils.hasText(accessToken)) {
+                if( jwtTokenUtil.validateToken(accessToken)) {
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(jwtTokenUtil.getUsername(accessToken));
+                    equalsUsernameFromTokenAndUserDetails(userDetails.getUsername(), jwtTokenUtil.getUsername(accessToken));
+                    processSecurity(request, userDetails);
+                    filterChain.doFilter(request, response);
+                }
+                else{
+                    log.info("유효하지 않은 토큰입니다.");
+                    filterChain.doFilter(request, response);
+                }
             }
             else{
-                log.info("유효하지 않은 토큰입니다.");
+                log.info("토큰 없음");
                 filterChain.doFilter(request, response);
             }
 
