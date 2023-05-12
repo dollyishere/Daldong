@@ -69,7 +69,8 @@ fun ExerciseWearApp(
                 onStartClick = {
                     navController.navigate(Screens.ExerciseScreen.route) {
                         popUpTo(navController.graph.id) {
-                            inclusive = false
+                            inclusive = false // 기존
+//                            inclusive = true // 바꿈
                         }
                     }
                 },
@@ -83,6 +84,7 @@ fun ExerciseWearApp(
         composable(Screens.ExerciseScreen.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
+
             ExerciseScreen(
                 onPauseClick = { viewModel.pauseExercise() },
                 onEndClick = { viewModel.endExercise() },
@@ -91,8 +93,6 @@ fun ExerciseWearApp(
                 serviceState = serviceState,
                 navController = navController,
             )
-
-
         }
         composable(Screens.ExerciseNotAvailable.route) {
             ExerciseNotAvailable()

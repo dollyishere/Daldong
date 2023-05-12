@@ -61,16 +61,14 @@ class ExerciseViewModel @Inject constructor(
     )
 
 
-    private var _exerciseServiceState: MutableState<ServiceState> =
-        healthServicesRepository.serviceState
+    private var _exerciseServiceState: MutableState<ServiceState> = healthServicesRepository.serviceState
     val exerciseServiceState = _exerciseServiceState
 
     init {
-        Log.d("ExerciseViewModel 처음", permissions.joinToString())
         viewModelScope.launch {
             healthServicesRepository.createService()
         }
-
+        Log.d("ExerciseViewModel 처음", permissions.joinToString())
     }
 
     suspend fun isExerciseInProgress(): Boolean {
@@ -95,6 +93,3 @@ class ExerciseViewModel @Inject constructor(
         return "ExerciseViewModel(uiState=$uiState, exerciseServiceState=$exerciseServiceState)"
     }
 }
-
-
-

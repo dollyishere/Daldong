@@ -15,18 +15,11 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import android.text.SpannedString
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.health.services.client.data.DataPoint
@@ -39,8 +32,6 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.TimeTextDefaults
 import com.ssafy.daldong.exercise.Screens
 import com.ssafy.daldong.exercise.service.ExerciseStateChange
 import com.ssafy.daldong.R
@@ -56,16 +47,29 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.core.text.buildSpannedString
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 /**
  * Shows while an exercise is in progress
  */
+data class ExerciseScreenState(
+    val caloriesHistory: MutableList<Double>, // 운동 중에 쌓인 칼로리 기록
+    val heartRateHistory: MutableList<Double>, // 운동 중에 쌓인 심박수 기록
+    var elapsedTime: String, // 운동 경과 시간
+    val startTime : LocalDateTime,
+    var endTime : LocalDateTime,
+    var calories: SpannedString,
+    var heartRate: Int = 0,
+    var distance: SpannedString,
+)
+
 @Composable
 fun ExerciseScreen(
     onPauseClick: () -> Unit = {},
@@ -76,6 +80,7 @@ fun ExerciseScreen(
     navController: NavHostController,
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
 
     /** Only collect metrics while we are connected to the Foreground Service. **/
     when (serviceState) {
@@ -87,50 +92,56 @@ fun ExerciseScreen(
             val baseActiveDuration = remember { mutableStateOf(Duration.ZERO) }
             var activeDuration by remember { mutableStateOf(Duration.ZERO) }
             val exerciseStateChange by mutableStateOf(getExerciseServiceState.exerciseStateChange)
-            var startImage by remember { mutableStateOf(R.drawable.exercise_start) }
-            var endImage by remember { mutableStateOf(R.drawable.exercise_end) }
-            var pauseImage by remember { mutableStateOf(R.drawable.exercise_pause) }
 
             /** Collect [DataPoint]s from the aggregate and exercise metric flows. Because
              * collectAsStateWithLifecycle() is asynchronous, store the last known value from each flow,
              * and update the value on screen only when the flow re-connects. **/
+
             val tempHeartRate = remember { mutableStateOf(0.0) }
-            if (exerciseMetrics?.getData(DataType.HEART_RATE_BPM)
-                    ?.isNotEmpty() == true
-            ) tempHeartRate.value =
-                exerciseMetrics?.getData(DataType.HEART_RATE_BPM)
-                    ?.last()?.value!!
+
+            if (exerciseMetrics?.getData(DataType.HEART_RATE_BPM)?.isNotEmpty() == true)
+                tempHeartRate.value = exerciseMetrics?.getData(DataType.HEART_RATE_BPM)?.last()?.value!!
             else tempHeartRate.value = tempHeartRate.value
 
             /**Store previous calorie and distance values to avoid rendering null values from
              * [getExerciseServiceState] flow**/
-            val distance =
-                exerciseMetrics?.getData(DataType.DISTANCE_TOTAL)?.total
+            val distance = exerciseMetrics?.getData(DataType.DISTANCE_TOTAL)?.total
             val tempDistance = remember { mutableStateOf(0.0) }
 
-            val calories =
-                exerciseMetrics?.getData(DataType.CALORIES_TOTAL)?.total
+            val calories = exerciseMetrics?.getData(DataType.CALORIES_TOTAL)?.total
             val tempCalories = remember { mutableStateOf(0.0) }
 
-            val averageHeartRate =
-                exerciseMetrics?.getData(DataType.HEART_RATE_BPM_STATS)?.average
+            val averageHeartRate = exerciseMetrics?.getData(DataType.HEART_RATE_BPM_STATS)?.average
             val tempAverageHeartRate = remember { mutableStateOf(0.0) }
 
             /** Update the Pause and End buttons according to [ExerciseState].**/
             val pauseOrResume = when (exerciseStateChange.exerciseState.isPaused) {
-//                true -> R.drawable.exercise_start
-//                false -> R.drawable.exercise_pause
-
                 true -> Icons.Default.PlayArrow
                 false -> Icons.Default.Pause
             }
             val startOrEnd =
                 when (exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding) {
-//                    true -> R.drawable.exercise_start
-//                    false -> R.drawable.exercise_end
                     true -> Icons.Default.PlayArrow
                     false -> Icons.Default.Stop
                 }
+
+            val exerciseScreenState = remember { ExerciseScreenState(
+                caloriesHistory = mutableListOf(),
+                heartRateHistory = mutableListOf(),
+                elapsedTime = "",
+                startTime = LocalDateTime.now(),
+                endTime = LocalDateTime.now(),
+                calories = buildSpannedString { append("0.0") },
+                heartRate = 0,
+                distance = buildSpannedString { append("0.0") },
+            ) }
+
+            val caloriesHistory = exerciseScreenState.caloriesHistory
+            val heartRateHistory = exerciseScreenState.heartRateHistory
+//            val startTime = exerciseScreenState.startTime
+//            var calories = exerciseScreenState.calories
+//            val heartRate = exerciseScreenState.heartRate
+//            var distance = exerciseScreenState.distance
 
             // The ticker coroutine updates activeDuration, but the ticker fires more often than
             // once a second, so we use derivedStateOf to update the elapsedTime state only when
@@ -138,9 +149,7 @@ fun ExerciseScreen(
             // happens when elapsedTime changes, so once a second.
 
             val elapsedTime = derivedStateOf {
-                formatElapsedTime(
-                    activeDuration.toKotlinDuration(), true
-                ).toString()
+                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
             }
 
             // Instead of watching the ExerciseState state, or active duration, I've defined a
@@ -155,20 +164,55 @@ fun ExerciseScreen(
             // and you want the ActiveDurationCheckpoint to be associated with exactly when the
             // state changed to active.
 
+            /*
+            ExerciseStateChange 객체는 서비스에서 정의되며, 운동 상태가 변경될 때만 업데이트 됨.
+            ExerciseStateChange 객체는 운동 상태가 ACTIVE로 변경되면 타이머를 시작,
+            운동 상태가 ACTIVE가 아니면 타이머를 중지.
+
+            또한, ExerciseStateChange 객체는 운동 상태가 ACTIVE일 때 ActiveDurationCheckpoint를 가지며,
+            이를 통해 기본 ActiveDuration을 설정할 수 있습니다.
+            ActiveDurationCheckpoint는 서비스에서 설정되며, ActiveDuration을 Compose에 노출하지 않습니다.
+
+            이렇게 하면 Compose가 재구성되지 않으며, ActiveDurationCheckpoint가 운동 상태가
+            ACTIVE로 변경된 정확한 시점에 연결되게 됩니다.
+
+            좀 더 자세히 설명하자면, ExerciseStateChange 객체는 다음과 같은 속성을 가지고 있습니다.
+            exerciseState: 운동 상태
+            activeDuration: 운동 중 경과된 시간
+            activeDurationCheckpoint: 운동 상태가 ACTIVE로 변경된 시점
+
+            ExerciseStateChange 객체는 서비스에서 onExerciseStateChanged() 메서드를 통해 업데이트됩니다.
+            이 메서드는 운동 상태가 변경될 때마다 호출됩니다.
+
+            ExerciseStateChange 객체는 Compose에서 exerciseStateChange 값으로 노출됩니다.
+            exerciseStateChange 값은 ExerciseStateChange 객체의 exerciseState 속성입니다.
+            exerciseStateChange 값을 사용하여 운동 상태를 확인하고,
+            운동 중 경과된 시간과 운동 상태가 ACTIVE로 변경된 시점을 확인할 수 있습니다
+            */
+
             LaunchedEffect(exerciseStateChange) {
                 if (exerciseStateChange is ExerciseStateChange.ActiveStateChange
                 ) {
-                    val activeStateChange =
-                        exerciseStateChange as ExerciseStateChange.ActiveStateChange
-                    val timeOffset =
-                        (System.currentTimeMillis() -
-                            activeStateChange.durationCheckPoint.time.toEpochMilli())
-                    baseActiveDuration.value =
-                        activeStateChange.durationCheckPoint.activeDuration.plusMillis(timeOffset)
-                    chronoTickJob.value = startTick(chronoTickJob.value, scope) { tickerTime ->
-                        activeDuration = baseActiveDuration.value.plusMillis(tickerTime)
-                    }
+                    val activeStateChange = exerciseStateChange as ExerciseStateChange.ActiveStateChange
+
+                    val timeOffset = (System.currentTimeMillis() - activeStateChange.durationCheckPoint.time.toEpochMilli())
+                    baseActiveDuration.value = activeStateChange.durationCheckPoint.activeDuration.plusMillis(timeOffset)
+                    chronoTickJob.value = startTick(
+                        chronoTickJob = chronoTickJob.value,
+                        scope = scope,
+                        block = { tickerTime ->
+                            activeDuration = baseActiveDuration.value.plusMillis(tickerTime)
+                        },
+                        tempAverageHeartRate = tempAverageHeartRate,
+                        averageHeartRate = averageHeartRate,
+                        tempCalories = tempCalories,
+                        calories = calories,
+                        heartRateHistory = heartRateHistory,
+                        caloriesHistory = caloriesHistory
+                    )
+
                 } else {
+                    println("운동 종료와 경과 시간 : ${activeDuration}")
                     chronoTickJob.value?.cancel()
                 }
             }
@@ -210,16 +254,11 @@ fun ExerciseScreen(
                             )
 
                             if (calories != null) {
-                                CaloriesText(
-                                    calories
-                                )
+                                CaloriesText(calories)
                                 tempCalories.value = calories
                             } else {
-                                CaloriesText(
-                                    tempCalories.value
-                                )
+                                CaloriesText(tempCalories.value)
                             }
-
                         }
 
                         Row(
@@ -237,14 +276,22 @@ fun ExerciseScreen(
 
                                     //In a production fitness app, you might upload workout metrics to your app
                                     // either via network connection or to your mobile app via the Data Layer API.
+                                    
+                                    exerciseScreenState.endTime = LocalDateTime.now()
+                                    exerciseScreenState.heartRate = tempAverageHeartRate.value.toInt()
+                                    exerciseScreenState.distance = formatDistanceKm(tempDistance.value)
+                                    exerciseScreenState.calories = formatCalories(tempCalories.value)
+                                    exerciseScreenState.elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+
+//                                    printResult(exerciseScreenState)
+                                    println("총 결과 출력 : ${exerciseScreenState.toString()}")
+
                                     navController.navigate(
-                                        Screens.SummaryScreen.route + "/${tempAverageHeartRate.value.toInt()} bpm/${
-                                            formatDistanceKm(
-                                                tempDistance.value
-                                            )
-                                        }/${formatCalories(tempCalories.value)}/" + formatElapsedTime(
-                                            activeDuration.toKotlinDuration(), true
-                                        ).toString()
+                                        Screens.SummaryScreen.route + "/" +
+                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                "${formatDistanceKm(tempDistance.value)} km/" +
+                                                "${formatCalories(tempCalories.value)} kcal/" +
+                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
                                     ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
 //                                Button(onClick = { onStartClick() }) {
@@ -263,17 +310,6 @@ fun ExerciseScreen(
                                             imageVector = startOrEnd,
                                             contentDescription = stringResource(id = R.string.startOrEnd)
                                         )
-//                                    Row(verticalAlignment = Alignment.CenterVertically) {
-//                                        Icon(
-//                                            imageVector = startOrEnd,
-//                                            contentDescription = stringResource(id = R.string.startOrEnd),
-//                                            modifier = Modifier.padding(end = 4.dp)
-//                                        )
-//                                        Text(
-//                                            text = "운동종료",
-//                                            style = MaterialTheme.typography.button
-//                                        )
-//                                    }
                                     }
                                 }
                             }
@@ -318,7 +354,6 @@ fun ExerciseScreen(
                                             contentDescription = stringResource(id = R.string.pauseOrResume)
                                         )
                                     }
-
                                 }
                             }
                         }
@@ -345,17 +380,6 @@ fun ExerciseScreen(
                             HRText(
                                 hr = tempHeartRate.value
                             )
-
-//                            Icon(
-//                                imageVector = Icons.Default.WatchLater,
-//                                contentDescription = stringResource(id = R.string.duration)
-//                            )
-//                            Text(elapsedTime.value)
-//                            Icon(
-//                                imageVector = Icons.Default._360,
-//                                contentDescription = stringResource(id = R.string.laps)
-//                            )
-//                            Text(text = laps.toString())
                             if (averageHeartRate != null) {
                                 tempAverageHeartRate.value = averageHeartRate
                             }
@@ -385,7 +409,9 @@ fun ExerciseScreen(
             }
         }
 
-        else -> {}
+        else -> {
+            println("여기는 뭘까")
+        }
     }
 }
 
@@ -394,13 +420,38 @@ fun ExerciseScreen(
 // Active state is used to start the ticker, but once started, delivery of ExerciseUpdates shouldn't
 // be relied on to make each tick, instead using the coroutine.
 private fun startTick(
-    chronoTickJob: Job?, scope: CoroutineScope, block: (tickTime: Long) -> Unit
+    chronoTickJob: Job?,
+    scope: CoroutineScope,
+    block: (tickTime: Long) -> Unit,
+    tempAverageHeartRate: MutableState<Double>,
+    averageHeartRate: Double?,
+    tempCalories: MutableState<Double>,
+    calories: Double?,
+    caloriesHistory: MutableList<Double>, // 운동 중에 쌓인 칼로리 기록 리스트
+    heartRateHistory: MutableList<Double> // 운동 중에 쌓인 심박수 기록 리스트
 ): Job? {
     if (chronoTickJob == null || !chronoTickJob.isActive) {
         return scope.launch {
             val tickStart = System.currentTimeMillis()
             while (isActive) {
                 val tickSpan = System.currentTimeMillis() - tickStart
+
+                if (calories != null) {
+                    tempCalories.value = calories
+                    caloriesHistory.add(tempCalories.value)
+                }else{
+                    caloriesHistory.add(tempCalories.value)
+                }
+//                println("칼로리 : ${tempCalories.value}, 큐 사이즈: ${caloriesHistory.size}")
+
+                if (averageHeartRate != null) {
+                    tempAverageHeartRate.value = averageHeartRate
+                    heartRateHistory.add(tempAverageHeartRate.value)
+                }else{
+                    heartRateHistory.add(tempAverageHeartRate.value)
+                }
+//                println("심박수 : ${tempAverageHeartRate.value} 심박수 큐 사이즈: ${heartRateHistory.size}")
+
                 block(tickSpan)
                 delay(CHRONO_TICK_MS)
             }
@@ -409,4 +460,31 @@ private fun startTick(
     return null
 }
 
-const val CHRONO_TICK_MS = 200L
+const val CHRONO_TICK_MS = 1000L
+
+//출력
+private fun printResult(
+    exerciseResult: ExerciseScreenState
+) {
+    println("칼로리 결과 출력 ${exerciseResult.caloriesHistory}")
+
+    var iterator = exerciseResult.caloriesHistory.iterator()
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        print("${element}, ")
+    }
+
+    println()
+
+    println("심박수 결과 출력 ${exerciseResult.heartRateHistory}")
+    iterator = exerciseResult.heartRateHistory.iterator()
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        print("${element}, ")
+    }
+
+    println()
+
+    println("총 결과 출력")
+    exerciseResult.toString()
+}

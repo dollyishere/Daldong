@@ -38,23 +38,6 @@ class HealthServicesRepository @Inject constructor(
 
     private var exerciseService: ForegroundService? = null
 
-    suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
-
-    private suspend fun getExerciseCapabilities() = exerciseClientManager.getExerciseCapabilities()
-
-    suspend fun isExerciseInProgress(): Boolean = exerciseClientManager.isExerciseInProgress()
-
-
-    suspend fun isTrackingExerciseInAnotherApp() =
-        exerciseClientManager.isTrackingExerciseInAnotherApp()
-
-
-    fun prepareExercise() = exerciseService?.prepareExercise()
-    fun startExercise() = exerciseService?.startExercise()
-    fun pauseExercise() = exerciseService?.pauseExercise()
-    fun endExercise() = exerciseService?.endExercise()
-    fun resumeExercise() = exerciseService?.resumeExercise()
-
     var bound = mutableStateOf(false)
 
     var serviceState: MutableState<ServiceState> = mutableStateOf(ServiceState.Disconnected)
@@ -80,6 +63,21 @@ class HealthServicesRepository @Inject constructor(
         }
 
     }
+
+    suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
+
+    private suspend fun getExerciseCapabilities() = exerciseClientManager.getExerciseCapabilities()
+
+    suspend fun isExerciseInProgress(): Boolean = exerciseClientManager.isExerciseInProgress()
+
+    suspend fun isTrackingExerciseInAnotherApp() =
+        exerciseClientManager.isTrackingExerciseInAnotherApp()
+
+    fun prepareExercise() = exerciseService?.prepareExercise()
+    fun startExercise() = exerciseService?.startExercise()
+    fun pauseExercise() = exerciseService?.pauseExercise()
+    fun endExercise() = exerciseService?.endExercise()
+    fun resumeExercise() = exerciseService?.resumeExercise()
 
     fun createService() {
         Intent(applicationContext, ForegroundService::class.java).also { intent ->
