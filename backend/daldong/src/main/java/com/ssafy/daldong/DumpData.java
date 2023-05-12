@@ -194,10 +194,11 @@ public class DumpData implements CommandLineRunner {
         User user = userRepository.getReferenceById((long) 1);
         statisticsRepository.save(Statistics.builder()
                 .user(user)
-                .dailyExTime(0)
+                .dailyExTime(LocalTime.MIN)
                 .dailyKcal(0)
                 .dailyCount(0)
                 .dailyFriend(0)
+                        .dailyPoint(0)
                 .build());
     }
 
