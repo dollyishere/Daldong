@@ -311,28 +311,24 @@ public class DumpData implements CommandLineRunner {
                 .rewardPoint(10)
                 .missionName("test")
                 .qualificationName("KCAL")
-                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
                 .build());
         dailyMissionRepository.save(DailyMission.builder()
                 .missionContent("test")
                 .rewardPoint(10)
                 .missionName("test")
                 .qualificationName("EX_TIME")
-                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
                 .build());
         dailyMissionRepository.save(DailyMission.builder()
                 .missionContent("test")
                 .rewardPoint(10)
                 .missionName("test")
                 .qualificationName("COUNT")
-                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
                 .build());
         dailyMissionRepository.save(DailyMission.builder()
                 .missionContent("test")
                 .rewardPoint(10)
                 .missionName("test")
                 .qualificationName("FRIEND")
-                .missoinDate(new Timestamp(2023, 3, 10, 0, 0, 0, 0))
                 .build());
     }
     private void createUserMission(){
@@ -343,6 +339,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(false)
                 .isReceive(false)
+                .missionDate(LocalDate.of(2023, 3, 10))
                 .build());
         DailyMission dailyMission2 = dailyMissionRepository.findById((long) 2).get();
         userMissionRepository.save(UserMission.builder()
@@ -350,6 +347,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(true)
                 .isReceive(true)
+                .missionDate(LocalDate.of(2023, 3, 10))
                 .build());
         DailyMission dailyMission3 = dailyMissionRepository.findById((long) 3).get();
         userMissionRepository.save(UserMission.builder()
@@ -357,6 +355,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(true)
                 .isReceive(false)
+                .missionDate(LocalDate.of(2023, 3, 10))
                 .build());
         DailyMission dailyMission4 = dailyMissionRepository.findById((long) 4).get();
         userMissionRepository.save(UserMission.builder()
@@ -364,6 +363,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(false)
                 .isReceive(false)
+                .missionDate(LocalDate.of(2023, 3, 10))
                 .build());
     }
 }

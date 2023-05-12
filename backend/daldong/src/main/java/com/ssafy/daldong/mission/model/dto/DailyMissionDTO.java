@@ -17,7 +17,6 @@ public class DailyMissionDTO {
     private String qualificationName;
     private int qualificationNum;
     private int rewardPoint;
-    private Timestamp missionDate;
 
     public static DailyMissionDTO of(DailyMission mission) {
         return DailyMissionDTO.builder()
@@ -27,7 +26,6 @@ public class DailyMissionDTO {
                 .qualificationName(mission.getQualificationName())
                 .qualificationNum(mission.getQualificationNum())
                 .rewardPoint(mission.getRewardPoint())
-                .missionDate(mission.getMissoinDate())
                 .build();
     }
 }

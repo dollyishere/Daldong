@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -13,12 +15,14 @@ public class MissionResDTO {
     private int QualificationCnt;
     private boolean isReceive;
     private boolean isDone;
+    private LocalDate missionDate;
 
     public static MissionResDTO of (UserMission userMission){
         return MissionResDTO.builder()
                 .mission(DailyMissionDTO.of(userMission.getMission()))
                 .isReceive(userMission.isReceive())
                 .isDone(userMission.isDone())
+                .missionDate(userMission.getMissionDate())
                 .build();
     }
 }
