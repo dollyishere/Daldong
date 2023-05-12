@@ -33,7 +33,7 @@ public class ExerciseServiceImpl implements ExerciseService{
     @Override
     public ExerciseResDTO getExercise(Long userId) {
         logger.info("ExerciseServiceImpl.getExercise({})",userId);
-        Statistics statistics = stasticsRepository.findByUser_UserId(userId);
+        Statistics statistics = stasticsRepository.findByUser_UserId(userId).orElseThrow();
 
         logger.info("statistics : {}",statistics);
         return ExerciseResDTO.builder()
@@ -43,6 +43,7 @@ public class ExerciseServiceImpl implements ExerciseService{
                 .dailyKcal(statistics.getDailyKcal())
                 .dailyCount(statistics.getDailyCount())
                 .dailyFriend(statistics.getDailyFriend())
+                .dailyPoint(statistics.getDailyPoint())
                 .build();
     }
 
@@ -54,7 +55,8 @@ public class ExerciseServiceImpl implements ExerciseService{
         LocalDateTime startDate = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime endDate = startDate.plusMonths(1);
 
-        List<ExerciseLog> exerciseLogList = exerciseLogRepository.findByUser_UserIdAndExerciseEndTimeBetween(userId, startDate, endDate);
+        List<ExerciseLog> exerciseLogList = exerciseLogRepository.findByUser_UserIdAndExerciseEndTimeBetween(userId, startDate, endDate)
+                .orElseThrow();
 
         Map<LocalDate, List<ExerciseLog>> dailyExerciseLogs = new LinkedHashMap<>();
         for (ExerciseLog exerciseLog : exerciseLogList) {

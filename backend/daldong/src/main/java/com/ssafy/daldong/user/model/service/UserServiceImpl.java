@@ -4,6 +4,8 @@ package com.ssafy.daldong.user.model.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.ssafy.daldong.exercise.model.entity.DailyExerciseLog;
+import com.ssafy.daldong.exercise.model.repository.DailyExerciseLogRepository;
 import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
@@ -23,7 +25,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService{
+    private final DailyExerciseLogRepository dailyExerciseLogRepository;
     private final StatisticsRepository statisticsRepository;
     private final UserRepository userRepository;
     private final AssetRepository assetRepository;
@@ -129,9 +134,24 @@ public class UserServiceImpl implements UserService{
     @Scheduled(cron = "0 0 0 * * ?")
     public void initStatistics(){
         log.info("{} | Statistics 초기화 시작", LocalDateTime.now());
-        List<Statistics> statistics = statisticsRepository.findAll();
-        statistics.forEach(Statistics::initTable);
-        statisticsRepository.saveAll(statistics);
+        List<Statistics> statisticsList = statisticsRepository.findAll();
+
+        List<DailyExerciseLog> dailyExerciseLogs = new ArrayList<>();
+        for (Statistics statistics: statisticsList) {
+            DailyExerciseLog dailyExerciseLog = DailyExerciseLog.builder()
+                    .user(statistics.getUser())
+                    .exDate(LocalDate.now().minusDays(1))
+                    .exTime(statistics.getDailyExTime())
+                    .kcal(statistics.getDailyKcal())
+                    .count(statistics.getDailyCount())
+                    .point(statistics.getDailyPoint())
+                    .build();
+            dailyExerciseLogs.add(dailyExerciseLog);
+        }
+        dailyExerciseLogRepository.saveAll(dailyExerciseLogs);
+
+        statisticsList.forEach(Statistics::initTable);
+        statisticsRepository.saveAll(statisticsList);
         log.info("{} | Statistics 초기화 종료", LocalDateTime.now());
     }
 

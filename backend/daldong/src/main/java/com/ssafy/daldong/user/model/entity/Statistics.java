@@ -6,6 +6,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "statistics")
@@ -26,7 +27,7 @@ public class Statistics implements Serializable {
     private User user;
 
     @Column(name = "daily_ex_time", nullable = false)
-    private int dailyExTime;
+    private LocalTime dailyExTime;
 
     @Column(name = "daily_kcal", nullable = false)
     private int dailyKcal;
@@ -36,11 +37,13 @@ public class Statistics implements Serializable {
 
     @Column(name = "daily_friend")
     private int dailyFriend;
-
+    @Column(name = "daily_point")
+    private int dailyPoint;
     public void initTable() {
-        this.dailyExTime = 0;
+        this.dailyExTime = LocalTime.MIN;
         this.dailyKcal = 0;
         this.dailyCount = 0;
         this.dailyFriend = 0;
+        this.dailyPoint = 0;
     }
 }
