@@ -1,4 +1,4 @@
-package com.ssafy.daldong.user.model.controller;
+package com.ssafy.daldong.user.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
