@@ -1,16 +1,15 @@
 package com.ssafy.daldong.mission.model.entity;
 
-import com.ssafy.daldong.mission.model.dto.DailyMissionDTO;
 import com.ssafy.daldong.user.model.entity.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "userMission")
-@IdClass(UserMissionId.class)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,12 +17,15 @@ import javax.persistence.*;
 public class UserMission {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_mission_id", nullable = false)
+    private long userMissionId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mission_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -34,6 +36,9 @@ public class UserMission {
 
     @Column(name = "is_done", nullable = false)
     private boolean isDone;
+
+    @Column(name = "mission_date", nullable = false)
+    private LocalDate missionDate;
 
     public void receive() {
         isReceive = true;
