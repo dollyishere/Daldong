@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://70.12.247.124:8080")
+                .allowedOrigins("http://k8a104.p.ssafy.io:8080")
                 .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.HEAD.name(),
