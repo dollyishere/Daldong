@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class MissionResDTO {
+    private Long userMissionId;
     private DailyMissionDTO mission;
     private int QualificationCnt;
     private boolean isReceive;
@@ -19,6 +20,7 @@ public class MissionResDTO {
 
     public static MissionResDTO of (UserMission userMission){
         return MissionResDTO.builder()
+                .userMissionId(userMission.getUserMissionId())
                 .mission(DailyMissionDTO.of(userMission.getMission()))
                 .isReceive(userMission.isReceive())
                 .isDone(userMission.isDone())

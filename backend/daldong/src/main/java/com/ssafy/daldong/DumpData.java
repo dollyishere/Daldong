@@ -339,7 +339,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(false)
                 .isReceive(false)
-                .missionDate(LocalDate.of(2023, 3, 10))
+                .missionDate(LocalDate.of(2023, 5, 12))
                 .build());
         DailyMission dailyMission2 = dailyMissionRepository.findById((long) 2).get();
         userMissionRepository.save(UserMission.builder()
@@ -347,7 +347,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(true)
                 .isReceive(true)
-                .missionDate(LocalDate.of(2023, 3, 10))
+                .missionDate(LocalDate.of(2023, 5, 12))
                 .build());
         DailyMission dailyMission3 = dailyMissionRepository.findById((long) 3).get();
         userMissionRepository.save(UserMission.builder()
@@ -355,7 +355,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(true)
                 .isReceive(false)
-                .missionDate(LocalDate.of(2023, 3, 10))
+                .missionDate(LocalDate.of(2023, 5, 12))
                 .build());
         DailyMission dailyMission4 = dailyMissionRepository.findById((long) 4).get();
         userMissionRepository.save(UserMission.builder()
@@ -363,7 +363,7 @@ public class DumpData implements CommandLineRunner {
                 .user(user)
                 .isDone(false)
                 .isReceive(false)
-                .missionDate(LocalDate.of(2023, 3, 10))
+                .missionDate(LocalDate.of(2023, 5, 12))
                 .build());
     }
 }
