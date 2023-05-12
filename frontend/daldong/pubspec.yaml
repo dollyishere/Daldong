@@ -41,6 +41,7 @@ dependencies:
   webview_flutter: ^4.2.0
   flutter_inappwebview: ^5.7.2+3
   firebase_core: ^2.10.0
+  firebase_core_platform_interface: 4.6.0
   firebase_auth: ^4.2.2
   google_sign_in: ^6.1.0
   flutter_secure_storage: ^8.0.0
@@ -49,6 +50,7 @@ dependencies:
   http: ^0.13.6
   flutter_appauth: ^5.0.0
   geolocator: ^9.0.2
+  group_button: ^5.2.2
 
 dev_dependencies:
   flutter_test:

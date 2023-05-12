@@ -18,31 +18,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   dynamic userEmail = '';
 
   checkUserState() async {
-    var name = await storage.read(key: 'nickName');
-    var img = await storage.read(key: 'picture');
-    var email = await storage.read(key: 'googleEmail');
-    setState(() {
-      userName = name;
-      userProfileImg = img;
-      userEmail = email;
-    });
-    if (userName == null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      ); // 로그인 페이지로 이동
-    }
+    // var name = await storage.read(key: 'nickName');
+    // var img = await storage.read(key: 'picture');
+    // var email = await storage.read(key: 'googleEmail');
+    // setState(() {
+    //   userName = name;
+    //   userProfileImg = img;
+    //   userEmail = email;
+    // });
+    // if (userName == null) {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(
+    //       builder: (context) => LoginScreen(),
+    //     ),
+    //   ); // 로그인 페이지로 이동
+    // }
   }
 
   @override
   void initState() {
     super.initState();
-// 비동기로 flutter secure storage 정보를 불러오는 작업
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkUserState();
     });
-    print('haha');
   }
 
   void signOut() async {
@@ -73,10 +72,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 50, // 원의 반지름 설정
-                backgroundImage: NetworkImage(userProfileImg ?? ""), // 이미지 가져오기
-              ),
+              // CircleAvatar(
+              //   radius: 50, // 원의 반지름 설정
+              //   backgroundImage: NetworkImage(userProfileImg ?? ""), // 이미지 가져오기
+              // ),
               Container(
                 width: 240,
                 height: 40,
