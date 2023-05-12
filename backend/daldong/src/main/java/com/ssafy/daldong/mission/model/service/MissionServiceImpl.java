@@ -1,7 +1,9 @@
 package com.ssafy.daldong.mission.model.service;
 
 import com.ssafy.daldong.mission.model.dto.MissionResDTO;
+import com.ssafy.daldong.mission.model.entity.DailyMission;
 import com.ssafy.daldong.mission.model.entity.UserMission;
+import com.ssafy.daldong.mission.model.repository.DailyMissionRepository;
 import com.ssafy.daldong.mission.model.repository.UserMissionRepository;
 import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
@@ -9,10 +11,13 @@ import com.ssafy.daldong.user.model.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +27,16 @@ public class MissionServiceImpl implements MissionService{
     private final UserMissionRepository userMissionRepository;
     private final StatisticsRepository statisticsRepository;
     private final UserRepository userRepository;
+    private final DailyMissionRepository dailyMissionRepository;
 
     @Autowired
     public MissionServiceImpl(UserMissionRepository userMissionRepository, StatisticsRepository statisticsRepository,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              DailyMissionRepository dailyMissionRepository) {
         this.userMissionRepository = userMissionRepository;
         this.statisticsRepository = statisticsRepository;
         this.userRepository = userRepository;
+        this.dailyMissionRepository = dailyMissionRepository;
     }
 
     @Override
@@ -83,6 +91,30 @@ public class MissionServiceImpl implements MissionService{
         userMissionRepository.save(userMission);
         userRepository.save(user);
         return true;
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void initMission(){
+        logger.info("{}| 미션 초기화 시작", LocalDateTime.now());
+        List<User> users = userRepository.findAll();
+        List<DailyMission> dailyMissions = dailyMissionRepository.findAll();
+
+        List<UserMission> userMissionList = new ArrayList<>();
+        for (User user : users) {
+            for (DailyMission mission : dailyMissions) {
+                UserMission userMission = UserMission.builder()
+                        .user(user)
+                        .mission(mission)
+                        .isReceive(false)
+                        .isDone(false)
+                        .missionDate(LocalDate.now())
+                        .build();
+                userMissionList.add(userMission);
+            }
+        }
+
+        userMissionRepository.saveAll(userMissionList);
+        logger.info("{}| 미션 초기화 종료", LocalDateTime.now());
     }
 }
 
