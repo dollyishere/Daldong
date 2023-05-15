@@ -15,7 +15,7 @@ public class FriendSearchDTO {
     private String nickname;
     private int userLevel;
     private Long mainPetId;
-    private boolean isFriend;
+    private int isFriend;
     public FriendSearchDTO fromEntity(User user){
         return FriendSearchDTO.builder()
                 .userId(user.getUserId())
