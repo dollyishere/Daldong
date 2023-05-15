@@ -12,8 +12,9 @@ class Asset(Base):
 
     asset_id = Column(BigInteger, primary_key=True)
     asset_name = Column(String(255), nullable=False)
+    asset_krname = Column(String(255), nullable=False)
     asset_price = Column(Integer, nullable=False)
-    asset_type = Column(BIT(1), nullable=False)
+    is_pet = Column(BIT(1), nullable=False)
     asset_unlock_level = Column(Integer, nullable=False)
 
 
@@ -131,12 +132,17 @@ class Friend(Base):
     friend = relationship('User', primaryjoin='Friend.friend_id == User.user_id')
     user = relationship('User', primaryjoin='Friend.user_id == User.user_id')
 
+class FriendRequest(Base):
+    __tablename__ = 'friend_request'
+    receiver_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True, nullable=False)
+    sender_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True, nullable=False, index=True)
 
-t_friend_request = Table(
-    'friend_request', metadata,
-    Column('receiver_id', ForeignKey('users.user_id'), primary_key=True, nullable=False),
-    Column('sender_id', ForeignKey('users.user_id'), primary_key=True, nullable=False, index=True)
-)
+
+# t_friend_request = Table(
+#     'friend_request', metadata,
+#     Column('receiver_id', ForeignKey('users.user_id'), primary_key=True, nullable=False),
+#     Column('sender_id', ForeignKey('users.user_id'), primary_key=True, nullable=False, index=True)
+# )
 
 
 class Statistic(Base):
