@@ -4,6 +4,7 @@ import com.ssafy.daldong.friend.model.dto.FriendDto;
 import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
+import com.ssafy.daldong.friend.model.repository.FriendRequestRepository;
 import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class FriendServiceImpl implements FriendService{
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
+    private final FriendRequestRepository friendRequestRepository;
 
     @Override
     public void createFriend(long userId, long friendId) {
@@ -105,7 +107,19 @@ public class FriendServiceImpl implements FriendService{
         }
         long friendId=user.getUserId();
         FriendSearchDTO friendSearchDTO= new FriendSearchDTO().fromEntity(user);
-        friendSearchDTO.setFriend(friendRepository.existsByUser_UserIdAndFriend_UserId(userId,friendId));
+        boolean isFriend = friendRepository.existsByUser_UserIdAndFriend_UserId(userId,friendId);
+        boolean isRequest = friendRequestRepository.existsBySender_UserIdAndReceiver_UserId(userId,friendId );
+        boolean isReceive =friendRequestRepository.existsBySender_UserIdAndReceiver_UserId(friendId,userId );
+        if(isFriend){
+            friendSearchDTO.setIsFriend(3);
+        } else if (isReceive) {
+            friendSearchDTO.setIsFriend(2);
+        }else if (isRequest) {
+            friendSearchDTO.setIsFriend(1);
+        }
+        else {
+            friendSearchDTO.setIsFriend(0);
+        }
         return friendSearchDTO;
     }
 
