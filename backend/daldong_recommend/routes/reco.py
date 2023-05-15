@@ -8,13 +8,13 @@ router = APIRouter(
 )  # Route 분리
 
 
-@router.get("/")  # Route Path
-def read_users(db: Session = Depends(get_db)):
-    res = exerciserecommend.read_users(db=db)  # apis 호출
-
-    return {"res": res}  # 결과
+# @router.get("/")  # Route Path
+# def read_users(db: Session = Depends(get_db)):
+#     res = exerciserecommend.read_users(db=db)  # apis 호출
+#
+#     return {"res": res}  # 결과
 
 @router.get("/{user_id}")
-async def ex_get(user_id: int, whether: str, template: float, db: Session = Depends(get_db)):
+async def ex_get(user_id: int, whether: str = "Clear", template: float = 20, db: Session = Depends(get_db)):
     res = exerciserecommend.ex_get(db=db, user_id=user_id, whether=whether, template=template)
     return {"Exercise": res}
