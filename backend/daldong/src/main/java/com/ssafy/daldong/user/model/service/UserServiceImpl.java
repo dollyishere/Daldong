@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService{
     }
     public UserDetailDTO mypage(long uid) {
 
-        return new UserDetailDTO().fromEntity(userRepository.findByUserId(uid));
+        return new UserDetailDTO().fromEntity(userRepository.findByUserId(uid).orElseThrow());
 
     }
 
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void updateUser(long uid, UserUpdateDTO userUpdateDTO) {
-        User user = userRepository.findByUserId(uid);
+        User user = userRepository.findByUserId(uid).orElseThrow();
         user.setUpdate(userUpdateDTO);
         userRepository.save(user);
     }
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService{
             return false;
         }
         else{
-            user = userRepository.findByUserId(uid);
+            user = userRepository.findByUserId(uid).orElseThrow();
             user.setNickname(nickname);
             userRepository.save(user);
             return true;
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void logout(long uid){
-       User user =userRepository.findByUserId(uid);
+       User user =userRepository.findByUserId(uid).orElseThrow();
        String userId=user.getUserUid();
       redisService.deleteValues(userId);
     }

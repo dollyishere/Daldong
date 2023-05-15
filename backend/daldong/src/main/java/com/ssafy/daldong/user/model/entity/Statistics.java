@@ -46,4 +46,11 @@ public class Statistics implements Serializable {
         this.dailyFriend = 0;
         this.dailyPoint = 0;
     }
+    public void sum(LocalTime time, int kcal, int count) {
+        this.dailyExTime.plusHours(time.getHour())
+                .plusMinutes(time.getMinute())
+                .plusSeconds(time.getSecond());
+        this.dailyKcal += kcal;
+        this.dailyCount += count;
+    }
 }
