@@ -4,6 +4,7 @@ package com.ssafy.daldong.main.controller;
 import com.ssafy.daldong.global.response.ResponseDefault;
 import com.ssafy.daldong.jwt.JwtTokenUtil;
 import com.ssafy.daldong.main.model.dto.AssetDTO;
+import com.ssafy.daldong.main.model.dto.AssetMainDTO;
 import com.ssafy.daldong.main.model.dto.AssetNameDTO;
 import com.ssafy.daldong.main.model.dto.MainpageDTO;
 import com.ssafy.daldong.main.model.service.MainpageService;
@@ -138,13 +139,13 @@ public class MainController {
 
     }
     @PutMapping("/inven/set")
-    public ResponseEntity<?> setMainAsset(@RequestHeader(name = "accessToken") String accessToken,@RequestBody long assetId){
+    public ResponseEntity<?> setMainAsset(@RequestHeader(name = "accessToken") String accessToken,@RequestBody AssetMainDTO assetMainDTO){
        // 해당 에셋을 메인으로 세팅
         //user가 보유중인 에셋이 맞는지 확인 필요 ->비정상적인 접근 방지
         long uid=jwtTokenUtil.getUserId(accessToken);
         ResponseDefault responseDefault = null;
         try{
-            Boolean isSetAsset=mainService.setMainAsset(uid,assetId);
+            Boolean isSetAsset=mainService.setMainAsset(uid,assetMainDTO.getAssetId());
 
             if (isSetAsset) {//유저가 보유한 에셋이 맞다
 
