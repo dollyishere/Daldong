@@ -28,7 +28,7 @@ public class MainpageServiceImpl implements MainpageService{
 
     @Override
     public MainpageDTO mainpage(long uid) {
-        MainpageDTO mainpageDTO= new MainpageDTO().fromEntity(userRepository.findByUserId(uid));
+        MainpageDTO mainpageDTO= new MainpageDTO().fromEntity(userRepository.findByUserId(uid).orElseThrow());
         return mainpageDTO;
     }
 
@@ -39,7 +39,7 @@ public class MainpageServiceImpl implements MainpageService{
         //최종 List 출력
 
         //1
-        int userLevel=userRepository.findByUserId(uid).getUserLevel();
+        int userLevel=userRepository.findByUserId(uid).orElseThrow().getUserLevel();
         //#1 전체 에셋 리스트 호출
         List<AssetDTO> assets= new AssetDTO().toDtoList(assetRepository.findAll());
         for(AssetDTO assetDTO:assets) {
@@ -67,7 +67,7 @@ public class MainpageServiceImpl implements MainpageService{
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public int buyAsset(long uid, long assetId) {
-        User user=userRepository.findByUserId(uid);
+        User user=userRepository.findByUserId(uid).orElseThrow();
         int userLevel=user.getUserLevel();
         int userPoint=user.getUserPoint();
 
@@ -99,7 +99,7 @@ public class MainpageServiceImpl implements MainpageService{
             return false;
         }
         else{
-            User user =userRepository.findByUserId(uid);
+            User user =userRepository.findByUserId(uid).orElseThrow();
             Asset asset=assetRepository.findByAssetId(assetId);
             if(asset.isPet()){//선택한 에셋이 펫이다
                 user.setMainPet(asset);
@@ -117,7 +117,7 @@ public class MainpageServiceImpl implements MainpageService{
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Boolean setPetName(long uid, long assetId, String setAssetName) {
-        User user=userRepository.findByUserId(uid);
+        User user=userRepository.findByUserId(uid).orElseThrow();
         Asset asset=assetRepository.findByAssetId(assetId);
         UserAsset userAsset=userAssetRepository.findByUserIdAndAssetId(uid,assetId).orElse(null);
         if(userAsset==null){//유저가 보유하지않은 에셋

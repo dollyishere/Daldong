@@ -1,6 +1,8 @@
 package com.ssafy.daldong.exercise.controller;
 
+import com.ssafy.daldong.exercise.model.dto.response.ExerciseLogResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseResDTO;
+import com.ssafy.daldong.exercise.model.repository.ExerciseLogRepository;
 import com.ssafy.daldong.exercise.model.service.ExerciseService;
 import com.ssafy.daldong.global.response.ResponseDefault;
 import com.ssafy.daldong.jwt.JwtTokenUtil;
@@ -14,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 @RestController
@@ -24,6 +27,7 @@ public class ExerciseController {
     private static final Logger logger = LogManager.getLogger(ExerciseController.class);
     private final ExerciseService exerciseService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ExerciseLogRepository exerciseLogRepository;
 
     /**
      * 운동 메인 페이지 조회
@@ -76,6 +80,29 @@ public class ExerciseController {
                     .success(true)
                     .messege("SUCCESS")
                     .data(exerciseMonthlyResDTOList)
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.OK);
+        } catch (Exception e) {
+            responseDefault = ResponseDefault.builder()
+                    .success(false)
+                    .messege("FAIL")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> endExercise(@RequestBody ExerciseLogResDTO exerciseLogResDTO) throws ExecutionException, InterruptedException {
+        logger.info("ExerciseController.endExercise");
+
+        ResponseDefault responseDefault;
+        try{
+            exerciseService.endExercise(exerciseLogResDTO);
+            responseDefault = ResponseDefault.builder()
+                    .success(true)
+                    .messege("SUCCESS")
+                    .data(null)
                     .build();
             return new ResponseEntity<>(responseDefault, HttpStatus.OK);
         } catch (Exception e) {
