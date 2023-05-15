@@ -9,5 +9,5 @@ app.include_router(friend_router) # 다른 route파일들을 불러와 포함시
 @app.get("/") # Route Path
 def index():
     return {
-        "Python": "Framework",
+        "잘되나요?": "잘됩니다.",
     }
