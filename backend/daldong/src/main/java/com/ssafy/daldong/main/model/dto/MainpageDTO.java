@@ -16,9 +16,9 @@ public class MainpageDTO {
     private int userExp;
     private int requiredExp;
     private int userPoint;
-    private Long mainBackId;
-    private Long mainPetId;
+    private String mainBackName;
     private String mainPetName;
+    private String mainPetCustomName;
 
     public MainpageDTO fromEntity(User user) {
         return MainpageDTO.builder()
@@ -27,9 +27,9 @@ public class MainpageDTO {
                 .userExp(user.getUserExp())
                 .requiredExp(user.getRequiredExp())
                 .userPoint(user.getUserPoint())
-                .mainBackId(AssetDTO.fromEntity(user.getMainBack()).getAssetId())
-                .mainPetId(AssetDTO.fromEntity(user.getMainPet()).getAssetId())
-                .mainPetName(user.getMainPetName())
+                .mainBackName(AssetDTO.fromEntity(user.getMainBack()).getAssetName())
+                .mainPetName(AssetDTO.fromEntity(user.getMainPet()).getAssetName())
+                .mainPetCustomName(user.getMainPetName())
                 .build();
     }
 }

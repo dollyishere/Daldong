@@ -24,9 +24,9 @@ public class UserJoinDTO {
     private int userExp;
     private int requiredExp;
     private int userPoint;
-    private Long mainBackId;
-    private Long mainPetId;
+    private String mainBackName;
     private String mainPetName;
+    private String mainPetCustomName;
 
 
     public User toEntity(User user){
