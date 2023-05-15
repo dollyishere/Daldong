@@ -51,8 +51,11 @@ public class MainpageServiceImpl implements MainpageService{
                 assetDTO.setAssetCustomName(userAsset.getPetName());
                 assetDTO.setExp(userAsset.getPetExp());
             }
-            else{
+            else if(userLevel>=assetDTO.getAssetUnlockLevel()){
                 assetDTO.setAssetStatus(1);
+            }
+            else{
+                assetDTO.setAssetStatus(0);
             }
         }
             //????? 에셋의 id와 List index가 일치할까? -> Test 필요
