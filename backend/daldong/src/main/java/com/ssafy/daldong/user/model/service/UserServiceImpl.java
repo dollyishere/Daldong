@@ -63,16 +63,19 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void join(String uid,UserJoinDTO userJoinDTO) {
-        userJoinDTO.setMainBackId(1L);//참새
-        userJoinDTO.setMainPetId(3L);//아직 몇번인지 모름 임의 세팅
+        userJoinDTO.setMainBackName("Sparrow");//참새
+        userJoinDTO.setMainBackName("Island_13");//아직 몇번인지 모름 임의 세팅
         userJoinDTO.setUserUId(uid);
-        Asset assetBack= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
-        Asset assetPet= assetRepository.findByAssetId(userJoinDTO.getMainBackId());
+        Asset assetBack= assetRepository.findByAssetId(1001L);//백 기본 값
+        Asset assetPet= assetRepository.findByAssetId(1L);//에셋 기본 값
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
         userRepository.save(user);
         user=userRepository.findByUserUid(userJoinDTO.getUserUId()).orElse(null);
-        userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),"참새"));
-        userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetBack.getAssetId(),"초원"));
+        if(user!=null){
+            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),"참새"));
+            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetBack.getAssetId(),"시냇물"));
+        }
+
     }
 
     @Override
