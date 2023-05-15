@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssetMainDTO {
+public class AssetIdDTO {
     private long assetId;
 }
