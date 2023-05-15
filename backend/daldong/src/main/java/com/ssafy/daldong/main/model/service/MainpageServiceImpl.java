@@ -43,10 +43,7 @@ public class MainpageServiceImpl implements MainpageService{
         //#1 전체 에셋 리스트 호출
         List<AssetDTO> assets= new AssetDTO().toDtoList(assetRepository.findAll());
         for(AssetDTO assetDTO:assets) {
-            if(assetDTO.getAssetUnlockLevel()>userLevel){
-                //여기 이상은 조회할 필요없다. ->에셋이 해금레벨 오름차순이므로.
-                break;
-            }
+
             UserAsset userAsset=userAssetRepository.findByUserIdAndAssetId(uid,assetDTO.getAssetId()).orElse(null);
 
             if(userAsset!=null){//구매한 에셋이다 ->변경사항 : 상태, 이름, 경험치
