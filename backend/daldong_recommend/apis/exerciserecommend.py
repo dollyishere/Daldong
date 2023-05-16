@@ -11,7 +11,7 @@ def read_user_id(db, user_uid: str):
     return user_id
 
 # 운동 추천 코드
-def ex_get(db, user_id: int, whether: str = "Clear", template: float = 20):
+def ex_get(db, user_id: int, whether: str = "Clear", temperature: float = 20):
     # user아이디 확인해서 유저 정보 받아옴
     user = read.get_user(db, user_id)
     # 정보 전처리 과정
@@ -35,7 +35,7 @@ def ex_get(db, user_id: int, whether: str = "Clear", template: float = 20):
     else:
         bmi_grade = 5
 
-    if whether in ["Clear", "Clouds"] and 15 <= template <= 30:
+    if whether in ["Clear", "Clouds"] and 15 <= temperature <= 30:
         space = ["0", "1"]
     else:
         space = ["0"]
