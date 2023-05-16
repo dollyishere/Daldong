@@ -1,13 +1,11 @@
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
-import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
+import 'package:daldong/screens/mypage_screen/mypage_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:daldong/screens/profile_screen/profile_screen.dart';
 import 'package:daldong/screens/home_screen/home_screen.dart';
 
 class RootScreen extends StatefulWidget {
@@ -49,7 +47,7 @@ class _RootScreenState extends State<RootScreen> {
       '/': MissionScreen(),
     },
     4: {
-      '/': ProfileScreen(),
+      '/': MypageScreen(),
     },
   };
 

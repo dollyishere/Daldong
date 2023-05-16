@@ -40,14 +40,19 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
+    print("credential $credential");
 
     // Once signed in, return the UserCredential
     final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    print("userCredential $userCredential");
     final idTokenResult = await userCredential.user!.getIdToken();
+    print("idTokenResult $idTokenResult");
     await storage.write(key: "idToken", value: idTokenResult);
     print("middle");
     // Try logging in
     bool isLoggedIn = await login();
+    String? nickname = await storage.read(key: "nickname");
+    print(nickname);
     print(isLoggedIn);
     print("end");
     // print(isLoggedIn);

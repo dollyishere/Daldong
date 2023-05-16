@@ -82,3 +82,25 @@ Future<dynamic> postUser({
     fail('HTTP 요청 처리 중 오류 발생: $error');
   }
 }
+
+Future<dynamic> getUserInfo({
+  required dynamic Function(dynamic) success,
+  required Function(String error) fail,
+}) async {
+  try {
+    Future<String?> futureString = storage.read(key: "accessToken");
+    String? accessToken = await futureString;
+    final jsonResponse = await http.get(
+      Uri.parse("$baseUrl/main/"),
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "accessToken": "$accessToken",
+      }
+    );
+    dynamic response = await jsonDecode(utf8.decode(jsonResponse.bodyBytes));
+    return success(response);
+  } catch (error) {
+    fail('HTTP 요청 처리 중 오류 발생: $error');
+  }
+}
+

@@ -4,7 +4,7 @@ import 'package:daldong/screens/friend_screen/friend_screen.dart';
 import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
-import 'package:daldong/screens/profile_screen/profile_screen.dart';
+import 'package:daldong/screens/mypage_screen/mypage_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:daldong/screens/signin_screen/signin_screen.dart';
 import 'package:daldong/screens/splash_screen/splash_screen.dart';
@@ -77,7 +77,7 @@ void main() async {
         '/inventory': (context) => InventoryScreen(),
         '/login': (context) => LoginScreen(),
         '/signin': (context) => SigninScreen(),
-        '/profile': (context) => ProfileScreen(),
+        '/profile': (context) => MypageScreen(),
         '/exercise': (context) => ExerciseScreen(),
         '/exercise_detail': (context) => ExerciseDetailScreen(),
         '/friend': (context) => FriendScreen(),
