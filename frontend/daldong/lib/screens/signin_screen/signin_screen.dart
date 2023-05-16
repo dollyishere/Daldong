@@ -48,64 +48,13 @@ class _SigninScreenState extends State<SigninScreen> {
     }
   }
   void _handleStepCancel() async {
-    String? uid = await storage.read(key: 'uid');
-    print(uid);
-
-    bool isSignedIn = false;
-    bool isLoggedIn = false;
-    if (_formKey1.currentState!.validate()) {
-      _formKey1.currentState!.save();
-
-      Map<String, dynamic> body = {
-        'nickname': _nickname,
-      };
-      await postUser(
-        success: (dynamic response) async {
-          // 새로운 유저 생성 성공
-          print("성공?!?!?!");
-          setState(() {
-            isSignedIn = true;
-
-          });
-        },
-        fail: (error){
-          print("회원가입 호출 오류: $error");
-        },
-        body: body,
-        uid: uid!,
-      );
-      if (isSignedIn == true) {
-        isLoggedIn = await login();
-        if (isLoggedIn != false){
-          setState(() {
-            _isLoggedIn = isLoggedIn;
-          });
-        }
-      }
-
-      print("_isLoggedIn: $_isLoggedIn");
-      if (_isLoggedIn == true){
-        Navigator.pushReplacementNamed(context, '/home');
-      } else{
-        print("로그인 오류 발생");
-        // TODO: 모달 띄우기?
-      }
-      print("여기 오지 마");
-
-      // Reset form data and current step
-      setState(() {
-        _currentStep = 0;
-        _nickname = "";
-        _age = 0;
-        _height = 0;
-        _weight = 0;
-      });
-    }
+    setState(() {
+      _currentStep -= 1;
+    });
   }
 
   void _handleComplete() async {
     String? uid = await storage.read(key: 'uid');
-    print(uid);
 
     bool isSignedIn = false;
     bool isLoggedIn = false;
@@ -127,7 +76,6 @@ class _SigninScreenState extends State<SigninScreen> {
           print("성공?!?!?!");
           setState(() {
             isSignedIn = true;
-
           });
         },
         fail: (error){
@@ -168,7 +116,6 @@ class _SigninScreenState extends State<SigninScreen> {
           setState(() {
             _isLoading = false;
             _isNicknameChecked = true;
-
             if (response.statusCode == 200) {
               _isValidatedNickname = true;
             } else {
@@ -176,7 +123,6 @@ class _SigninScreenState extends State<SigninScreen> {
             }
           });
         });
-
       },
       fail: (error) {
         print('닉네임 중복 확인 호출 오류: $error');
@@ -200,17 +146,25 @@ class _SigninScreenState extends State<SigninScreen> {
 
   @override
   void initState() {
+    final RegExp nicknameRegex = RegExp(r'^[a-zA-Zㄱ-ㅎ가-힣0-9\s]+$');
+
     super.initState();
     _nicknameController.addListener(() {
+
       if (_isNicknameChecked == true){
         setState(() {
           _isNicknameChecked = false;
+          _isValidatedNickname = false;
         });
       }
+
       // Remove any trailing whitespace characters
       String currentValue = _nicknameController.text.trim();
       if (currentValue.length > 6) {
         currentValue = currentValue.substring(0, 7);
+      }
+      if (!nicknameRegex.hasMatch(currentValue[currentValue.length - 1])) {
+        currentValue = currentValue.substring(0, currentValue.length - 1);
       }
       // setState 필요할까?
       setState(() {
@@ -260,7 +214,6 @@ class _SigninScreenState extends State<SigninScreen> {
                     colorScheme: Theme.of(context).colorScheme.copyWith(
                       primary: Theme.of(context).primaryColor,
                       secondary: Theme.of(context).secondaryHeaderColor,
-
                     ),
                   ),
                   child: Center(
@@ -270,14 +223,14 @@ class _SigninScreenState extends State<SigninScreen> {
                           children: [
                             const SizedBox(height: 30,),
                             if (_currentStep == 0) ElevatedButton(
-                              style: _isValidatedNickname
+                              style: _isValidatedNickname && _isNicknameChecked
                                 ? null
                                 : TextButton.styleFrom(
                                   foregroundColor: Colors.black54,
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                 ),
-                              onPressed: _isValidatedNickname ? dtl.onStepContinue : null,
+                              onPressed: _isValidatedNickname && _isNicknameChecked && _formKey1.currentState?.validate() == true? dtl.onStepContinue : null,
                               child: const Text("다음"),
                             ),
                             if (_currentStep == 0) ElevatedButton(
@@ -288,7 +241,7 @@ class _SigninScreenState extends State<SigninScreen> {
                                     shadowColor: Colors.transparent,
                                     )
                                   : null,
-                                onPressed: _checkNickname,
+                                onPressed: _formKey1.currentState?.validate() == true ? _checkNickname : null,
                                 child: const Text("닉네임 중복 확인"),
                             ),
                             if (_currentStep == 1) ElevatedButton(
@@ -302,7 +255,7 @@ class _SigninScreenState extends State<SigninScreen> {
                                 shadowColor: Colors.transparent,
                               ),
                               onPressed: _handleStepCancel,
-                              child: const Text("나중에 입력할래요"),
+                              child: const Text("뒤로"),
                             ),
                           ],
                         );
@@ -313,7 +266,7 @@ class _SigninScreenState extends State<SigninScreen> {
                       steps: [
                         Step(
                           isActive: _currentStep == 0,
-                          title: const Text('필수 정보 입력'),
+                          title: const Text('닉네임 입력'),
                           content: Container(
                             alignment: Alignment.centerLeft,
                             child: Form(
@@ -343,7 +296,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         ),
                         Step(
                           isActive: _currentStep == 1,
-                          title: const Text('선택 정보 입력'),
+                          title: const Text('신체 정보 입력'),
                           content: Form(
                             key: _formKey2,
                             child: Column(
@@ -366,7 +319,7 @@ class _SigninScreenState extends State<SigninScreen> {
                                               if (value == null || value.isEmpty) {
                                                 return '';
                                               }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! > 100) {
+                                              if (int.tryParse(value) == null || int.tryParse(value)! < 5 || int.tryParse(value)! > 100) {
                                                 return '';
                                               }
                                               return null;
@@ -394,13 +347,13 @@ class _SigninScreenState extends State<SigninScreen> {
                                               if (value == null || value.isEmpty) {
                                                 return '';
                                               }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! > 250) {
+                                              if (int.tryParse(value) == null || int.tryParse(value)! < 80 || int.tryParse(value)! > 250) {
                                                 return '';
                                               }
                                               return null;
                                             },
                                             onSaved: (value) {
-                                              _age = int.tryParse(value!)!;
+                                              _height = int.tryParse(value!)!;
                                             },
                                             decoration: const InputDecoration(
                                               labelText: '키',
@@ -422,13 +375,13 @@ class _SigninScreenState extends State<SigninScreen> {
                                               if (value == null || value.isEmpty) {
                                                 return '';
                                               }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! > 200) {
+                                              if (int.tryParse(value) == null || int.tryParse(value)! < 30 || int.tryParse(value)! > 200) {
                                                 return '';
                                               }
                                               return null;
                                             },
                                             onSaved: (value) {
-                                              _age = int.tryParse(value!)!;
+                                              _weight = int.tryParse(value!)!;
                                             },
                                             decoration: const InputDecoration(
                                               labelText: '몸무게',
@@ -498,8 +451,10 @@ class _SigninScreenState extends State<SigninScreen> {
                                             ),
                                             borderRadius: BorderRadius.circular(30),
                                           ),
-                                          onSelected: (val, i, selected) =>
-                                              debugPrint('Button: $val index: $i $selected'),
+                                          onSelected: (val, i, selected) {
+                                            debugPrint('Button: $val index: $i $selected');
+                                            _ability = i;
+                                          }
                                         ),
                                       ),
                                     ],
