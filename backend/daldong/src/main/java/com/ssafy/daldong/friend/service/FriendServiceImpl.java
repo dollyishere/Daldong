@@ -102,7 +102,7 @@ public class FriendServiceImpl implements FriendService{
     @Override
     public FriendSearchDTO searchFriend(long userId,String nickname) {
         User user=userRepository.findByNickname(nickname).orElse(null);
-        if(user==null||user.getNickname()==nickname){//해당하는 유저가 없다
+        if(user==null||user.getUserId()==userId){//해당하는 유저가 없다
             return null;
         }
         long friendId=user.getUserId();
