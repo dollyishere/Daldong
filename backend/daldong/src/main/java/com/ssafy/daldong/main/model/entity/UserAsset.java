@@ -48,4 +48,8 @@ public class UserAsset {
     public void setPetName(String newName){
         this.petName=newName;
     }
+
+    public void sumExp(int exp) {
+        this.petExp += exp;
+    }
 }

@@ -5,6 +5,10 @@ def read_friends(db, user_id: int):
     friends = read.get_friends(db, user_id)
     return friends
 
+def read_user_id(db, user_uid: str):
+    user_id = read.get_user_id(db, user_uid)
+    return user_id
+
 def read_user(db, user_id: int):
     user = read.get_user(db, user_id)
     return user
@@ -13,10 +17,10 @@ def read_strangers(db, user_id: int):
     friends = read.get_strangers(db, user_id)
     return friends
 
-def read_requset_friends(db, user_id: int):
+def read_request_friends(db, user_id: int):
 
     rec_friends = read.get_rec_fr(db, user_id)
-    rec_friend = rec_friends[random.randint(0, 9)]
+    rec_friend = rec_friends[random.randint(0, min(len(rec_friends)-1,9))]
     res = {"friendId": rec_friend.user_id,
            "friendNickname": rec_friend.nickname,
            "friendUserLevel": rec_friend.user_level,
