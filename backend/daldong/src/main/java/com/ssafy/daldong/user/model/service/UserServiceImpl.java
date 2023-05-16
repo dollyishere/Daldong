@@ -10,10 +10,7 @@ import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
-import com.ssafy.daldong.user.model.dto.UserDetailDTO;
-import com.ssafy.daldong.user.model.dto.UserJoinDTO;
-import com.ssafy.daldong.user.model.dto.UserLoginDTO;
-import com.ssafy.daldong.user.model.dto.UserUpdateDTO;
+import com.ssafy.daldong.user.model.dto.*;
 import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
@@ -70,6 +67,8 @@ public class UserServiceImpl implements UserService{
         Asset assetPet= assetRepository.findByAssetId(1L);//에셋 기본 값
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
         userRepository.save(user);
+        Statistics userdaily=new UserStatisticsDTO().fromEntity(user);
+        statisticsRepository.save(userdaily);
         user=userRepository.findByUserUid(userJoinDTO.getUserUId()).orElse(null);
         if(user!=null){
             userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),"참새"));
