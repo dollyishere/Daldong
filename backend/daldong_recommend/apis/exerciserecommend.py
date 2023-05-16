@@ -5,6 +5,11 @@ def read_users(db):
     users = read.get_users(db)
     return users
 
+def read_user_id(db, user_uid: str):
+    user_id = read.get_user_id(db, user_uid)
+
+    return user_id
+
 # 운동 추천 코드
 def ex_get(db, user_id: int, whether: str = "Clear", template: float = 20):
     # user아이디 확인해서 유저 정보 받아옴

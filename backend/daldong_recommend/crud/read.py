@@ -6,6 +6,10 @@ from sqlalchemy import and_, not_, or_
 def get_users(db: Session):
     return db.query(User).all()
 
+# user_uid로 user_id 불러오기
+def get_user_id(db:Session, user_uid: str):
+    return db.query(User).filter(User.user_uid == user_uid).first().user_id
+
 # 선택한 유저 불러오기
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.user_id == user_id).first()
@@ -83,7 +87,7 @@ def get_rec_fr(db: Session, user_id: int):
 
     strangers_sort = sorted(strangers, key=lambda x: (x.gower, x.last_ex, x.user_id))
 
-    res = strangers_sort[0:10]
+    res = strangers_sort[0:min(len(strangers),10)]
     # res
 
     return res
