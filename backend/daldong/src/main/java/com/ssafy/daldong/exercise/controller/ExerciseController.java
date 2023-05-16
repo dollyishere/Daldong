@@ -92,7 +92,7 @@ public class ExerciseController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> endExercise(@RequestBody ExerciseLogResDTO exerciseLogResDTO) throws ExecutionException, InterruptedException {
         logger.info("ExerciseController.endExercise");
 
