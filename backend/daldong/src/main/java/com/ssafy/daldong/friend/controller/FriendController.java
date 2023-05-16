@@ -227,7 +227,7 @@ public class FriendController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
     })
-    @GetMapping("/search")
+    @GetMapping("/search/{friendNickname}")
     public ResponseEntity<?> friendSearch(@RequestHeader(name = "accessToken") String accessToken,@PathVariable(name="friendNickname") String friendNickname){
         long userId = jwtTokenUtil.getUserId(accessToken);
         try {
