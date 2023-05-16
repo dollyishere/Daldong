@@ -145,8 +145,9 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("/mypage/nickname")
-    public ResponseEntity<?> updateNickname(@RequestHeader(name="accessToken")String accessToken,@RequestBody String nickname){
+    public ResponseEntity<?> updateNickname(@RequestHeader(name="accessToken")String accessToken,@RequestBody UserNicknameDTO userNicknameDTO){
         long uid=jwtTokenUtil.getUserId(accessToken);
+        String nickname=userNicknameDTO.getNickname();
         ResponseDefault responseDefault = null;
         try {
             if(userService.updateNickname(uid,nickname)){
