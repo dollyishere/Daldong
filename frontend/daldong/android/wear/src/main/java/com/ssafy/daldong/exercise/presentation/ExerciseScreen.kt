@@ -40,40 +40,39 @@ import com.ssafy.daldong.exercise.presentation.component.*
 import com.ssafy.daldong.exercise.theme.ExerciseTheme
 import java.time.Duration
 import kotlin.time.toKotlinDuration
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.text.buildSpannedString
+import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import androidx.lifecycle.lifecycleScope
+import com.ssafy.daldong.exercise.service.RetrofitExerciseService
+import com.ssafy.daldong.exercise.service.RetrofitInterface
+import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
 /**
  * Shows while an exercise is in progress
  */
-data class ExerciseScreenState(
-    val caloriesHistory: MutableList<Double>, // 운동 중에 쌓인 칼로리 기록
-    val heartRateHistory: MutableList<Double>, // 운동 중에 쌓인 심박수 기록
-    var elapsedTime: String, // 운동 경과 시간
-    val startTime : LocalDateTime,
-    var endTime : LocalDateTime,
-    var calories: SpannedString,
-    var heartRate: Int = 0,
-    var distance: SpannedString,
-)
 
 @Composable
 fun ExerciseScreen(
     onPauseClick: () -> Unit = {},
     onEndClick: () -> Unit = {},
+//    onEndClick: (exerciseResult: ExerciseResult) -> Unit = {},
     onResumeClick: () -> Unit = {},
     onStartClick: () -> Unit = {},
     serviceState: ServiceState,
@@ -125,23 +124,35 @@ fun ExerciseScreen(
                     false -> Icons.Default.Stop
                 }
 
-            val exerciseScreenState = remember { ExerciseScreenState(
-                caloriesHistory = mutableListOf(),
-                heartRateHistory = mutableListOf(),
-                elapsedTime = "",
-                startTime = LocalDateTime.now(),
-                endTime = LocalDateTime.now(),
-                calories = buildSpannedString { append("0.0") },
-                heartRate = 0,
-                distance = buildSpannedString { append("0.0") },
-            ) }
+            val exerciseResult = remember {
+                ExerciseResult(
+                    userId = 1,
+                    caloriesHistory = mutableListOf(),
+                    heartRateHistory = mutableListOf(),
+                    elapsedTime = "",
+                    startTime = LocalDateTime.now().toString(),
+                    endTime = LocalDateTime.now().toString(),
+                    calories = "0.0",
+                    heartRate = 0,
+                    distance = "0.0",
+                )
+            }
 
-            val caloriesHistory = exerciseScreenState.caloriesHistory
-            val heartRateHistory = exerciseScreenState.heartRateHistory
-//            val startTime = exerciseScreenState.startTime
-//            var calories = exerciseScreenState.calories
-//            val heartRate = exerciseScreenState.heartRate
-//            var distance = exerciseScreenState.distance
+            val caloriesHistory = exerciseResult.caloriesHistory
+            val heartRateHistory = exerciseResult.heartRateHistory
+
+            val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current // LocalContext를 사용하여 Context를 가져옵니다.
+
+//            val retrofit = remember {
+//                Retrofit.Builder()
+//                    .baseUrl("https://k8a104.p.ssafy.io/test/api/")
+//                    .client(OkHttpClient())
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .build()
+//            }
+//
+//            val exerciseResultService = retrofit.create(RetrofitInterface::class.java)
 
             // The ticker coroutine updates activeDuration, but the ticker fires more often than
             // once a second, so we use derivedStateOf to update the elapsedTime state only when
@@ -210,9 +221,16 @@ fun ExerciseScreen(
                         heartRateHistory = heartRateHistory,
                         caloriesHistory = caloriesHistory
                     )
-
                 } else {
                     println("운동 종료와 경과 시간 : ${activeDuration}")
+
+//                    exerciseResult.endTime = LocalDateTime.now().toString()
+//                    exerciseResult.heartRate = tempAverageHeartRate.value.toInt()
+//                    exerciseResult.distance = formatDistanceKm(tempDistance.value)
+//                    exerciseResult.calories = formatCalories(tempCalories.value)
+//                    exerciseResult.elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//
+
                     chronoTickJob.value?.cancel()
                 }
             }
@@ -230,7 +248,9 @@ fun ExerciseScreen(
                     ) {
                         Row( // 시계
                             horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth().padding(5.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.WatchLater,
@@ -272,27 +292,74 @@ fun ExerciseScreen(
                             ) {
                                 // 운동 종료
                                 if (exerciseStateChange.exerciseState.isEnding || exerciseStateChange.exerciseState.isEnded) {
-                                    Log.d("운동 스크린", "운동 끝")
-
                                     //In a production fitness app, you might upload workout metrics to your app
                                     // either via network connection or to your mobile app via the Data Layer API.
-                                    
-                                    exerciseScreenState.endTime = LocalDateTime.now()
-                                    exerciseScreenState.heartRate = tempAverageHeartRate.value.toInt()
-                                    exerciseScreenState.distance = formatDistanceKm(tempDistance.value)
-                                    exerciseScreenState.calories = formatCalories(tempCalories.value)
-                                    exerciseScreenState.elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
 
-//                                    printResult(exerciseScreenState)
-                                    println("총 결과 출력 : ${exerciseScreenState.toString()}")
+                                    //to execute the suspend function withContext within the LaunchedEffect block.
+                                    // By using coroutineScope,
+                                    // you ensure that the suspend function is executed within a valid coroutine context.
+                                    // val coroutineScope = rememberCoroutineScope()
 
-                                    navController.navigate(
-                                        Screens.SummaryScreen.route + "/" +
-                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                "${formatDistanceKm(tempDistance.value)} km/" +
-                                                "${formatCalories(tempCalories.value)} kcal/" +
-                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                    exerciseResult.endTime = LocalDateTime.now().toString()
+                                    exerciseResult.heartRate = tempAverageHeartRate.value.toInt()
+                                    exerciseResult.distance = formatDistanceKm(tempDistance.value).toString()
+                                    exerciseResult.calories = formatCalories(tempCalories.value).toString()
+                                    exerciseResult.elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+
+                                    println("총 결과 출력 : ${exerciseResult.toString()}")
+
+                                    LaunchedEffect(Unit) {
+                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+                                        try {
+                                            val response = withContext(Dispatchers.IO) {
+                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
+                                            }
+                                            // 결과 처리
+                                            Log.d("운동 결과 화면", "운동 결과 전송 성공 ${response.toString()}")
+
+                                            navController.navigate(
+                                                Screens.SummaryScreen.route + "/" +
+                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+                                                        "${formatCalories(tempCalories.value)} kcal/" +
+                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+
+                                        }catch (e: retrofit2.HttpException) {
+                                            // HTTP 요청 실패 처리
+                                            val errorCode = e.code()
+                                            val errorBody = e.response()?.errorBody()?.string()
+                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+
+                                            navController.navigate(
+                                                Screens.SummaryScreen.route + "/" +
+                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+                                                        "${formatCalories(tempCalories.value)} kcal/" +
+                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+
+                                        }catch (e: Exception) {
+                                            // 에러 처리
+                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
+
+                                            navController.navigate(
+                                                Screens.SummaryScreen.route + "/" +
+                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+                                                        "${formatCalories(tempCalories.value)} kcal/" +
+                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                        }
+                                    }
+
+//                                    navController.navigate(
+//                                        Screens.SummaryScreen.route + "/" +
+//                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                "${formatCalories(tempCalories.value)} kcal/" +
+//                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
 //                                Button(onClick = { onStartClick() }) {
 //                                    Icon(
@@ -303,6 +370,7 @@ fun ExerciseScreen(
 
                                 } else { // 운동 시작 중일 때
                                     Button(
+//                                        onClick = { onEndClick(exerciseResult) },
                                         onClick = { onEndClick() },
 //                                    Modifier.size(40.dp)
                                     ) {
@@ -316,7 +384,9 @@ fun ExerciseScreen(
                             Column(
                                 verticalArrangement = Arrangement.Center,
 //                                modifier = Modifier.fillMaxHeight().padding(10.dp)
-                                modifier = Modifier.height(90.dp).padding(10.dp)
+                                modifier = Modifier
+                                    .height(90.dp)
+                                    .padding(10.dp)
                             ){
                                 Image(
                                     painter = painterResource(id = R.drawable.sparrow),
@@ -386,7 +456,9 @@ fun ExerciseScreen(
                         }
 
                         Row( // 이동 거리
-                            modifier = Modifier.fillMaxWidth().padding(5.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Icon(
@@ -464,7 +536,7 @@ const val CHRONO_TICK_MS = 1000L
 
 //출력
 private fun printResult(
-    exerciseResult: ExerciseScreenState
+    exerciseResult: ExerciseResult
 ) {
     println("칼로리 결과 출력 ${exerciseResult.caloriesHistory}")
 

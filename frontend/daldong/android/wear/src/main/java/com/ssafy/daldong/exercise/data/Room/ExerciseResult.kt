@@ -3,15 +3,37 @@ package com.ssafy.daldong.exercise.data.Room
 import android.text.SpannedString
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.time.LocalDateTime
 
 @Entity(tableName = "exercise_result")
+@TypeConverters(Converters::class)
 data class ExerciseResult(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val startTime: String,
-    val endTime: String,
-    val distance: SpannedString,
-    val heartRate: Int,
-    val calories: SpannedString,
-    val timestamp: String
+    @PrimaryKey
+    val userId : Int,
+    val caloriesHistory: MutableList<Double>,
+    val heartRateHistory: MutableList<Double>,
+    var elapsedTime: String,
+    val startTime : String,
+    var endTime : String,
+    var calories: String,
+    var heartRate: Int = 0,
+    var distance: String,
 )
+
+object Converters {
+    @TypeConverter
+    @JvmStatic
+    fun fromDoubleList(list: List<Double>): String {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toDoubleList(json: String): List<Double> {
+        return Gson().fromJson(json, object : TypeToken<List<Double>>() {}.type)
+    }
+}

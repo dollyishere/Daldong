@@ -49,5 +49,11 @@
     <string name="exercise_in_progress">Exercise In Progress</string>
     <string name="ending_continue">Ending other exercise. Continue?</string>
 
+    <!-- Exercise sample -->
+    <string name="data_item_changed">DataItem changed</string>
+    <string name="data_item_deleted">DataItem deleted</string>
+    <string name="data_item_unknown">Unknown DataItem type</string>
+    <string name="no_device">No device provides the requested capabilities</string>
+    <string name="connected_nodes">Nodes: %1$s</string>
 
 </resources>

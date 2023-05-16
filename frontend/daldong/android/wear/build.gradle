@@ -70,7 +70,7 @@ android {
     }
     composeOptions {
 //        kotlinCompilerExtensionVersion '1.2.0'
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
     }
     packagingOptions {
         pickFirst 'data.proto'
@@ -136,7 +136,7 @@ dependencies {
 
     // Compose for Wear OS Dependencies
     implementation libs.wear.compose.material
-    implementation 'androidx.compose.material:material-icons-extended:1.3.1'
+    implementation 'androidx.compose.material:material-icons-extended:1.4.3'
     implementation libs.androidx.compose.runtime
 
     // Foundation is additive, so you can use the mobile version in your Wear OS app.
@@ -153,8 +153,8 @@ dependencies {
     implementation libs.androidx.health.services
 
     // Lifecycle components
-    implementation libs.androidx.lifecycle.viewmodel
-    implementation libs.androidx.lifecycle.runtime
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
     implementation libs.androidx.lifecycle.common.java8
     implementation libs.androidx.lifecycle.extensions
     implementation libs.androidx.lifecycle.service
@@ -180,7 +180,7 @@ dependencies {
     androidTestImplementation libs.compose.ui.test.junit4
     debugImplementation libs.compose.ui.tooling
 
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation 'androidx.activity:activity-compose:1.7.1'
 
     / *** waer - app 간 연동을 위한 종속 항목 선언 **** /
     implementation libs.androidx.wear
@@ -216,5 +216,12 @@ dependencies {
     implementation(libs.squareup.retrofit.converter.gson)
 
     // Gson 라이브러리
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.play.services
+
+    // 에러 출력을 위한 로그 라이브러리 추가
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

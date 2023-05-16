@@ -16,9 +16,7 @@
 package com.ssafy.daldong.exercise.presentation
 
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +27,7 @@ import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.ssafy.daldong.exercise.Screens
-
+import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 
 /** Navigation for the exercise app. **/
 
@@ -85,9 +83,12 @@ fun ExerciseWearApp(
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
 
+            var exerciseResult by remember { mutableStateOf<ExerciseResult?>(null) }
+
             ExerciseScreen(
                 onPauseClick = { viewModel.pauseExercise() },
                 onEndClick = { viewModel.endExercise() },
+//                onEndClick = { exerciseResult?.let { result -> viewModel.endExercise(exerciseResult = result) } },
                 onResumeClick = { viewModel.resumeExercise() },
                 onStartClick = { viewModel.startExercise() },
                 serviceState = serviceState,

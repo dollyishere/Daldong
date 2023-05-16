@@ -19,6 +19,7 @@ package com.ssafy.daldong.exercise
 import android.content.Context
 import androidx.health.services.client.HealthServices
 import androidx.health.services.client.HealthServicesClient
+import com.ssafy.daldong.exercise.service.RetrofitExerciseService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,4 +45,13 @@ class MainModule {
     @Provides
     fun provideApplicationCoroutineScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RetrofitExerciseServiceModule {
+    @Provides
+    fun provideRetrofitExerciseService(): RetrofitExerciseService {
+        return RetrofitExerciseService()
+    }
 }
