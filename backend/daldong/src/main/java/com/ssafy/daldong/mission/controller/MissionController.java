@@ -63,7 +63,7 @@ public class MissionController {
      * @return
      */
     @Operation(summary = "미션 리워드 얻기")
-    @PostMapping("/{missionid}")
+    @PutMapping ("/{missionid}")
     public ResponseEntity<?> getExerciseMonthly(@RequestHeader(name = "accessToken") String accessToken,
                                                 @PathVariable(name = "missionid") Long MissionId) {
         long userId = jwtTokenUtil.getUserId(accessToken);
