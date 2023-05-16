@@ -19,9 +19,10 @@ router = APIRouter(
 #
 #     return {"res": res}  # 결과
 
-@router.get("/{user_id}")  # Route Path
-def read_requset_friends(user_id: int, db: Session = Depends(get_db)):
-    res = friendrecommend.read_requset_friends(db=db, user_id=user_id)  # apis 호출
+@router.get("/{user_uid}")  # Route Path
+def read_request_friends(user_uid: str, db: Session = Depends(get_db)):
+    user_id = friendrecommend.read_user_id(db=db, user_uid=user_uid)
+    res = friendrecommend.read_request_friends(db=db, user_id=user_id)  # apis 호출
 
     return res  # 결과
 
