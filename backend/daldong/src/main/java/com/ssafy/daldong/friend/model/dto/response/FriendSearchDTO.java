@@ -14,14 +14,14 @@ public class FriendSearchDTO {
     private long userId;
     private String nickname;
     private int userLevel;
-    private Long mainPetId;
+    private String mainPetName;
     private int isFriend;
     public FriendSearchDTO fromEntity(User user){
         return FriendSearchDTO.builder()
                 .userId(user.getUserId())
                 .nickname(user.getNickname())
                 .userLevel(user.getUserLevel())
-                .mainPetId(AssetDTO.fromEntity(user.getMainPet()).getAssetId())
+                .mainPetName(user.getMainPet().getAssetName())
                 .build();
     }
 
