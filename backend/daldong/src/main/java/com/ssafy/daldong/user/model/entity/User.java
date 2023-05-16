@@ -112,4 +112,10 @@ public class User {
                 .mainPetName("참새")
                 .build();
     }
+
+    public void levelUp(int nextRequiredExp) {
+        this.userLevel++;
+        this.userExp = 0;
+        this.requiredExp = nextRequiredExp;
+    }
 }

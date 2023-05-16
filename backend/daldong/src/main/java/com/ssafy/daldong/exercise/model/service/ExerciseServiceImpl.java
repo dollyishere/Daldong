@@ -7,8 +7,11 @@ import com.ssafy.daldong.exercise.model.dto.response.ExerciseMonthlyResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseResDTO;
 import com.ssafy.daldong.exercise.model.entity.ExerciseLog;
 import com.ssafy.daldong.exercise.model.repository.ExerciseLogRepository;
+import com.ssafy.daldong.main.model.entity.UserAsset;
+import com.ssafy.daldong.main.model.repository.UserAssetRepository;
 import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
+import com.ssafy.daldong.user.model.repository.LevelRepository;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
@@ -31,14 +34,20 @@ public class ExerciseServiceImpl implements ExerciseService{
     private final StatisticsRepository stasticsRepository;
     private final ExerciseLogRepository exerciseLogRepository;
     private final UserRepository userRepository;
+    private final LevelRepository levelRepository;
+    private final UserAssetRepository userAssetRepository;
 
     @Autowired
     public ExerciseServiceImpl(StatisticsRepository stasticsRepository,
                                ExerciseLogRepository exerciseLogRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository,
+                               LevelRepository levelRepository,
+                               UserAssetRepository userAssetRepository) {
         this.stasticsRepository = stasticsRepository;
         this.exerciseLogRepository = exerciseLogRepository;
         this.userRepository = userRepository;
+        this.levelRepository = levelRepository;
+        this.userAssetRepository = userAssetRepository;
     }
 
     @Override
@@ -93,8 +102,7 @@ public class ExerciseServiceImpl implements ExerciseService{
         logger.info("ExerciseServiceImpl.endExercise()");
         User user = userRepository.findByUserId(exerciseLogResDTO.getUserId()).orElseThrow();
 
-        //TODO: exerciseLog 저장
-        logger.info("exerciseLog 저장");
+        logger.info("exerciseLog");
         ExerciseLog exerciseLog = ExerciseLog.builder()
                 .user(user)
                 .exerciseStartTime(exerciseLogResDTO.getStartTime())
@@ -102,21 +110,30 @@ public class ExerciseServiceImpl implements ExerciseService{
                 .exerciseTime(calcExerciseTime(exerciseLogResDTO.getStartTime(), exerciseLogResDTO.getEndTime()))
                 .exerciseKcal(exerciseLogResDTO.getCalories())
                 .averageHeart(exerciseLogResDTO.getHeartRate())
+                .exercisePetExp(5)
+                .exerciseUserExp(exerciseLogResDTO.getCalories()/30)
                 .maxHeart((int) getMaxHeart(exerciseLogResDTO.getHeartRateHistory()))
                 .exercisePoint(0)
                 .build();
 
-        //TODO: statistics 저장
-        logger.info("statistics 저장");
+        logger.info("statistics");
         Statistics statistics = stasticsRepository.findByUser_UserId(user.getUserId()).orElseThrow();
         statistics.sum(calcExerciseTime(exerciseLogResDTO.getStartTime(), exerciseLogResDTO.getEndTime()),
                 exerciseLogResDTO.getCalories(), 1);
-        //TODO: 리워드 제공
+
         logger.info("리워드 제공");
+        int exp = exerciseLogResDTO.getCalories()/30;
+        if (user.getRequiredExp() <= exp) {
+            int nextRequiredExp = levelRepository.findById((long) user.getUserLevel()).orElseThrow().getRequiredExp();
+            user.levelUp(nextRequiredExp);
+        }
+        UserAsset userAsset = userAssetRepository.findByUserIdAndAssetId(user.getUserId(), user.getMainPet().getAssetId()).orElseThrow();
+        userAsset.sumExp(5);
+
+        userAssetRepository.save(userAsset);
         exerciseLogRepository.save(exerciseLog);
         stasticsRepository.save(statistics);
 
-        //TODO: firebase 저장
         logger.info("firebase 저장");
         Firestore db = FirestoreClient.getFirestore();
         db.collection("uid").document(user.getUserUid())
