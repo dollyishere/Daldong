@@ -61,7 +61,7 @@ public class ExerciseServiceImpl implements ExerciseService{
         logger.info("ExerciseServiceImpl.getExercise({})",userId);
         Statistics statistics = stasticsRepository.findByUser_UserId(userId).orElseThrow();
 
-        Map<LocalDate, Integer> chart = new HashMap<>();
+        Map<LocalDate, Integer> chart = new TreeMap<>();
         for (int i = 0; i < 7; i++) {
             LocalDate date = LocalDate.now().minusDays(i);
             List<DailyExerciseLog> dailyExerciseLogs = dailyExerciseLogRepository.findAllByUser_UserIdAndExDate(userId, date);
