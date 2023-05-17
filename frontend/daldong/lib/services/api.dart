@@ -21,7 +21,7 @@ Future<dynamic> apiInstance({
   final url = Uri.parse(path);
   Future<String?> futureString = storage.read(key: "accessToken");
   String? accessToken = await futureString;
-
+  print(url);
   // bodyList가 null이 아니라면 body 대신 사용
   final requestBody =
       bodyList != null ? json.encode(bodyList) : json.encode(body);

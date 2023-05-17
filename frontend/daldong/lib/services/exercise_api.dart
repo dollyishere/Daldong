@@ -44,7 +44,7 @@ void getRecommendExercise({
   required double temperature,
 }) {
   apiInstance(
-    path: '${fastUrl}/${uid}uid?whether=$weather&temperature=$temperature',
+    path: '${fastUrl}/${uid}?whether=$weather&temperature=$temperature',
     method: Method.get,
     success: success,
     fail: fail,

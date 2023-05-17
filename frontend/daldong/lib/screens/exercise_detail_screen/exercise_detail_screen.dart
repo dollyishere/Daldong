@@ -168,6 +168,19 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '운동 상세',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+          elevation: 0,
+          // backgroundColor: Color(0xFFFF3F3F),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          foregroundColor: Colors.white,
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.pop(context);
