@@ -130,6 +130,16 @@ class _SigninScreenState extends State<SigninScreen> {
       nickname: _nickname
     );
   }
+  String? _validateDouble(String? value) {
+    if (value == null || value.isEmpty) {
+      return '';
+    }
+    final doubleVal = double.tryParse(value);
+    if (doubleVal == null) {
+      return '';
+    }
+    return null;
+  }
 
   String? _validateNickname(String? value) {
     if (value == null || value.isEmpty || value.trim().isEmpty) {
@@ -140,6 +150,26 @@ class _SigninScreenState extends State<SigninScreen> {
     }
     if (_isNicknameChecked == true && _isValidatedNickname == false){
       return "중복 닉네임입니다.";
+    }
+    return null;
+  }
+  String? _validateHeight(String? value) {
+    if (value == null || value.isEmpty) {
+      return '';
+    }
+    final doubleVal = double.tryParse(value);
+    if (doubleVal == null || doubleVal < 80 || doubleVal > 250) {
+      return '';
+    }
+    return null;
+  }
+  String? _validateWeight(String? value) {
+    if (value == null || value.isEmpty) {
+      return '';
+    }
+    final doubleVal = double.tryParse(value);
+    if (doubleVal == null || doubleVal < 30 || doubleVal > 200) {
+      return '';
     }
     return null;
   }
@@ -341,17 +371,9 @@ class _SigninScreenState extends State<SigninScreen> {
                                             controller: _heightController,
                                             keyboardType: TextInputType.number,
                                             inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly
+                                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}?$')),
                                             ],
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return '';
-                                              }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! < 80 || int.tryParse(value)! > 250) {
-                                                return '';
-                                              }
-                                              return null;
-                                            },
+                                            validator: _validateHeight,
                                             onSaved: (value) {
                                               _height = int.tryParse(value!)!;
                                             },
@@ -369,17 +391,9 @@ class _SigninScreenState extends State<SigninScreen> {
                                             controller: _weightController,
                                             keyboardType: TextInputType.number,
                                             inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly
+                                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}?$')),
                                             ],
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return '';
-                                              }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! < 30 || int.tryParse(value)! > 200) {
-                                                return '';
-                                              }
-                                              return null;
-                                            },
+                                            validator: _validateWeight,
                                             onSaved: (value) {
                                               _weight = int.tryParse(value!)!;
                                             },
