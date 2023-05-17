@@ -51,9 +51,10 @@ void postFriendRequest({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
   Map<String, dynamic>? body,
+  required int friendId
 }) {
   apiInstance(
-    path: '${baseUrl}/friend/request',
+    path: '$baseUrl/friend/request/$friendId',
     method: Method.post,
     body: body,
     success: success,
