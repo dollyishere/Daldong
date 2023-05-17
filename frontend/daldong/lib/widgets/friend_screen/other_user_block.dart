@@ -154,22 +154,25 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                 onTap: () {
                                   if (widget.isFriend == 0) {
                                     postFriendRequest(
-                                        success: (dynamic response) {
-                                          print(response);
-                                          print('친구 요청 완료');
-                                          setState(() {
-                                            widget
-                                                .stateFunction(widget.friendId);
-                                            print(widget.friendId);
-                                          });
-                                        },
-                                        fail: (error) {
-                                          print('친구 요청 오류 : $error');
-                                        },
-                                        body: {
-                                          'receiverId': widget.friendId,
+                                      success: (dynamic response) {
+                                        print(response);
+                                        print('친구 요청 완료');
+                                        setState(() {
+                                          widget
+                                              .stateFunction(widget.friendId);
+                                          print(widget.friendId);
                                         });
-                                  } else if (widget.isFriend == 1) {
+                                      },
+                                      fail: (error) {
+                                        print('친구 요청 오류 : $error');
+                                      },
+                                      body: {
+                                        'receiverId': widget.friendId,
+                                      },
+                                      friendId: widget.friendId
+                                    );
+                                  }
+                                  else if (widget.isFriend == 1) {
                                   } else if (widget.isFriend == 2) {
                                     postFriendRequestResult(
                                         success: (dynamic response) {
@@ -194,8 +197,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                         },
                                         body: {
                                           'accept': true,
-                                          'receiverId': 1,
-                                          'senderId': widget.friendId,
+                                          'receiverId': widget.friendId,
                                         });
                                   }
                                 },
