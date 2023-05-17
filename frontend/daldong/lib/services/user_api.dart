@@ -42,27 +42,16 @@ Future<dynamic> updateUserNickname({
   }
 }
 
-
-Future<dynamic> updateUserInfo({
+void updateUserInfo({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
   required Map<String, dynamic> body,
-}) async {
-  try {
-    Future<String?> futureString = storage.read(key: "accessToken");
-    String? accessToken = await futureString;
-    final response = await http.put(
-      Uri.parse("$baseUrl/user/mypage"),
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        "accessToken": "$accessToken",
-      },
-      body: json.encode(body),
-    );
-
-    print("updateUserInfo 결과: ${response.statusCode}");
-    return success(response);
-  } catch (error) {
-    fail('HTTP 요청 처리 중 오류 발생: $error');
-  }
+}) {
+  apiInstance(
+    path: '$baseUrl/user/mypage',
+    method: Method.put,
+    success: success,
+    fail: fail,
+    body: body,
+  );
 }

@@ -4,6 +4,7 @@ import 'package:daldong/services/user_api.dart';
 import 'package:daldong/widgets/common/button.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/mypage_screen/update_nickname_dialog.dart';
+import 'package:daldong/widgets/mypage_screen/update_userinfo_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,14 +20,15 @@ class _MypageScreenState extends State<MypageScreen> {
   static const storage = FlutterSecureStorage();
   Map<String, dynamic> userInfo = {};
 
-  dynamic nickname = '';
-  dynamic height = 0;
-  dynamic weight = 0;
-  dynamic gender = false;
-  dynamic age = 0;
-  dynamic ability = 0;
-  dynamic userLevel = 0;
-  dynamic userPoint = 0;
+  dynamic _nickname = '';
+  dynamic _height = 0;
+  dynamic _weight = 0;
+  dynamic _gender = false;
+  dynamic _age = 0;
+  dynamic _ability = 0;
+  dynamic _userLevel = 0;
+  dynamic _userPoint = 0;
+  dynamic _mainPetName = "Sparrow";
 
   @override
   void initState() {
@@ -37,19 +39,22 @@ class _MypageScreenState extends State<MypageScreen> {
     });
   }
 
-  void getMypageInfo(){
+  void getMypageInfo() async {
+    String? mainPetName = await storage.read(key: "mainPetName");
     getUserMypage(
         success: (dynamic response) {
           setState(() {
             userInfo = response['data'];
-            nickname = userInfo['nickname'];
-            height = userInfo['height'];
-            weight = userInfo['weight'];
-            gender = userInfo['gender'];
-            age = userInfo['age'];
-            ability = userInfo['ability'];
-            userLevel = userInfo['userLevel'];
-            userPoint = userInfo['userPoint'];
+            _nickname = userInfo['nickname'];
+            _height = userInfo['height'];
+            _weight = userInfo['weight'];
+            _gender = userInfo['gender'];
+            _age = userInfo['age'];
+            _ability = userInfo['ability'];
+            _userLevel = userInfo['userLevel'];
+            _userPoint = userInfo['userPoint'];
+            _mainPetName = mainPetName;
+            print(_mainPetName);
           });
         },
         fail: (error) {
@@ -131,7 +136,7 @@ class _MypageScreenState extends State<MypageScreen> {
                             color: Colors.white,
                             image: DecorationImage(
                               image:
-                              AssetImage("lib/assets/images/animals/Cheetah.png"),
+                              AssetImage("lib/assets/images/animals/${_mainPetName}.png"),
                               fit: BoxFit.cover,
                             ),
                             shape: BoxShape.circle,
@@ -163,7 +168,7 @@ class _MypageScreenState extends State<MypageScreen> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 17),
                             child: Text(
-                              '$nickname',
+                              '$_nickname',
                               style: TextStyle(fontSize: 20.0),
                             ),
                           ),
@@ -172,7 +177,7 @@ class _MypageScreenState extends State<MypageScreen> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return UpdateUserInfoDialog(updateNickname: getMypageInfo);
+                                  return UpdateNicknameDialog(updateNickname: getMypageInfo, originalNickname: _nickname,);
                                 },
                               );
                             },
@@ -188,7 +193,7 @@ class _MypageScreenState extends State<MypageScreen> {
                           Column(
                             children: [
                               Text(
-                                "$userLevel",
+                                "$_userLevel",
                                 style: TextStyle(
                                   fontSize: 20
                                 ),
@@ -209,7 +214,7 @@ class _MypageScreenState extends State<MypageScreen> {
                           Column(
                             children: [
                               Text(
-                                "$userPoint",
+                                "$_userPoint",
                                 style: TextStyle(
                                     fontSize: 20,
                                 ),
@@ -240,7 +245,7 @@ class _MypageScreenState extends State<MypageScreen> {
                                       fontSize: 15
                                   ),
                                 ),
-                                GreenButton(title: "$age세")
+                                GreenButton(title: "$_age세")
                               ],
                             ),
                           ),
@@ -255,7 +260,7 @@ class _MypageScreenState extends State<MypageScreen> {
                                       fontSize: 15
                                   ),
                                 ),
-                                GreenButton(title: "${height}cm")
+                                GreenButton(title: "${_height}cm")
                               ],
                             ),
                           ),
@@ -270,7 +275,7 @@ class _MypageScreenState extends State<MypageScreen> {
                                       fontSize: 15
                                   ),
                                 ),
-                                GreenButton(title: "${weight}kg")
+                                GreenButton(title: "${_weight}kg")
                               ],
                             ),
                           ),
@@ -285,7 +290,7 @@ class _MypageScreenState extends State<MypageScreen> {
                                       fontSize: 15
                                   ),
                                 ),
-                                GreenButton(title: gender ? "남성" : "여성")
+                                GreenButton(title: _gender ? "남성" : "여성")
                               ],
                             ),
                           ),
@@ -300,7 +305,7 @@ class _MypageScreenState extends State<MypageScreen> {
                                       fontSize: 15
                                   ),
                                 ),
-                                GreenButton(title: getUserAbility(ability))
+                                GreenButton(title: getUserAbility(_ability))
                               ],
                             ),
                           ),
@@ -309,7 +314,7 @@ class _MypageScreenState extends State<MypageScreen> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return UpdateUserInfoDialog(updateNickname: getMypageInfo);
+                                  return UpdateUserInfoDialog(updateInfo: getMypageInfo, originalAge: _age, originalHeight: _height, originalWeight: _weight, originalAbility: _ability, originalGender: _gender,);
                                 },
                               );
                             },

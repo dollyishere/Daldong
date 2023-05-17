@@ -1,17 +1,18 @@
 import 'package:daldong/services/user_api.dart';
 import 'package:flutter/material.dart';
 
-class UpdateUserInfoDialog extends StatefulWidget {
+class UpdateNicknameDialog extends StatefulWidget {
+  final String originalNickname;
   final Function updateNickname;
-  const UpdateUserInfoDialog({Key? key, required this.updateNickname}) : super(key: key);
+  const UpdateNicknameDialog({Key? key, required this.updateNickname, required this.originalNickname}) : super(key: key);
   @override
-  State<UpdateUserInfoDialog> createState() => _UpdateUserInfoDialogState();
+  State<UpdateNicknameDialog> createState() => _UpdateNicknameDialogState();
 }
 
-class _UpdateUserInfoDialogState extends State<UpdateUserInfoDialog> {
+class _UpdateNicknameDialogState extends State<UpdateNicknameDialog> {
 
   final _formKey = GlobalKey<FormState>();
-  final _nicknameController = TextEditingController();
+  late TextEditingController _nicknameController;
 
   bool _isNicknameChecked = false;
   bool _isValidatedNickname = false;
@@ -56,8 +57,9 @@ class _UpdateUserInfoDialogState extends State<UpdateUserInfoDialog> {
   @override
   void initState() {
     final RegExp nicknameRegex = RegExp(r'^[a-zA-Zㄱ-ㅎ가-힣0-9\s]+$');
-
     super.initState();
+
+    _nicknameController = TextEditingController(text: widget.originalNickname);
     _nicknameController.addListener(() {
 
       if (_isNicknameChecked == true){
