@@ -51,5 +51,7 @@ public class UserAsset {
 
     public void sumExp(int exp) {
         this.petExp += exp;
+        if (this.petExp >= 100 )
+            this.petExp = 100;
     }
 }
