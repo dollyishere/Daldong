@@ -131,7 +131,7 @@ data class ExerciseState(
     var elapsedTime: String, // 운동 경과 시간
     val startTime : LocalDateTime,
     var endTime : LocalDateTime,
-    var calories: SpannedString,
+    var calories: String,
     var heartRate: Int = 0,
-    var distance: SpannedString,
+    var distance: String,
 )

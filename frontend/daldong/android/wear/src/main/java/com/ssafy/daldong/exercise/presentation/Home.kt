@@ -68,11 +68,15 @@ fun Home(
     onStart: () -> Unit = {},
     serviceState: ServiceState,
     permissions: Array<String>,
-    isTrackingAnotherExercise: Boolean,
+//    isTrackingAnotherExercise: Boolean,
 ) {
-    if (isTrackingAnotherExercise) {
-        ExerciseInProgressAlert(true)
-    }
+//    if (isTrackingAnotherExercise) {
+//        ExerciseInProgressAlert(true)
+//    }
+
+    // 작업 완료 여부를 나타내는 상태 변수들
+    var isPrepareExerciseFinished by remember { mutableStateOf(false) }
+    var isStartExerciseFinished by remember { mutableStateOf(false) }
 
     /** Request permissions prior to launching exercise.**/
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -80,6 +84,8 @@ fun Home(
     ) { result ->
         if (result.all { it.value }) {
             Log.d(TAG, "All required permissions granted")
+            prepareExercise() //이동
+            isPrepareExerciseFinished = true
         }
     }
 
@@ -88,7 +94,7 @@ fun Home(
             LaunchedEffect(Unit) {
                 launch {
                     permissionLauncher.launch(permissions)
-                    prepareExercise()
+//                    prepareExercise() // 기존 코드
                 }
             }
 //            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
@@ -163,9 +169,9 @@ fun Home(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Button(
-                                    onClick = { 
-                                        onStartClick();
+                                    onClick = {
                                         onStart()
+                                        onStartClick();
                                               },
                                     modifier = Modifier.size(ButtonDefaults.SmallButtonSize)
                                 ) {

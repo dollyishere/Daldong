@@ -136,7 +136,7 @@ class ExerciseClientManager @Inject constructor(
      * when acquiring calories or distance.
      */
     suspend fun prepareExercise() {
-        Log.d(TAG, "운동 준비")
+        Log.d(TAG, "운동 준비 들어옴")
         val warmUpConfig = WarmUpConfig(
             ExerciseType.RUNNING, setOf(
                 DataType.HEART_RATE_BPM, DataType.LOCATION

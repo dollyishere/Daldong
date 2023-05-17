@@ -36,10 +36,12 @@ import androidx.lifecycle.ViewModelProvider
 import io.flutter.embedding.android.FlutterFragment
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
+import io.flutter.plugin.common.MethodChannel
 import androidx.fragment.app.FragmentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.activity.viewModels
+
 
 /**
  * Manages Wearable clients to showcase the [DataClient], [MessageClient], [CapabilityClient] and
@@ -55,146 +57,36 @@ import androidx.activity.viewModels
  */
 @SuppressLint("VisibleForTests")
 class MainActivity : FlutterActivity()  {
+    private val CHANNEL = "login.method.channel"
 
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
 
-//    private val flutterEngine by lazy { FlutterEngine(this) }
+        // MethodChannel을 초기화합니다.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method == "loginMethod") {
+                    val uid = call.argument<String>("uid")
+                    val mainPetCustomName = call.argument<String>("mainPetCustomName")
+                    val mainPetName = call.argument<String>("mainPetName")
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        FlutterEngineCache.getInstance().put("my_engine_id", flutterEngine)
-//
-//        val flutterFragment : FlutterFragment = FlutterFragment.withCachedEngine("my_engine_id").build()
-//
-////        supportFragmentManager.beginTransaction()
-////            .add(R.id.fragment_container_view_tag, flutterFragment)
-////            .commit()
-//
-//        val clientDataViewModel = ViewModelProvider(flutterFragment).get(ClientDataViewModel::class.java)
-//        // ViewModel 사용 예시
-////        clientDataViewModel.events.offer(ExerciseState())
-//    }
+                    // Flutter로부터 전달된 메시지를 처리합니다.
+                    Log.d(TAG, "메소드 채널 코틀린")
+                    handleMyMethod(uid, mainPetCustomName, mainPetName)
+                    result.success(null) // 처리 완료를 알립니다.
+                } else {
+                    result.notImplemented() // 지원하지 않는 메소드를 호출했을 때 처리합니다.
+                }
+            }
+    }
 
-
-
-    private val dataClient by lazy { Wearable.getDataClient(this) }
-    private val messageClient by lazy { Wearable.getMessageClient(this) }
-    private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
-//
-//    private val clientDataViewModel by activityViewModels<ClientDataViewModel>()
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        var count = 0
-//
-//        lifecycleScope.launch {
-//            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-//                // Set the initial trigger such that the first count will happen in one second.
-//                var lastTriggerTime = Instant.now() - (countInterval - Duration.ofSeconds(1))
-//                while (isActive) {
-//                    // Figure out how much time we still have to wait until our next desired trigger
-//                    // point. This could be less than the count interval if sending the count took
-//                    // some time.
-//                    delay(
-//                        Duration.between(Instant.now(), lastTriggerTime + countInterval).toMillis()
-//                    )
-//                    // Update when we are triggering sending the count
-//                    lastTriggerTime = Instant.now()
-//                    sendCount(count)
-//
-//                    // Increment the count to send next time
-//                    count++
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        dataClient.addListener(clientDataViewModel)
-//        messageClient.addListener(clientDataViewModel)
-//        capabilityClient.addListener(
-//            clientDataViewModel,
-//            Uri.parse("wear://"),
-//            CapabilityClient.FILTER_REACHABLE
-//        )
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        dataClient.removeListener(clientDataViewModel)
-//        messageClient.removeListener(clientDataViewModel)
-//        capabilityClient.removeListener(clientDataViewModel)
-//
-//        lifecycleScope.launch {
-//            // This is a judicious use of NonCancellable.
-//            // This is asynchronous clean-up, since the capability is no longer available.
-//            // If we allow this to be cancelled, we may leave the capability in-place for other
-//            // nodes to see.
-//            withContext(NonCancellable) {
-//                try {
-//                    capabilityClient.removeLocalCapability(CAMERA_CAPABILITY).await()
-//                } catch (exception: Exception) {
-//                    Log.e(TAG, "Could not remove capability: $exception")
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun startWearableActivity() {
-//        lifecycleScope.launch {
-//            try {
-//                val nodes = capabilityClient
-//                    .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
-//                    .await()
-//                    .nodes
-//
-//                // Send a message to all nodes in parallel
-//                nodes.map { node ->
-//                    async {
-//                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())
-//                            .await()
-//                    }
-//                }.awaitAll()
-//
-//                Log.d(TAG, "Starting activity requests sent successfully")
-//            } catch (cancellationException: CancellationException) {
-//                throw cancellationException
-//            } catch (exception: Exception) {
-//                Log.d(TAG, "Starting activity failed: $exception")
-//            }
-//        }
-//    }
-//
-//    private suspend fun sendCount(count: Int) {
-//        try {
-//            val request = PutDataMapRequest.create(COUNT_PATH).apply {
-//                dataMap.putInt(COUNT_KEY, count)
-//            }
-//                .asPutDataRequest()
-//                .setUrgent()
-//
-//            val result = dataClient.putDataItem(request).await()
-//
-//            Log.d(TAG, "DataItem saved: $result")
-//        } catch (cancellationException: CancellationException) {
-//            throw cancellationException
-//        } catch (exception: Exception) {
-//            Log.d(TAG, "Saving DataItem failed: $exception")
-//        }
-//    }
-//
-//    /**
-//     * Converts the [Bitmap] to an asset, compress it to a png image in a background thread.
-//     */
-//    private suspend fun Bitmap.toAsset(): Asset =
-//        withContext(Dispatchers.Default) {
-//            ByteArrayOutputStream().use { byteStream ->
-//                compress(Bitmap.CompressFormat.PNG, 100, byteStream)
-//                Asset.createFromBytes(byteStream.toByteArray())
-//            }
-//        }
+    private fun handleMyMethod(uid: String?, mainPetCustomName: String?, mainPetName: String?) {
+        // Flutter로부터 전달된 메시지를 처리하는 로직을 구현합니다.
+        println("Received message from Flutter:")
+        println("uid: $uid")
+        println("mainPetCustomName: $mainPetCustomName")
+        println("mainPetName: $mainPetName")
+    }
 
     companion object {
         private const val TAG = "MainActivity"
@@ -208,7 +100,7 @@ class MainActivity : FlutterActivity()  {
         private const val CAMERA_CAPABILITY = "camera"
         private const val WEAR_CAPABILITY = "wear"
 
-        private val countInterval = Duration.ofSeconds(5)
+//        private val countInterval = Duration.ofSeconds(5)
     }
 
 }

@@ -13,15 +13,15 @@ String mainPetName = 'Sparrow';
 String petNickName = '짹짹쓰';
 
 saveUserInfo(
-  String uid,
-  String nickname,
-  int userLevel,
-  int userExp,
-  int requiredExp,
-  int userPoint,
-  String mainBackName,
-  String mainPetName,
-) async {
+    String uid,
+    String nickname,
+    int userLevel,
+    int userExp,
+    int requiredExp,
+    int userPoint,
+    String mainBackName,
+    String mainPetName,
+    ) async {
   await storage.write(key: "uid", value: uid);
   await storage.write(key: "nickname", value: nickname);
   await storage.write(key: "userLevel", value: userLevel.toString());
