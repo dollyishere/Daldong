@@ -1,11 +1,12 @@
 package com.ssafy.daldong.exercise.model.dto.response;
 
-import com.ssafy.daldong.user.model.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -23,4 +24,5 @@ public class ExerciseResDTO {
 
     private int dailyFriend;
     private int dailyPoint;
+    private Map<LocalDate, Integer> chart;
 }
