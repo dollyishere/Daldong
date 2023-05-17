@@ -16,10 +16,7 @@
 package com.ssafy.daldong.exercise.presentation
 
 
-import android.nfc.Tag
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import UserInfoViewModel
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +35,8 @@ import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 @Composable
 fun ExerciseWearApp(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    userInfoViewModel: UserInfoViewModel
 ) {
     var isLoading by remember { mutableStateOf(false) } // 비동기 작업 처리 완료 상태
 
@@ -135,10 +133,10 @@ fun ExerciseWearApp(
                 onStart = { viewModel.startExercise() },
                 serviceState = serviceState,
                 permissions = permissions,
+                userInfoViewModel = userInfoViewModel,
 //                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
             )
         }
-
 
         composable(Screens.ExerciseScreen.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
@@ -181,14 +179,3 @@ fun ExerciseWearApp(
         }
     }
 }
-
-@Preview()
-@Composable
-fun ExerciseSampleAppPreview() {
-    val navController = rememberNavController()
-    ExerciseWearApp(navController = navController, startDestination = Screens.StartingUp.route)
-}
-
-
-
-

@@ -1,4 +1,4 @@
-package com.ssafy.daldong.exercise.Util
+package com.ssafy.daldong.util
 
 import com.ssafy.daldong.R
 import androidx.core.app.RemoteInput

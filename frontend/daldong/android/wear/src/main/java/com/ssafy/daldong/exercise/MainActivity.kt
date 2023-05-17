@@ -1,5 +1,6 @@
 package com.ssafy.daldong.exercise
 
+import UserInfoViewModel
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,20 +9,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
-import androidx.room.Room
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
 import com.ssafy.daldong.R
-import com.ssafy.daldong.exercise.data.Room.ExerciseResultDatabase
 import com.ssafy.daldong.exercise.presentation.ExerciseViewModel
 import com.ssafy.daldong.exercise.presentation.ExerciseWearApp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -36,6 +33,8 @@ class MainActivity : ComponentActivity() {
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
     private val wearDataViewModel by viewModels<WearDataViewModel>()
+
+    private val userInfoViewModel by viewModels<UserInfoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,22 +63,9 @@ class MainActivity : ComponentActivity() {
 
                 ExerciseWearApp(
                     navController,
-                    startDestination = destination
+                    startDestination = destination,
+                    userInfoViewModel = userInfoViewModel,
                 )
-            }
-        }
-    }
-
-    private fun onQueryOtherDevicesClicked() {
-        lifecycleScope.launch {
-            try {
-                val nodes = getCapabilitiesForReachableNodes()
-                    .filterValues { MOBILE_CAPABILITY in it || WEAR_CAPABILITY in it }.keys
-                displayNodes(nodes)
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (exception: Exception) {
-                Log.d(TAG, "Querying nodes failed: $exception")
             }
         }
     }
@@ -137,8 +123,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "워치 메인 액티비티"
-
-        private const val WEAR_CAPABILITY = "wear"
-        private const val MOBILE_CAPABILITY = "mobile"
+        private val DATA_ITEM_PATH = "/PetInfo"
     }
 }

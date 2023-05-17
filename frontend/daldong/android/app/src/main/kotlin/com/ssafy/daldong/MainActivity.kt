@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +42,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.activity.viewModels
+import com.google.android.gms.wearable.DataMap
 
 
 /**
@@ -56,8 +58,18 @@ import androidx.activity.viewModels
  * sent from this activity and from the watch(es).
  */
 @SuppressLint("VisibleForTests")
-class MainActivity : FlutterActivity()  {
+class MainActivity : FlutterActivity() {
     private val CHANNEL = "login.method.channel"
+
+    private val dataClient by lazy { Wearable.getDataClient(this) }
+    private val messageClient by lazy { Wearable.getMessageClient(this) }
+    private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
+
+    lateinit var uid : String
+    lateinit var mainPetCustomName : String
+    lateinit var mainPetName : String
+
+    lateinit var dataMap : DataMap
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -66,13 +78,24 @@ class MainActivity : FlutterActivity()  {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 if (call.method == "loginMethod") {
-                    val uid = call.argument<String>("uid")
-                    val mainPetCustomName = call.argument<String>("mainPetCustomName")
-                    val mainPetName = call.argument<String>("mainPetName")
+                    uid = call.argument<String>("uid").toString()
+                    mainPetCustomName = call.argument<String>("mainPetCustomName").toString()
+                    mainPetName = call.argument<String>("mainPetName").toString()
+
+                    // DataMap 객체를 생성하고 데이터를 설정합니다.
+                    dataMap = DataMap().apply {
+                        putString("uid", uid)
+                        putString("mainPetCustomName", mainPetCustomName)
+                        putString("mainPetName", mainPetName)
+                    }
 
                     // Flutter로부터 전달된 메시지를 처리합니다.
                     Log.d(TAG, "메소드 채널 코틀린")
                     handleMyMethod(uid, mainPetCustomName, mainPetName)
+
+                    // 데이터를 Wear OS 기기로 전송합니다.
+                    sendPetInfoToWear()
+
                     result.success(null) // 처리 완료를 알립니다.
                 } else {
                     result.notImplemented() // 지원하지 않는 메소드를 호출했을 때 처리합니다.
@@ -88,8 +111,33 @@ class MainActivity : FlutterActivity()  {
         println("mainPetName: $mainPetName")
     }
 
+    private fun sendPetInfoToWear() {
+        lifecycleScope.launch {
+            try {
+                val request = PutDataMapRequest.create(PET_INFO_PATH).apply {
+                    dataMap
+                }
+                    .asPutDataRequest()
+                    .setUrgent()
+
+                val result = dataClient.putDataItem(request).await()
+                Log.d(TAG, "wear 전달 성공: $result")
+            } catch (cancellationException: CancellationException) {
+                Log.d(TAG, "wear 전달 취소: $cancellationException")
+                throw cancellationException
+            } catch (exception: Exception) {
+                Log.d(TAG, "wear 전달 실패: $exception")
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     companion object {
         private const val TAG = "MainActivity"
+        private val PET_INFO_PATH = "/PetInfo"
 
         private const val START_ACTIVITY_PATH = "/start-activity"
         private const val COUNT_PATH = "/count"

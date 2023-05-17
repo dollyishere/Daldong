@@ -89,14 +89,6 @@ class ExerciseViewModel @Inject constructor(
     }
 
     suspend fun isExerciseInProgress(): Boolean {
-
-        Log.d("운동 화면의 isExerciseInProgress permissions.toString()", permissions.joinToString())
-        Log.d("운동 화면의 healthServicesRepository ",
-            healthServicesRepository.serviceState.toString() + " " +
-            healthServicesRepository.isExerciseInProgress().toString() + " " +
-                    healthServicesRepository.hasExerciseCapability().toString()
-        )
-
         return healthServicesRepository.isExerciseInProgress()
     }
 
