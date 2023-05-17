@@ -5,6 +5,7 @@ import com.ssafy.daldong.mission.model.entity.DailyMission;
 import com.ssafy.daldong.mission.model.entity.UserMission;
 import com.ssafy.daldong.mission.model.repository.DailyMissionRepository;
 import com.ssafy.daldong.mission.model.repository.UserMissionRepository;
+import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
@@ -50,23 +51,42 @@ public class MissionServiceImpl implements MissionService{
                 .collect(Collectors.toList());
 
         for (MissionResDTO missionResDTO : missionResDTOS) {
+            Statistics statistics = statisticsRepository.findByUser_UserId(userId).orElseThrow();
             switch (missionResDTO.getMission().getQualificationName()) {
                 case "KCAL":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyKcal());
+                    missionResDTO.setQualificationCnt(statistics.getDailyKcal());
                     break;
-                case "EX_TIME":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyExTime().getSecond());
+                case "TIME":
+                    missionResDTO.setQualificationCnt(statistics.getDailyExTime().getHour() * 60 + statistics.getDailyExTime().getMinute());
                     break;
-                case "COUNT":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyCount());
+                case "EXERCISE":
+                    missionResDTO.setQualificationCnt(statistics.getDailyCount());
                     break;
                 case "FRIEND":
-                    missionResDTO.setQualificationCnt(statisticsRepository.findByUser_UserId(userId).orElseThrow().getDailyFriend());
+                    missionResDTO.setQualificationCnt(statistics.getDailyFriend());
+                    break;
+                case "CHECK":
+                    missionResDTO.setQualificationCnt(1);
                     break;
             }
+
+            checkDone(missionResDTOS);
+
         }
 
         return missionResDTOS;
+    }
+
+    private void checkDone(List<MissionResDTO> missionResDTOS) {
+        for (MissionResDTO userMission :
+                missionResDTOS) {
+            if(userMission.getQualificationCnt() >= userMission.getMission().getQualificationNum()) {
+                userMission.setDone(true);
+                UserMission mission = userMissionRepository.findById(userMission.getUserMissionId()).orElseThrow();
+                mission.done();
+                userMissionRepository.save(mission);
+            }
+        }
     }
 
     @Transactional
