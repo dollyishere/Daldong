@@ -5,7 +5,9 @@ import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import com.ssafy.daldong.friend.model.entity.Friend;
 import com.ssafy.daldong.friend.model.repository.FriendRepository;
 import com.ssafy.daldong.friend.model.repository.FriendRequestRepository;
+import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
+import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class FriendServiceImpl implements FriendService{
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
+    private final StatisticsRepository statisticsRepository;
 
     @Override
     public void createFriend(long userId, long friendId) {
@@ -68,6 +71,7 @@ public class FriendServiceImpl implements FriendService{
     public void updateFriend(long userId, long friendId) {
 
         Optional<Friend> optionalFriendship = friendRepository.findByUser_UserIdAndFriend_UserId(userId, friendId);
+        Statistics statistics = statisticsRepository.findByUser_UserId(userId).orElseThrow();
         if (optionalFriendship.isEmpty()){
             return;
         }
@@ -76,6 +80,8 @@ public class FriendServiceImpl implements FriendService{
             return;
         }
         friendship.updateFriend();
+        statistics.stingFriend();
+        statisticsRepository.save(statistics);
         log.info("[stingFriend] : 친구 찌르기 성공, userId : {}, friendId : {}", userId, friendId);
 
     }
