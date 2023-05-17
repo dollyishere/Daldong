@@ -100,6 +100,7 @@ class _FriendReceivedScreenState extends State<FriendReceivedScreen> {
                                 mainPetAssetName: user['mainPetAssetName'],
                                 useCase: 'received',
                                 stateFunction: changeUserState,
+                                isFriend: 2,
                               ),
                             )
                             .toList(),

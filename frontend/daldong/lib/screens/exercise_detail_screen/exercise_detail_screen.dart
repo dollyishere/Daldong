@@ -1,5 +1,3 @@
-import 'package:daldong/screens/exercise_detail_screen/exercise_detail_part.dart';
-import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/exercise_detail_screen/exercise_detail_block.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -105,18 +103,23 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
 
               for (int j = 0; j < event.length; j++) {
                 print(event[j]);
-                var haha = DateTime.parse(event[j]['exerciseStartTime'])
-                        .add(const Duration(hours: 9)) ??
-                    'string';
+                // var haha = DateTime.parse(event[j]['exerciseStartTime'])
+                //         .add(const Duration(hours: 9)) ??
+                //     'string';
+                var haha =
+                    DateTime.parse(event[j]['exerciseStartTime']) ?? 'string';
                 print(haha);
                 if (kEvents.containsKey(eventDate)) {
                   kEvents[eventDate]!.add(
                     Event(
+                      // '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
+                      // DateTime.parse(event[j]['exerciseStartTime'])
+                      //     .add(const Duration(hours: 9)),
+                      // DateTime.parse(event[j]['exerciseEndTime'])
+                      //     .add(const Duration(hours: 9)),
                       '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
-                      DateTime.parse(event[j]['exerciseStartTime'])
-                          .add(const Duration(hours: 9)),
-                      DateTime.parse(event[j]['exerciseEndTime'])
-                          .add(const Duration(hours: 9)),
+                      DateTime.parse(event[j]['exerciseStartTime']),
+                      DateTime.parse(event[j]['exerciseEndTime']),
                       event[j]['exerciseTime'],
                       event[j]['exerciseKcal'],
                       event[j]['exercisePoint'],
@@ -130,11 +133,14 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                   kEvents.addAll({
                     eventDate: [
                       Event(
+                        // '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
+                        // DateTime.parse(event[j]['exerciseStartTime'])
+                        //     .add(const Duration(hours: 9)),
+                        // DateTime.parse(event[j]['exerciseEndTime'])
+                        //     .add(const Duration(hours: 9)),
                         '${eventDate.toString().substring(0, 4)}년 ${eventDate.toString().substring(5, 7)}월 ${eventDate.toString().substring(8, 10)}일 / ${j + 1}번째 운동 기록',
-                        DateTime.parse(event[j]['exerciseStartTime'])
-                            .add(const Duration(hours: 9)),
-                        DateTime.parse(event[j]['exerciseEndTime'])
-                            .add(const Duration(hours: 9)),
+                        DateTime.parse(event[j]['exerciseStartTime']),
+                        DateTime.parse(event[j]['exerciseEndTime']),
                         event[j]['exerciseTime'],
                         event[j]['exerciseKcal'],
                         event[j]['exercisePoint'],
@@ -162,7 +168,24 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: Footer(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          backgroundColor: Theme.of(context).primaryColor,
+          tooltip: '캘린더를 나갈 수 있습니다.',
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.highlight_remove_outlined,
+                size: 42,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        // bottomNavigationBar: Footer(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -287,17 +310,23 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                     return ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) {
-                        return ExerciseDetailBlock(
-                          exerciseValue: value[index],
+                        return Column(
+                          children: [
+                            ExerciseDetailBlock(
+                              exerciseValue: value[index],
+                            ),
+                            (index == value.length - 1)
+                                ? const SizedBox(
+                                    height: 70,
+                                  )
+                                : Container(),
+                          ],
                         );
                       },
                     );
                   },
                 ),
               ),
-              // const SizedBox(
-              //  height: 80,
-              // ),
             ],
           ),
         ),

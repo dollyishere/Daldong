@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 class InventoryPetScreen extends StatefulWidget {
   final List<dynamic> petList;
   final int mainPetId;
+  final int userPoint;
   final void Function(String, int) changeMainItem;
   final void Function(String, int) buySelectItem;
+  final void Function(String, int) changeAssetName;
 
   const InventoryPetScreen({
     required this.petList,
     required this.mainPetId,
+    required this.userPoint,
     required this.changeMainItem,
     required this.buySelectItem,
+    required this.changeAssetName,
     Key? key,
   }) : super(key: key);
 
@@ -61,80 +65,37 @@ class _InventoryPetScreenState extends State<InventoryPetScreen> {
                         Theme.of(context).primaryColorDark.withOpacity(0.5),
                     thickness: 5,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                      ),
-                      child: ListView(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              PetBlock(
-                                petInfo: widget.petList[0],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                              PetBlock(
-                                petInfo: widget.petList[1],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                              PetBlock(
-                                petInfo: widget.petList[2],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                            ],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Container(
+                            width: double.infinity,
+                            child: Column(
+                              children: [
+                                Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 4.0,
+                                  runSpacing: 0.0,
+                                  children: List.generate(
+                                    91,
+                                    (index) => PetBlock(
+                                      petInfo: widget.petList[index],
+                                      mainPetId: widget.mainPetId,
+                                      changeMainItem: widget.changeMainItem,
+                                      buySelectItem: widget.buySelectItem,
+                                      changeAssetName: widget.changeAssetName,
+                                      userPoint: widget.userPoint,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 70,
+                                ),
+                              ],
+                            ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              PetBlock(
-                                petInfo: widget.petList[3],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                              PetBlock(
-                                petInfo: widget.petList[4],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                              PetBlock(
-                                petInfo: widget.petList[5],
-                                mainPetId: widget.mainPetId,
-                                changeMainItem: widget.changeMainItem,
-                                buySelectItem: widget.buySelectItem,
-                              ),
-                            ],
-                          ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //   children: [
-                          //     PetBlock(
-                          //       petInfo: widget.petList[3],
-                          //       mainPetId: widget.mainPetId,
-                          //     ),
-                          //     PetBlock(
-                          //       petInfo: widget.petList[4],
-                          //       mainPetId: widget.mainPetId,
-                          //     ),
-                          //     PetBlock(
-                          //       petInfo: widget.petList[5],
-                          //       mainPetId: widget.mainPetId,
-                          //     ),
-                          //   ],
-                          // ),
-                          SizedBox(
-                            height: 80,
-                          ),
-                        ],
-                      ),
-                    ),
+                        )),
                   ),
                 ),
         ],

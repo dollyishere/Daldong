@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:daldong/screens/login_screen/login_screen.dart';
+import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
+import 'package:daldong/services/home_api.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:daldong/widgets/home_screen/info_block.dart';
@@ -17,29 +17,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final InAppLocalhostServer localhostServer = new InAppLocalhostServer();
-  bool loading = false;
+  InAppWebViewController? _webViewController;
 
-  // final controller = WebViewController()
-  //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
-  //   ..setBackgroundColor(const Color(0x00000000))
-  //   ..setNavigationDelegate(
-  //     NavigationDelegate(
-  //       onProgress: (int progress) {
-  //         // Update loading bar.
-  //       },
-  //       onPageStarted: (String url) {},
-  //       onPageFinished: (String url) {},
-  //       onWebResourceError: (WebResourceError error) {},
-  //       onNavigationRequest: (NavigationRequest request) {
-  //         if (request.url.startsWith('https://www.youtube.com/')) {
-  //           return NavigationDecision.prevent;
-  //         }
-  //         return NavigationDecision.navigate;
-  //       },
-  //     ),
-  //   )
-  //   ..loadRequest(Uri.parse(
-  //       'http://192.168.137.1:3000/create-react-app-typescript-babylonjs'));
+  bool apiLoading = false;
+  bool isLoading = false;
+
+  Map<String, dynamic> homeStatus = {};
+  String nickname = '';
+
+  int userLevel = 0;
+  int userExp = 0;
+  int requiredExp = 0;
+  int userPoint = 0;
+
+  String mainBackName = '';
+  String mainPetName = '';
+  String mainPetCustomName = '';
 
   Future<void> getLocalHost() async {
     // start the localhost server
@@ -48,31 +41,60 @@ class _HomeScreenState extends State<HomeScreen> {
     if (Platform.isAndroid) {
       await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
     }
-    print('gkgkgkgkgk');
     await Future.delayed(const Duration(milliseconds: 10));
     setState(() {
-      loading = false;
-      print(loading);
+      isLoading = false;
     });
   }
 
   static const storage = FlutterSecureStorage();
-  dynamic userName = '';
-  dynamic userProfileImg = '';
-  dynamic userEmail = '';
 
-  checkUserState() async {
-    var name = await storage.read(key: 'nickName');
-    var img = await storage.read(key: 'picture');
-    var email = await storage.read(key: 'googleEmail');
+  void changeMainAsset(String itemCase, String assetName) async {
+    if (itemCase == 'pet') {
+      await storage.write(key: "mainPetName", value: assetName);
+      setState(() {
+        mainPetName = assetName;
+      });
+    } else {
+      setState(() {
+        mainBackName = assetName;
+      });
+      await storage.write(key: "mainBackName", value: assetName);
+    }
+    _webViewController?.reload();
+    setState(() {});
+  }
+
+  void changeUserPoint(int minusPoint) async {
     setState(() {
-      userName = name;
-      userProfileImg = img;
-      userEmail = email;
+      userPoint -= minusPoint;
     });
-    // if (name == null) {
-    //   Navigator.pushReplacementNamed(context, '/login');
-    // }
+    await storage.write(key: "userPoint", value: userPoint.toString());
+    setState(() {});
+  }
+
+  saveHomeInfo(
+    String nickname,
+    String mainPetCustomName,
+    int userLevel,
+    int userExp,
+    int requiredExp,
+    int userPoint,
+    String mainBackName,
+    String mainPetName,
+  ) async {
+    await storage.write(key: "nickname", value: nickname);
+    await storage.write(key: "mainPetCustomName", value: mainPetCustomName);
+    await storage.write(key: "userLevel", value: userLevel.toString());
+    await storage.write(key: "userExp", value: userExp.toString());
+    await storage.write(key: "requiredExp", value: userExp.toString());
+    await storage.write(key: "userPoint", value: userPoint.toString());
+    await storage.write(key: "mainBackName", value: mainBackName);
+    await storage.write(key: "mainPetName", value: mainPetName);
+    await Future.delayed(const Duration(milliseconds: 20));
+    setState(() {
+      apiLoading = false;
+    });
   }
 
   @override
@@ -80,7 +102,32 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkUserState();
+      getMainStatus(success: (dynamic response) {
+        setState(() {
+          homeStatus = response['data'];
+          nickname = homeStatus['nickname'];
+          mainPetCustomName = homeStatus['mainPetCustomName'];
+          userLevel = homeStatus['userLevel'];
+          userExp = homeStatus['userExp'];
+          requiredExp = homeStatus['requiredExp'];
+          userPoint = homeStatus['userPoint'];
+          mainBackName = homeStatus['mainBackName'];
+          mainPetName = homeStatus['mainPetName'];
+        });
+        print(homeStatus['mainPetCustomName']);
+        saveHomeInfo(
+          nickname,
+          mainPetCustomName,
+          userLevel,
+          userExp,
+          requiredExp,
+          userPoint,
+          mainBackName,
+          mainPetName,
+        );
+      }, fail: (error) {
+        print('홈 화면 정보 로드 오류: $error');
+      });
     });
     getLocalHost();
     super.initState();
@@ -95,73 +142,102 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar: Footer(),
-        body: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InfoBlock(
-              petNumber: 5,
-              nickName: '집에가고싶다',
-              playerLevel: 10,
-              playerExp: 1100,
-              playerKcal: 2540,
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                width: double.infinity,
-                height: 360,
-                child:
-                    // loading
-                    CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                )
-                // : InAppWebView(
-                //     initialUrlRequest: URLRequest(
-                //       url: Uri.parse(
-                //           "http://localhost:8080/lib/assets/models/daldong_webview.html"),
-                //     ),
-                //     onWebViewCreated: (controller) {},
-                //     onLoadStart: (controller, url) {},
-                //     onLoadStop: (controller, url) {},
-                //   ),
-                ),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+      child: apiLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+          : Scaffold(
+              bottomNavigationBar: Footer(),
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  InfoBlock(
+                    petName: mainPetName,
+                    nickName: nickname,
+                    playerLevel: userLevel,
+                    playerExp: userExp,
+                    requiredExp: requiredExp,
+                    playerPoint: userPoint,
                   ),
-                  fixedSize: const Size(180, 30),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/inventory');
-                },
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      '인벤토리',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                  SizedBox(
+                    height: 5,
+                  ),
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //   ),
+                  //   width: double.infinity,
+                  //   height: MediaQuery.of(context).size.width,
+                  //   child: isLoading
+                  //       ? CircularProgressIndicator(
+                  //           color: Theme.of(context).primaryColor,
+                  //         )
+                  //       : InAppWebView(
+                  //           initialUrlRequest: URLRequest(
+                  //             url: Uri.parse(
+                  //                 "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+                  //           ),
+                  //           onWebViewCreated: (controller) {
+                  //             _webViewController = controller;
+                  //             _webViewController!.evaluateJavascript(
+                  //               source: 'setVariable("hello!")',
+                  //             );
+                  //           },
+                  //           onLoadStart: (controller, url) async {},
+                  //           onLoadStop: (controller, url) {
+                  //             _webViewController!.evaluateJavascript(
+                  //               source:
+                  //                   'setVariable( "${mainBackName}", "${mainPetName}")',
+                  //             );
+                  //           },
+                  //           onConsoleMessage: (controller, consoleMessage) {
+                  //             print('나 여기 있어');
+                  //             print(consoleMessage.message);
+                  //           },
+                  //         ),
+                  // ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize: const Size(180, 30),
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InventoryScreen(
+                                    mainPetAssetName: mainPetName,
+                                    mainRoomAssetName: mainBackName,
+                                    changeMainAsset: changeMainAsset,
+                                    changeUserPoint: changeUserPoint,
+                                  )),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            '인벤토리',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

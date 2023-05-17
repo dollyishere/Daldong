@@ -1,17 +1,22 @@
+import 'package:daldong/services/inventory_api.dart';
 import 'package:daldong/utilites/inventory_screen/inventory_util.dart';
 import 'package:flutter/material.dart';
 
 class PetBlock extends StatefulWidget {
   final dynamic petInfo;
   final int mainPetId;
+  final int userPoint;
   final void Function(String, int) changeMainItem;
   final void Function(String, int) buySelectItem;
+  final void Function(String, int) changeAssetName;
 
   const PetBlock({
     required this.petInfo,
     required this.mainPetId,
+    required this.userPoint,
     required this.changeMainItem,
     required this.buySelectItem,
+    required this.changeAssetName,
     Key? key,
   }) : super(key: key);
 
@@ -37,26 +42,19 @@ class _PetBlockState extends State<PetBlock> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 4,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Container(
         width: 100,
         height: 140,
         decoration: BoxDecoration(
           color: Theme.of(context).disabledColor,
           borderRadius: BorderRadius.circular(10),
-          // border: Border.all(
-          //   color: Theme.of(context).primaryColorDark,
-          //   width: 1,
-          // ),
           boxShadow: [
             widget.mainPetId == widget.petInfo['assetId']
                 ? BoxShadow(
                     color: Theme.of(context).primaryColorDark,
                     spreadRadius: 0.5,
-                    blurRadius: 20,
+                    blurRadius: 14,
                   )
                 : BoxShadow(
                     color: Colors.black45,
@@ -102,10 +100,13 @@ class _PetBlockState extends State<PetBlock> {
                     : Container(),
                 InkWell(
                   onTap: () {
-                    showDetailPet(
-                      context,
-                      widget.petInfo,
-                    );
+                    widget.petInfo['assetStatus'] == 2
+                        ? showDetailPet(
+                            context,
+                            widget.petInfo,
+                            widget.changeAssetName,
+                          )
+                        : null;
                   },
                   child: Container(
                     width: 100,
@@ -135,9 +136,7 @@ class _PetBlockState extends State<PetBlock> {
                                     horizontal: 4,
                                   ),
                                   child: Text(
-                                    widget.petInfo['assetStatus'] != 2
-                                        ? widget.petInfo['assetName']
-                                        : widget.petInfo['assetName'],
+                                    widget.petInfo['assetKRName'],
                                     style: TextStyle(
                                       fontSize: 10,
                                       color: widget.petInfo['assetStatus'] != 2
@@ -165,6 +164,7 @@ class _PetBlockState extends State<PetBlock> {
                                         showDetailPet(
                                           context,
                                           widget.petInfo,
+                                          widget.changeAssetName,
                                         );
                                       },
                                     ),
@@ -179,14 +179,15 @@ class _PetBlockState extends State<PetBlock> {
                                   width: 76,
                                   height: 28,
                                   decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.circular(
-                                        20,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      )),
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(
+                                      20,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       vertical: 4,
@@ -269,7 +270,7 @@ class _PetBlockState extends State<PetBlock> {
                                           //   width: 2,
                                           // ),
                                           Text(
-                                            widget.petInfo['petName'],
+                                            widget.petInfo['assetCustomName'],
                                             style: TextStyle(
                                               fontSize: 10,
                                               color: Colors.black,
@@ -296,10 +297,32 @@ class _PetBlockState extends State<PetBlock> {
                 onTap: () {
                   if (widget.petInfo['assetStatus'] == 2) {
                     if (widget.mainPetId != widget.petInfo['assetId']) {
-                      widget.changeMainItem('pet', widget.petInfo['assetId']);
+                      putChangeMainAsset(
+                          success: (dynamic response) {
+                            widget.changeMainItem(
+                                'pet', widget.petInfo['assetId']);
+                            print('에셋 변경 완료');
+                          },
+                          fail: (error) {
+                            print('메인 에셋 변경 에러: $error');
+                          },
+                          body: {'assetId': widget.petInfo['assetId']});
                     }
                   } else if (widget.petInfo['assetStatus'] == 1) {
-                    widget.buySelectItem('pet', widget.petInfo['assetId']);
+                    if (widget.userPoint >= widget.petInfo['assetPrice']) {
+                      postBuyAsset(
+                          success: (dynamic response) {
+                            widget.buySelectItem(
+                                'pet', widget.petInfo['assetId']);
+                            print('에셋 구매 완료');
+                          },
+                          fail: (error) {
+                            print('에셋 구매 에러: $error');
+                          },
+                          body: {'assetId': widget.petInfo['assetId']});
+                    } else {
+                      print('포인트 부족으로 구매 불가');
+                    }
                   }
                 },
                 child: Container(

@@ -21,11 +21,10 @@ void putStingFriend({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
   Map<String, String>? body,
-  required int userId,
   required int friendId,
 }) {
   apiInstance(
-    path: '${baseUrl}/friend/sting/${userId}/${friendId}',
+    path: '${baseUrl}/friend/sting/${friendId}',
     method: Method.put,
     body: body,
     success: success,
@@ -51,7 +50,7 @@ void getFriendDetail({
 void postFriendRequest({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
-  Map<String, String>? body,
+  Map<String, dynamic>? body,
 }) {
   apiInstance(
     path: '${baseUrl}/friend/request',
@@ -104,19 +103,19 @@ void getSendList({
 }
 
 // 친구 검색하기
-void getSearchFriendList({
-  required dynamic Function(dynamic) success,
-  required Function(String error) fail,
-}) {
+void getSearchFriendList(
+    {required dynamic Function(dynamic) success,
+    required Function(String error) fail,
+    required String friendNickname}) {
   apiInstance(
-    path: '${baseUrl}/friend/search',
+    path: '${baseUrl}/friend/search/${friendNickname}',
     method: Method.get,
     success: success,
     fail: fail,
   );
 }
 
-// 친구 요청 처리하기
+// 친구와 이별하기
 void deleteMyFriend({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,

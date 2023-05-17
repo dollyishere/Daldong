@@ -74,7 +74,7 @@ void main() async {
         '/': (context) => SplashScreen(),
         '/root': (context) => RootScreen(),
         '/home': (context) => HomeScreen(),
-        '/inventory': (context) => InventoryScreen(),
+        // '/inventory': (context) => InventoryScreen(),
         '/login': (context) => LoginScreen(),
         '/signin': (context) => SigninScreen(),
         '/profile': (context) => MypageScreen(),

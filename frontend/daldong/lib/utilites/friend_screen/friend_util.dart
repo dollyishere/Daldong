@@ -3,7 +3,8 @@ import 'package:daldong/screens/friend_screen/friend_search_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_send_screen.dart';
 import 'package:flutter/material.dart';
 
-void showDetailFriend(BuildContext context) {
+void showDetailFriend(
+    BuildContext context, void Function(dynamic) changeUserState) {
   FocusNode unUsedFocusNode = FocusNode();
   showDialog(
     context: context,
@@ -102,7 +103,10 @@ void showDetailFriend(BuildContext context) {
                       ),
                       body: TabBarView(
                         children: [
-                          FriendSearchScreen(unUsedFocusNode: unUsedFocusNode),
+                          FriendSearchScreen(
+                            unUsedFocusNode: unUsedFocusNode,
+                            changeUserState: changeUserState,
+                          ),
                           FriendReceivedScreen(),
                           FriendSendScreen(),
                         ],

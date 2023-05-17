@@ -1,12 +1,15 @@
+import 'package:daldong/services/friend_api.dart';
 import 'package:daldong/widgets/friend_screen/other_user_block.dart';
 import 'package:flutter/material.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   final FocusNode unUsedFocusNode;
+  final void Function(dynamic) changeUserState;
 
   const FriendSearchScreen({
     Key? key,
     required this.unUsedFocusNode,
+    required this.changeUserState,
   }) : super(key: key);
 
   @override
@@ -15,13 +18,28 @@ class FriendSearchScreen extends StatefulWidget {
 
 class _FriendSearchScreenState extends State<FriendSearchScreen> {
   bool isLoading = false;
+  bool isSearched = false;
+  bool noUser = false;
   late TextEditingController inputController;
   String searchInput = '';
   List<dynamic> searchUserList = [];
+  Map<String, dynamic> searchUser = {};
 
   void changeUserState(int targetId) {
-    searchUserList.removeWhere((user) => user['friendId'] == targetId);
-    setState(() {});
+    if (searchUser['isFriend'] == 0) {
+      setState(() {
+        searchUser['isFriend'] == 1;
+      });
+    } else if (searchUser['isFriend'] == 2) {
+      setState(() {
+        searchUser['isFriend'] == 3;
+      });
+    } else if (searchUser['isFriend'] == 3) {
+      widget.changeUserState(searchUser['userId']);
+      setState(() {
+        searchUser['isFriend'] == 0;
+      });
+    }
   }
 
   @override
@@ -113,7 +131,42 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
               InkWell(
                 onTap: () {
                   setState(() {
+                    isLoading = true;
+                  });
+                  setState(() {
+                    getSearchFriendList(
+                      success: (dynamic response) {
+                        setState(() {
+                          searchUser = response['data'];
+                          print('유저 데이터');
+                          print(searchUser);
+                          setState(() {
+                            noUser = false;
+                            isSearched = true;
+                          });
+                        });
+                      },
+                      fail: (error) {
+                        print('친구 검색 결과 호출 오류 : $error');
+                        setState(() {
+                          noUser = true;
+                        });
+                        // Navigator.pushNamedAndRemoveUntil(
+                        //   context,
+                        //   '/error',
+                        //   arguments: {
+                        //     'errorText': error,
+                        //   },
+                        //   ModalRoute.withName('/home'),
+                        // );
+                      },
+                      friendNickname: searchInput,
+                    );
                     searchInput = '';
+                    inputController = TextEditingController(text: searchInput);
+                  });
+                  setState(() {
+                    isLoading = false;
                   });
                 },
                 splashColor: Colors.transparent,
@@ -155,50 +208,46 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                     ),
                   ),
                 )
-              : searchUserList.length == 0
-                  ? Expanded(
-                      child: Center(
-                        child: Text(
-                          '현재 검색된 유저가 없습니다',
-                        ),
-                      ),
-                    )
-                  : Expanded(
-                      child: RawScrollbar(
-                        thumbVisibility: true,
-                        radius: const Radius.circular(10),
-                        thumbColor:
-                            Theme.of(context).primaryColorDark.withOpacity(0.5),
-                        thickness: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
+              : Expanded(
+                  child: !isSearched
+                      ? Center(
+                          child: Text(
+                            '현재 검색된 유저가 없습니다',
                           ),
-                          child: ListView(
-                            children: searchUserList.length == 0
-                                ? [
-                                    Center(
-                                      child: Text('검색한 유저가 없습니다.'),
-                                    )
-                                  ]
-                                : searchUserList
-                                    .map(
-                                      (user) => OtherUserBlock(
-                                        friendId: user['friendId'],
-                                        friendNickname: user['friendNickname'],
+                        )
+                      : RawScrollbar(
+                          thumbVisibility: true,
+                          radius: const Radius.circular(10),
+                          thumbColor: Theme.of(context)
+                              .primaryColorDark
+                              .withOpacity(0.5),
+                          thickness: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                            ),
+                            child: ListView(
+                              children: [
+                                noUser
+                                    ? Center(
+                                        child: Text('해당하는 유저가 없습니다.'),
+                                      )
+                                    : OtherUserBlock(
+                                        friendId: searchUser['userId'],
+                                        friendNickname: searchUser['nickname'],
                                         friendUserLevel:
-                                            user['friendUserLevel'],
+                                            searchUser['userLevel'],
                                         mainPetAssetName:
-                                            user['mainPetAssetName'],
-                                        useCase: 'send',
+                                            searchUser['mainPetName'],
+                                        useCase: 'search',
                                         stateFunction: changeUserState,
+                                        isFriend: searchUser['isFriend'],
                                       ),
-                                    )
-                                    .toList(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                ),
           SizedBox(
             height: 50,
           ),

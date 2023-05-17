@@ -56,14 +56,6 @@ void showConfirmationDialog(BuildContext context, void func, String title,
             },
             fail: (error) {
               print('친구 삭제 오류 : $error');
-              // Navigator.pushNamedAndRemoveUntil(
-              //   context,
-              //   '/error',
-              //   arguments: {
-              //     'errorText': error,
-              //   },
-              //   ModalRoute.withName('/home'),
-              // );
             },
             friendId: data['friendId'],
           );
