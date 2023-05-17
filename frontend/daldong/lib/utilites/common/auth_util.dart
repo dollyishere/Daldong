@@ -13,7 +13,6 @@ String mainPetName = 'Sparrow';
 String petNickName = '짹짹쓰';
 
 saveUserInfo(
-    String uid,
     String nickname,
     int userLevel,
     int userExp,
@@ -22,7 +21,6 @@ saveUserInfo(
     String mainBackName,
     String mainPetName,
     ) async {
-  await storage.write(key: "uid", value: uid);
   await storage.write(key: "nickname", value: nickname);
   await storage.write(key: "userLevel", value: userLevel.toString());
   await storage.write(key: "userExp", value: userExp.toString());
@@ -75,7 +73,6 @@ Future<bool> login() async {
     mainBackName = homeStatus['mainBackName'];
     mainPetName = homeStatus['mainPetName'];
     saveUserInfo(
-      uid,
       nickname,
       userLevel,
       userExp,
