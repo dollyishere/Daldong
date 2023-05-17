@@ -11,5 +11,5 @@ public interface FriendRequestService {
     boolean createFriendRequest(long senderId, long receiverId);
     List<FriendDto> getReceivedFriendRequestList(long userId);
     List<FriendDto> getSendFriendRequestList(long userId);
-    void handleFriendRequest(long senderId, FriendRequestHandleDto friendRequestHandleDto);
+    void handleFriendRequest(long receiverId, FriendRequestHandleDto friendRequestHandleDto);
 }
