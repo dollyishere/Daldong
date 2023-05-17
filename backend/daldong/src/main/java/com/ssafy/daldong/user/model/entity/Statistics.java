@@ -53,4 +53,8 @@ public class Statistics implements Serializable {
         this.dailyKcal += kcal;
         this.dailyCount += count;
     }
+
+    public void stingFriend(){
+        this.dailyFriend += 1;
+    }
 }
