@@ -1,12 +1,17 @@
 package com.ssafy.daldong.exercise
 
 import UserInfoViewModel
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -16,6 +21,7 @@ import com.google.android.gms.wearable.Wearable
 import com.ssafy.daldong.R
 import com.ssafy.daldong.exercise.presentation.ExerciseViewModel
 import com.ssafy.daldong.exercise.presentation.ExerciseWearApp
+import com.ssafy.daldong.exercise.presentation.NoReachableNodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -40,15 +46,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-
             /** Check if we have an active exercise. If true, set our destination as the
              * Exercise Screen. If false, route to preparing a new exercise. **/
-            Log.d("메인 액티비티", exerciseViewModel.toString())
-
-            val destination = when (exerciseViewModel.isExerciseInProgress()) {
-                false -> Screens.StartingUp.route
-                true -> Screens.ExerciseScreen.route
-            }
 
             // Room 데이터베이스 인스턴스 초기화
 //            val db = Room.databaseBuilder(applicationContext, ExerciseResultDatabase::class.java, "exercise_result").build()
@@ -57,6 +56,27 @@ class MainActivity : ComponentActivity() {
 //            lifecycleScope.launch(Dispatchers.IO) {
 //                Log.d(TAG, "db 저장된 값 ${myDao.getAll().toString()}")
 //            }
+
+            //주위에 도달할 노드 없는경우
+            val nodes = getCapabilitiesForReachableNodes()
+            if (nodes.isEmpty()) {
+                // 노드가 없음
+                Log.d(TAG, "도달 가능한 폰 없음")
+                setContent{
+                    NoReachableNodes()
+                }
+
+            } else {
+                // 노드가 있음
+                Log.d(TAG, "도달 가능한 폰 있음")
+                // capabilities.values()를 사용하여 노드의 기능 목록을 얻을 수 있습니다.
+                // capabilities.keys()를 사용하여 노드 목록을 얻을 수 있습니다.
+            }
+
+            val destination = when (exerciseViewModel.isExerciseInProgress()) {
+                false -> Screens.StartingUp.route
+                true -> Screens.ExerciseScreen.route
+            }
 
             setContent {
                 navController = rememberSwipeDismissableNavController()
@@ -123,6 +143,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "워치 메인 액티비티"
-        private val DATA_ITEM_PATH = "/PetInfo"
+        private val PET_INIT_PATH = "/PetInit"
     }
 }

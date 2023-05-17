@@ -17,18 +17,12 @@ package com.ssafy.daldong.exercise.presentation
 
 import UserInfoViewModel
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
@@ -54,6 +48,8 @@ import com.ssafy.daldong.exercise.theme.ExerciseTheme
 import com.ssafy.daldong.exercise.data.ServiceState
 import androidx.compose.runtime.Composable
 import android.os.Build.VERSION.SDK_INT
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.ImageLoader
@@ -81,6 +77,7 @@ fun Home(
     // 작업 완료 여부를 나타내는 상태 변수들
     var isPrepareExerciseFinished by remember { mutableStateOf(false) }
     var isStartExerciseFinished by remember { mutableStateOf(false) }
+    val petCustomName by userInfoViewModel.petCustomName.observeAsState()
 
     /** Request permissions prior to launching exercise.**/
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -93,6 +90,16 @@ fun Home(
         }
     }
 
+    val imageLoader = ImageLoader.Builder(LocalContext.current)
+        .components {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
+
     when (serviceState) {
         is ServiceState.Connected -> {
             LaunchedEffect(Unit) {
@@ -102,7 +109,7 @@ fun Home(
                 }
             }
 //            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
-            val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
+//            val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
                 Scaffold(timeText =
@@ -123,7 +130,7 @@ fun Home(
                             Text(
                                 textAlign = TextAlign.Center,
 //                                text = stringResource(id = R.string.app_name),
-                                text = "짹짹이",
+                                text = petCustomName ?: "짹짹이",
                                 modifier = Modifier.fillMaxWidth(),
                                 color = Color(0xFFC4E8C2),
                             )
@@ -131,7 +138,10 @@ fun Home(
 
                         Row( // 동물
                             horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .height(100.dp)
+//                                .padding(5.dp),
+
                         ) {
 //
 //                            val drawableName = userInfoViewModel.petNamePng.value ?: ""
@@ -141,9 +151,17 @@ fun Home(
 //                                contentDescription = ""
 //                            )
                             //기존
+//                            Image(
+//                                painter = painterResource(id = R.drawable.sparrow_png),
+//                                contentDescription = ""
+//                            )
+                            // 운동 준비 GIF
+
+                            // 되는 버전
                             Image(
-                                painter = painterResource(id = R.drawable.sparrow_png),
-                                contentDescription = ""
+                                painter = rememberAsyncImagePainter(R.drawable.cow_basic, imageLoader),
+//                                painter = rememberAsyncImagePainter(test, imageLoader),
+                                contentDescription = "",
                             )
                         }
 
@@ -202,7 +220,7 @@ fun Home(
         else -> {}
     }
 }
-//
+
 //@Composable
 //private fun getDrawableResourceId(drawableName: String?): Int {
 //    val resources = LocalContext.current.resources

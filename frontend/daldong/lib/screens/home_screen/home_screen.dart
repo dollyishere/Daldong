@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> sendToKotlin() async {
+  Future<void> InitInfoSendToKotlin() async {
     // MethodChannel을 초기화합니다.
     const platform = MethodChannel('login.method.channel');
 
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       // Kotlin에서 처리할 메소드 이름을 지정합니다.
-      String methodName = 'loginMethod';
+      String methodName = 'InitInfoSendToKotlin';
 
       // Kotlin으로 메시지를 보냅니다.
       await platform.invokeMethod(methodName,
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getLocalHost();
 
     // sendToKotlin 함수 호출
-    sendToKotlin();
+    InitInfoSendToKotlin();
 
     super.initState();
   }

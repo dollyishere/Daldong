@@ -152,6 +152,7 @@ fun ExerciseWearApp(
                 onStartClick = { viewModel.startExercise() },
                 serviceState = serviceState,
                 navController = navController,
+                userInfoViewModel = userInfoViewModel,
             )
         }
         composable(Screens.ExerciseNotAvailable.route) {
@@ -174,7 +175,8 @@ fun ExerciseWearApp(
                             inclusive = true
                         }
                     }
-                }
+                },
+                userInfoViewModel = userInfoViewModel,
             )
         }
     }

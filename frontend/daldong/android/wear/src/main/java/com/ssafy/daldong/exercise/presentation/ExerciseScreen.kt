@@ -15,51 +15,43 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import UserInfoViewModel
 import android.os.Build
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.health.services.client.data.DataPoint
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import com.ssafy.daldong.exercise.Screens
-import com.ssafy.daldong.exercise.service.ExerciseStateChange
-import com.ssafy.daldong.R
-import com.ssafy.daldong.exercise.data.ServiceState
-import com.ssafy.daldong.exercise.presentation.component.*
-import com.ssafy.daldong.exercise.theme.ExerciseTheme
-import java.time.Duration
-import kotlin.time.toKotlinDuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.wear.compose.material.*
 import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.ssafy.daldong.R
+import com.ssafy.daldong.exercise.Screens
 import com.ssafy.daldong.exercise.data.Room.ExerciseResult
+import com.ssafy.daldong.exercise.data.ServiceState
+import com.ssafy.daldong.exercise.presentation.component.*
+import com.ssafy.daldong.exercise.service.ExerciseStateChange
+import com.ssafy.daldong.exercise.theme.ExerciseTheme
+import kotlinx.coroutines.*
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlinx.coroutines.*
-import androidx.compose.runtime.Composable
-import android.os.Build.VERSION.SDK_INT
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import coil.compose.rememberAsyncImagePainter
-
+import kotlin.time.toKotlinDuration
 
 /**
  * Shows while an exercise is in progress
@@ -74,6 +66,7 @@ fun ExerciseScreen(
     onStartClick: () -> Unit = {},
     serviceState: ServiceState,
     navController: NavHostController,
+    userInfoViewModel : UserInfoViewModel,
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
@@ -123,7 +116,7 @@ fun ExerciseScreen(
 
             val exerciseResult = remember {
                 ExerciseResult(
-                    userId = 1,
+                    userId = userInfoViewModel.userId.toString(),
                     caloriesHistory = mutableListOf(),
                     heartRateHistory = mutableListOf(),
                     elapsedTime = "",
@@ -146,7 +139,6 @@ fun ExerciseScreen(
             val elapsedTime = derivedStateOf {
                 formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
             }
-
 
             val imageLoader = ImageLoader.Builder(LocalContext.current)
                 .components {
@@ -234,7 +226,8 @@ fun ExerciseScreen(
                             .background(MaterialTheme.colors.background),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Row( // 시계
+                        Row(
+                            // 시계
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -376,15 +369,18 @@ fun ExerciseScreen(
                                     .height(90.dp)
                                     .padding(10.dp)
                             ){
-//                                사진
-//                                Image(
-//                                    painter = painterResource(id = R.drawable.sparrow_png),
-//                                    contentDescription = ""
-//                                )
+//                                 운동 중 GIF
+                                val context = LocalContext.current
+                                val drawableId = remember("cow_run") {
+                                    context.resources.getIdentifier(
+                                        "cow_run",
+                                        "drawable",
+                                        context.packageName
+                                    )
+                                }
 
-                                // GIF
                                 Image(
-                                    painter = rememberAsyncImagePainter(R.drawable.sparrow_gif, imageLoader),
+                                    painter = rememberAsyncImagePainter(drawableId, imageLoader),
                                     contentDescription = "",
                                 )
                             }
@@ -403,11 +399,12 @@ fun ExerciseScreen(
                                             imageVector = pauseOrResume,
                                             contentDescription = stringResource(id = R.string.pauseOrResume)
                                         )
-//                                    Image(
-//                                        painter = painterResource(id = pauseOrResume),
-//                                        contentDescription = stringResource(id = R.string.pauseOrResume),
-////                                        modifier = Modifier.size(24.dp)
-//                                    )
+                                        val petGifNameWithSit = userInfoViewModel.petGifName.toString() + "sit"
+
+                                        Image(
+                                            painter = rememberAsyncImagePainter(petGifNameWithSit, imageLoader),
+                                            contentDescription = "",
+                                        )
                                     }
                                 } else {
                                     Button(

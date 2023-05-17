@@ -1,4 +1,5 @@
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,33 +22,39 @@ class UserInfoViewModel(application: Application) :
     val petCustomName: LiveData<String>
         get() = _petCustomName
 
-    private val _petNamePng = MutableLiveData<String>()
-    val petNamePng: LiveData<String>
-        get() = _petNamePng
+    private val _petGifName = MutableLiveData<String>()
+    val petGifName: LiveData<String>
+        get() = _petGifName
 
-    private val _petNameGif = MutableLiveData<String>()
-    val petNameGif: LiveData<String>
-        get() = _petNameGif
-
-    private val _uId = MutableLiveData<String>()
-    val uId: LiveData<String>
-        get() = _uId
+    private val _userId = MutableLiveData<String>()
+    val userId: LiveData<String>
+        get() = _userId
 
     override fun onDataChanged(dataEventBuffer: DataEventBuffer) {
         for (event in dataEventBuffer) {
-            if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == "/PetInfo") {
+            if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == PET_INIT_PATH) {
                 val dataMap = event.dataItem.data?.let { DataMap.fromByteArray(it) }
 
                 // 데이터 수신 처리
-                val mainUId = dataMap!!.getString("uid")
+                val uId = dataMap!!.getString("uid")
                 val mainPetCustomName = dataMap.getString("mainPetCustomName")
                 val mainPetName = dataMap.getString("mainPetName")
 
                 // petCustomName, petName 변경 처리
-                _uId.value = mainUId
+                _userId.value = uId
                 _petCustomName.value = mainPetCustomName
-                _petNamePng.value = mainPetName + "_png"
-                _petNameGif.value = mainPetName + "_gif"
+                _petGifName.value = mainPetName
+
+                Log.d(TAG, "PetInit: $uId, $mainPetCustomName, $mainPetName")
+            }
+            else if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == PET_CHANGE_COSTOM_NAME) {
+                val dataMap = event.dataItem.data?.let { DataMap.fromByteArray(it) }
+
+                // 데이터 수신 처리
+                val mainPetCustomName = dataMap!!.getString("mainPetCustomName")
+                _petCustomName.value = mainPetCustomName
+
+                Log.d(TAG, "펫 이름 변경 성공: $mainPetCustomName")
             }
         }
     }
@@ -61,6 +68,11 @@ class UserInfoViewModel(application: Application) :
         // Capability 변경 처리 로직 구현
         // ...
     }
+    companion object {
+        private const val TAG = "워치 유저 정보 뷰모델"
+        private val PET_INIT_PATH = "/PetInit"
+        private val PET_CHANGE_COSTOM_NAME = "/PetChangeCostomName"
 
-    // 나머지 메서드 구현
+//        private val countInterval = Duration.ofSeconds(5)
+    }
 }

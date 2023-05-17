@@ -44,7 +44,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.activity.viewModels
 import com.google.android.gms.wearable.DataMap
 
-
 /**
  * Manages Wearable clients to showcase the [DataClient], [MessageClient], [CapabilityClient] and
  * [NodeClient].
@@ -77,7 +76,7 @@ class MainActivity : FlutterActivity() {
         // MethodChannel을 초기화합니다.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
-                if (call.method == "loginMethod") {
+                if (call.method == InitInfoSendToKotlin) {
                     uid = call.argument<String>("uid").toString()
                     mainPetCustomName = call.argument<String>("mainPetCustomName").toString()
                     mainPetName = call.argument<String>("mainPetName").toString()
@@ -114,7 +113,7 @@ class MainActivity : FlutterActivity() {
     private fun sendPetInfoToWear() {
         lifecycleScope.launch {
             try {
-                val request = PutDataMapRequest.create(PET_INFO_PATH).apply {
+                val request = PutDataMapRequest.create(PET_INIT_PATH).apply {
                     dataMap
                 }
                     .asPutDataRequest()
@@ -136,17 +135,14 @@ class MainActivity : FlutterActivity() {
     }
 
     companion object {
-        private const val TAG = "MainActivity"
-        private val PET_INFO_PATH = "/PetInfo"
+        private const val TAG = "앱 메인 액티비티"
 
-        private const val START_ACTIVITY_PATH = "/start-activity"
-        private const val COUNT_PATH = "/count"
-        private const val IMAGE_PATH = "/image"
-        private const val IMAGE_KEY = "photo"
-        private const val TIME_KEY = "time"
-        private const val COUNT_KEY = "count"
-        private const val CAMERA_CAPABILITY = "camera"
-        private const val WEAR_CAPABILITY = "wear"
+        // wear <-> app PATH
+        private val PET_INIT_PATH = "/PetInit"
+        private val PET_CHANGE_COSTOM_NAME = "/PetChangeCostomName"
+
+        // flutter <-> kotlin PATH
+        private val InitInfoSendToKotlin = "InitInfoSendToKotlin"
 
 //        private val countInterval = Duration.ofSeconds(5)
     }
