@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import com.ssafy.daldong.R
 import com.ssafy.daldong.exercise.presentation.component.SummaryFormat
@@ -91,7 +89,7 @@ fun SummaryScreen(
 
                 item {
                     Image(
-                        painter = painterResource(id = R.drawable.sparrow),
+                        painter = painterResource(id = R.drawable.sparrow_png),
                         contentDescription = ""
                     )
                 }

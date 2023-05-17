@@ -15,8 +15,7 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
-import android.text.SpannedString
-import android.util.Log
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -47,22 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.text.buildSpannedString
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import androidx.lifecycle.lifecycleScope
-import com.ssafy.daldong.exercise.service.RetrofitExerciseService
-import com.ssafy.daldong.exercise.service.RetrofitInterface
 import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
+import androidx.compose.runtime.Composable
+import android.os.Build.VERSION.SDK_INT
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
+
 
 /**
  * Shows while an exercise is in progress
@@ -149,6 +146,18 @@ fun ExerciseScreen(
             val elapsedTime = derivedStateOf {
                 formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
             }
+
+
+            val imageLoader = ImageLoader.Builder(LocalContext.current)
+                .components {
+                    if (Build.VERSION.SDK_INT >= 28) {
+                        add(ImageDecoderDecoder.Factory())
+                    } else {
+                        add(GifDecoder.Factory())
+                    }
+                }
+                .build()
+
 
             // Instead of watching the ExerciseState state, or active duration, I've defined a
             // ExerciseStateChange object in the service (and exposed it in the view), which is only
@@ -367,9 +376,16 @@ fun ExerciseScreen(
                                     .height(90.dp)
                                     .padding(10.dp)
                             ){
+//                                사진
+//                                Image(
+//                                    painter = painterResource(id = R.drawable.sparrow_png),
+//                                    contentDescription = ""
+//                                )
+
+                                // GIF
                                 Image(
-                                    painter = painterResource(id = R.drawable.sparrow),
-                                    contentDescription = ""
+                                    painter = rememberAsyncImagePainter(R.drawable.sparrow_gif, imageLoader),
+                                    contentDescription = "",
                                 )
                             }
                             Column(

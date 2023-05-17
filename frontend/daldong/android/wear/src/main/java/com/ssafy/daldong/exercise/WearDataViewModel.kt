@@ -25,12 +25,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.MessageClient
-import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.*
 import kotlinx.coroutines.Job
 import java.time.LocalDateTime
 
@@ -46,14 +41,6 @@ class WearDataViewModel(application: Application) :
      * The list of events from the clients.
      */
     val events: List<Event> = _events
-
-    /**
-     * The currently received image (if any), available to display.
-     */
-    var image by mutableStateOf<Bitmap?>(null)
-        private set
-
-    private var loadPhotoJob: Job = Job().apply { complete() }
 
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataEvent: DataEventBuffer) {

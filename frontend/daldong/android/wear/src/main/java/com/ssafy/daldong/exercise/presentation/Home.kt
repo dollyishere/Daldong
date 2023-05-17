@@ -15,11 +15,9 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
-import android.app.RemoteInput
+import UserInfoViewModel
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.util.Log
-import android.view.inputmethod.EditorInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -29,7 +27,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -38,7 +35,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,9 +50,16 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.TimeTextDefaults
 import com.ssafy.daldong.R
 import kotlinx.coroutines.launch
-import com.ssafy.daldong.exercise.presentation.component.ExerciseInProgressAlert
 import com.ssafy.daldong.exercise.theme.ExerciseTheme
 import com.ssafy.daldong.exercise.data.ServiceState
+import androidx.compose.runtime.Composable
+import android.os.Build.VERSION.SDK_INT
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 
 /**
  * Screen that appears while the device is preparing the exercise.
@@ -68,6 +71,7 @@ fun Home(
     onStart: () -> Unit = {},
     serviceState: ServiceState,
     permissions: Array<String>,
+    userInfoViewModel : UserInfoViewModel,
 //    isTrackingAnotherExercise: Boolean,
 ) {
 //    if (isTrackingAnotherExercise) {
@@ -129,8 +133,16 @@ fun Home(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
+//
+//                            val drawableName = userInfoViewModel.petNamePng.value ?: ""
+//                            val drawableResId = getDrawableResourceId(drawableName)
+//                            Image(
+//                                painter = painterResource(id = drawableResId),
+//                                contentDescription = ""
+//                            )
+                            //기존
                             Image(
-                                painter = painterResource(id = R.drawable.sparrow),
+                                painter = painterResource(id = R.drawable.sparrow_png),
                                 contentDescription = ""
                             )
                         }
@@ -172,7 +184,7 @@ fun Home(
                                     onClick = {
                                         onStart()
                                         onStartClick();
-                                              },
+                                    },
                                     modifier = Modifier.size(ButtonDefaults.SmallButtonSize)
                                 ) {
                                     Icon(
@@ -190,6 +202,12 @@ fun Home(
         else -> {}
     }
 }
+//
+//@Composable
+//private fun getDrawableResourceId(drawableName: String?): Int {
+//    val resources = LocalContext.current.resources
+//    return resources.getIdentifier(drawableName, "drawable", resources.getResourcePackageName(R.drawable.default_image))
+//}
 
 /**Return [LocationAvailability] value code as a string**/
 
