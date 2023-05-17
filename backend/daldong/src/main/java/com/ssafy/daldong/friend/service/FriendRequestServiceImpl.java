@@ -83,15 +83,11 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Override
     @Transactional
-    public void handleFriendRequest(long senderId, FriendRequestHandleDto friendRequestHandleDto) {
+    public void handleFriendRequest(long receiverId, FriendRequestHandleDto friendRequestHandleDto) {
         System.out.println(friendRequestHandleDto.isAccept());
-        long receiverId = friendRequestHandleDto.getReceiverId();
+        long senderId = friendRequestHandleDto.getReceiverId();
         // 요청 삭제
-        Optional<FriendRequest> optionalFriendRequest = friendRequestRepository.findBySender_UserIdAndReceiver_UserId(senderId, receiverId);
-        if (optionalFriendRequest.isEmpty()){
-            return;
-        }
-        FriendRequest friendRequest = optionalFriendRequest.get();
+        FriendRequest friendRequest = friendRequestRepository.findBySender_UserIdAndReceiver_UserId(senderId, receiverId).orElseThrow();
         friendRequestRepository.delete(friendRequest);
         // 수락/거절 처리
         if (friendRequestHandleDto.isAccept()){
