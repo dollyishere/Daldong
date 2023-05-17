@@ -5,7 +5,9 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseLogResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseMonthlyResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseResDTO;
+import com.ssafy.daldong.exercise.model.entity.DailyExerciseLog;
 import com.ssafy.daldong.exercise.model.entity.ExerciseLog;
+import com.ssafy.daldong.exercise.model.repository.DailyExerciseLogRepository;
 import com.ssafy.daldong.exercise.model.repository.ExerciseLogRepository;
 import com.ssafy.daldong.main.model.entity.UserAsset;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
@@ -14,6 +16,7 @@ import com.ssafy.daldong.user.model.entity.User;
 import com.ssafy.daldong.user.model.repository.LevelRepository;
 import com.ssafy.daldong.user.model.repository.StatisticsRepository;
 import com.ssafy.daldong.user.model.repository.UserRepository;
+import io.swagger.models.auth.In;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,24 +39,43 @@ public class ExerciseServiceImpl implements ExerciseService{
     private final UserRepository userRepository;
     private final LevelRepository levelRepository;
     private final UserAssetRepository userAssetRepository;
+    private final DailyExerciseLogRepository dailyExerciseLogRepository;
 
     @Autowired
     public ExerciseServiceImpl(StatisticsRepository stasticsRepository,
                                ExerciseLogRepository exerciseLogRepository,
                                UserRepository userRepository,
                                LevelRepository levelRepository,
-                               UserAssetRepository userAssetRepository) {
+                               UserAssetRepository userAssetRepository,
+                               DailyExerciseLogRepository dailyExerciseLogRepository) {
         this.stasticsRepository = stasticsRepository;
         this.exerciseLogRepository = exerciseLogRepository;
         this.userRepository = userRepository;
         this.levelRepository = levelRepository;
         this.userAssetRepository = userAssetRepository;
+        this.dailyExerciseLogRepository = dailyExerciseLogRepository;
     }
 
     @Override
     public ExerciseResDTO getExercise(Long userId) {
         logger.info("ExerciseServiceImpl.getExercise({})",userId);
         Statistics statistics = stasticsRepository.findByUser_UserId(userId).orElseThrow();
+
+        Map<LocalDate, Integer> chart = new HashMap<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = LocalDate.now().minusDays(i);
+            List<DailyExerciseLog> dailyExerciseLogs = dailyExerciseLogRepository.findAllByUser_UserIdAndExDate(userId, date);
+            if (dailyExerciseLogs.isEmpty()) {
+                chart.put(date, 0);
+                continue;
+            }
+
+            int totalKcal = 0;
+            for (DailyExerciseLog dailyExerciseLog : dailyExerciseLogs) {
+                totalKcal += dailyExerciseLog.getKcal();
+            }
+            chart.put(date, totalKcal);
+        }
 
         logger.info("statistics : {}",statistics);
         return ExerciseResDTO.builder()
@@ -64,6 +86,7 @@ public class ExerciseServiceImpl implements ExerciseService{
                 .dailyCount(statistics.getDailyCount())
                 .dailyFriend(statistics.getDailyFriend())
                 .dailyPoint(statistics.getDailyPoint())
+                .chart(chart)
                 .build();
     }
 
