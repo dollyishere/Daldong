@@ -43,4 +43,8 @@ public class UserMission {
     public void receive() {
         isReceive = true;
     }
+
+    public void done() {
+        this.isDone = true;
+    }
 }
