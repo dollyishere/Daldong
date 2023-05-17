@@ -31,145 +31,399 @@
         margin: 0;
         padding: 0;
       }
-
       #renderCanvas {
         width: 100%;
         height: 100%;
         touch-action: none;
       }
-
       #canvasZone {
         width: 100%;
         height: 100%;
       }
+      #loadingScreen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        touch-action: none;
+      }
+      #loadingScreen > h1 {
+        font-size: 36px;
+        color: white;
+      }
     </style>
   </head>
   <body>
-    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
+    <div id="loadingScreen">
+      <h1>Loading...</h1>
+    </div>
+    <div id="canvasZone">
+      <canvas id="renderCanvas"></canvas>
+    </div>
     <script>
+      let mainPetName = "Elephant";
+      let mainRoomName = "Island_18";
+
       // get canvas
       var canvas = document.getElementById("renderCanvas");
 
       // create Babylon.js engine
       var engine = new BABYLON.Engine(canvas, true);
 
+      // // 로딩 화면 숨기기
+      // engine.displayLoadingUI();
+
       // create Babylon.js scene
       var scene = new BABYLON.Scene(engine);
-      scene.clearColor = new BABYLON.Color4.FromHexString("#F47373");
 
       // create camera
       var camera = new BABYLON.ArcRotateCamera(
         "Camera",
-        BABYLON.Tools.ToRadians(270),
-        BABYLON.Tools.ToRadians(50),
-        340,
+        BABYLON.Tools.ToRadians(250),
+        BABYLON.Tools.ToRadians(80),
+        400,
         BABYLON.Vector3.Zero(),
         scene
       );
 
       // 최소 줌 거리 설정
-      camera.lowerRadiusLimit = 5;
+      camera.lowerRadiusLimit = 100;
 
       // 최대 줌 거리 설정
-      camera.upperRadiusLimit = 350;
+      camera.upperRadiusLimit = 800;
 
       camera.attachControl(canvas, true);
 
-      // Add hemispheric light to the scene
+      // // 포인트 라이트 생성
+      // var pointLight = new BABYLON.PointLight(
+      //   "pointLight",
+      //   new BABYLON.Vector3(100, 600, 100),
+      //   scene
+      // );
+      // pointLight.intensity = 0.7;
+      // pointLight.diffuse = new BABYLON.Color3(1, 1, 1);
+
+      // // 디렉셔널 라이트 생성
+      // var dirLight = new BABYLON.DirectionalLight(
+      //   "dirLight",
+      //   new BABYLON.Vector3(-1, -2, 1),
+      //   scene
+      // );
+      // dirLight.intensity = 0.5;
+      // dirLight.diffuse = new BABYLON.Color3(1, 1, 1);
+
+      // // 스포트 라이트 생성
+      // var spotLight = new BABYLON.SpotLight(
+      //   "spotLight",
+      //   new BABYLON.Vector3(0, 10, 0),
+      //   new BABYLON.Vector3(0, -1, 0),
+      //   Math.PI / 4,
+      //   2,
+      //   scene
+      // );
+      // spotLight.intensity = 1;
+      // spotLight.diffuse = new BABYLON.Color3(0, 0, 0);
+
+      // 헤미스피어 라이트 생성
       var hemiLight = new BABYLON.HemisphericLight(
         "hemiLight",
         new BABYLON.Vector3(0, 1, 0),
         scene
       );
       hemiLight.intensity = 0.5;
-      hemiLight.diffuse = new BABYLON.Color4.FromHexString("#212568");
+      hemiLight.diffuse = new BABYLON.Color3(1, 0, 1);
 
-      // Add point light to the scene
-      var pointLight = new BABYLON.PointLight(
-        "pointLight",
-        new BABYLON.Vector3(0, 1, 0),
-        scene
+      const currentDatetime = new Date();
+      const currentHour = currentDatetime.getHours();
+      console.log(currentDatetime.getHours());
+
+      if (currentHour == 9) {
+        scene.clearColor = new BABYLON.Color3(0, 1, 0);
+      }
+
+      if (
+        (currentHour >= 0 && currentHour < 6) ||
+        (currentHour >= 19 && currentHour <= 24)
+      ) {
+        // Skybox
+        scene.clearColor = new BABYLON.Color3(0, 0, 0);
+        var skybox = BABYLON.Mesh.CreateBox("skyBox", 2000.0, scene);
+        var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.Texture(
+          "https://cdn.jsdelivr.net/gh/PirateJC/assets@deeb0dbb5f526d2fa607c2178578b1bb6a72d9d5/NightSkybox.png",
+          scene,
+          true
+        );
+        skyboxMaterial.reflectionTexture.coordinatesMode =
+          BABYLON.Texture.FIXED_EQUIRECTANGULAR_MODE;
+        skyboxMaterial.disableLighting = true;
+        skybox.material = skyboxMaterial;
+      } else {
+        scene.clearColor = new BABYLON.Color3.FromHexString("#FAC3D5");
+      }
+
+      // // 빗방울 비효과를 구현할 메시 생성 (플레인 메시 사용)
+      // const plane = BABYLON.MeshBuilder.CreatePlane(
+      //   "plane",
+      //   { size: 10 },
+      //   scene
+      // );
+
+      // // 재질 설정 (투명한 재질)
+      // const material = new BABYLON.StandardMaterial("material", scene);
+      // material.alpha = 0.5; // 투명도 설정
+      // plane.material = material;
+
+      // // 비 효과 애니메이션 (메시 위치 애니메이션)
+      // scene.registerBeforeRender(() => {
+      //   plane.position.y -= 0.02; // 비가 내리는 속도 조정
+      // });
+
+      // // 클릭 이벤트 핸들러 함수
+      // function onAssetClicked(evt) {
+      //   // 캔버스 내 클릭 위치 가져오기
+      //   var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+
+      //   // 클릭된 메시가 있는 경우
+      //   if (pickResult.hit) {
+      //     // 하트 스프라이트 생성
+      //     var heart = new BABYLON.Sprite("heart", heartSpriteManager);
+      //     heart.position = pickResult.pickedPoint; // 클릭된 위치에 위치시킴
+      //     heart.size = 1000; // 스프라이트 크기 조정
+      //     heart.playAnimation(0, 3, true, 100); // 애니메이션 재생
+      //   }
+      // }
+
+      // // 캔버스 클릭 이벤트 등록
+      // canvas.addEventListener("click", onAssetClicked);
+      const box = BABYLON.MeshBuilder.CreateBox("box", {});
+      box.position.x = 0.5;
+      box.position.y = 1;
+
+      const boxMaterial = new BABYLON.StandardMaterial("material", scene);
+      boxMaterial.diffuseColor = BABYLON.Color3.Random();
+      box.material = boxMaterial;
+
+      box.actionManager = new BABYLON.ActionManager(scene);
+      box.actionManager.registerAction(
+        new BABYLON.ExecuteCodeAction(
+          BABYLON.ActionManager.OnPickTrigger,
+          function (evt) {
+            const sourceBox = evt.meshUnderPointer;
+            sourceBox.position.x += 0.1;
+            sourceBox.position.y += 0.1;
+
+            boxMaterial.diffuseColor = BABYLON.Color3.Random();
+          }
+        )
       );
-      pointLight.intensity = 0.6;
-      pointLight.diffuse = new BABYLON.Color4.FromHexString("#FFFFBC");
+      function setVariable(roomName, petName) {
+        mainRoomName = roomName;
+        mainPetName = petName;
 
-      // Add spotlight to the scene
-      var spotLight = new BABYLON.SpotLight(
-        "spotLight",
-        new BABYLON.Vector3(0, 20, 0),
-        new BABYLON.Vector3(0, -1, 0),
-        BABYLON.Tools.ToRadians(30),
-        0,
-        scene
-      );
-      spotLight.intensity = 0.6;
-      spotLight.diffuse = new BABYLON.Color4.FromHexString("#FF400");
+        // load glb file as ground
+        var ground = BABYLON.SceneLoader.ImportMesh(
+          "",
+          "./islands/",
+          `${mainRoomName}.glb`,
+          scene,
+          function (newMeshes) {
+            // access the first mesh in the returned array
+            var ground = newMeshes[0];
 
-      // // Add shadow generator to the point light
-      // var shadowGenerator = new BABYLON.ShadowGenerator(1024, pointLight);
-      // shadowGenerator.usePoissonSampling = true;
-      // shadowGenerator.bias = 0.01;
-      // shadowGenerator.normalBias = 0.02;
-      // shadowGenerator.darkness = 0.5;
+            // apply scaling and position to the ground mesh
+            ground.scaling = new BABYLON.Vector3(10, 10, 10);
+            ground.position = new BABYLON.Vector3(5, 0, 0);
 
-      // load glb file as ground
-      BABYLON.SceneLoader.ImportMesh(
-        "",
-        "",
-        "Island_20.glb",
-        scene,
-        function (newMeshes) {
-          // access the first mesh in the returned array
-          var ground = newMeshes[0];
+            // enable shadows for the ground mesh
+            ground.receiveShadows = true;
 
-          // apply scaling and position to the ground mesh
-          ground.scaling = new BABYLON.Vector3(10, 10, 10);
-          ground.position = new BABYLON.Vector3(5, 0, 0);
+            // enable collisions for the ground mesh
+            var groundMaterial = new BABYLON.StandardMaterial(
+              "groundMaterial",
+              scene
+            );
+            groundMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+            groundMaterial.alpha = 0.5;
+            groundMaterial.wireframe = true;
+            ground.material = groundMaterial;
+            ground.receiveShadows = true;
 
-          // enable shadows for the ground mesh
-          ground.receiveShadows = true;
-
-          // enable collisions for the ground mesh
-          var groundMaterial = new BABYLON.StandardMaterial(
-            "groundMaterial",
-            scene
-          );
-          groundMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
-          groundMaterial.alpha = 0.5;
-          groundMaterial.wireframe = true;
-          ground.material = groundMaterial;
-          ground.receiveShadows = true;
-          BABYLON.SceneLoader.ImportMesh(
-            "",
-            "",
-            "dog.glb",
-            scene,
-            function (newMeshes, particleSystems, skeletons, animationGroups) {
-              var pet = newMeshes[0];
-              // 콜백 함수 내부에서 새로운 메시(mesh)의 위치를 조정할 수 있습니다.
-              pet.position = new BABYLON.Vector3(5, 11, 0);
-              pet.rotation = new BABYLON.Vector3(0, 4, 0);
-              pet.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
-              pet.receiveShadows = true;
-
-              // //Scale the model down
-              // pet.scaling.scaleInPlace(0.1);
-
-              //Lock camera on the character
-              camera.target = pet;
-
-              //Get the Samba animation Group
-              const walkAnim = scene.getAnimationGroupByName("Walk");
-
-              //Play the Samba animation
-              walkAnim.start(true, 1.0, walkAnim.from, walkAnim.to, false);
+            // // 로딩 화면 숨기기
+            // scene.executeWhenReady(function () {
+            //   engine.hideLoadingUI();
+            // });
+          }
+        );
+        var pet = BABYLON.SceneLoader.ImportMesh(
+          "",
+          "./animals/",
+          `${mainPetName}.glb`,
+          scene,
+          function (newMeshes, particleSystems, skeletons, animationGroups) {
+            var pet = newMeshes[0];
+            // 콜백 함수 내부에서 새로운 메시(mesh)의 위치를 조정할 수 있습니다.
+            pet.position = new BABYLON.Vector3(0, 0, 0);
+            if (roomName == "Island_1") {
+              pet.position = new BABYLON.Vector3(0, 8, -15);
+            } else if (roomName == "Island_2") {
+              pet.position = new BABYLON.Vector3(0, 3, -32);
+            } else if (roomName == "Island_3") {
+              pet.position = new BABYLON.Vector3(60, 10, -30);
+            } else if (roomName == "Island_4") {
+              pet.position = new BABYLON.Vector3(0, 14, -3);
+            } else if (roomName == "Island_5") {
+              pet.position = new BABYLON.Vector3(0, 125, 7);
+            } else if (roomName == "Island_6") {
+              pet.position = new BABYLON.Vector3(0, 23, -18);
+            } else if (roomName == "Island_7") {
+              pet.position = new BABYLON.Vector3(50, 12, -20);
+            } else if (roomName == "Island_8") {
+              pet.position = new BABYLON.Vector3(-30, -3, 10);
+            } else if (roomName == "Island_9") {
+              pet.position = new BABYLON.Vector3(-50, 14, -30);
+            } else if (roomName == "Island_10") {
+              pet.position = new BABYLON.Vector3(0, -10, -50);
+            } else if (roomName == "Island_11") {
+              pet.position = new BABYLON.Vector3(0, 25, -3);
+            } else if (roomName == "Island_12") {
+              pet.position = new BABYLON.Vector3(-50, 12, -3);
+            } else if (roomName == "Island_13") {
+              pet.position = new BABYLON.Vector3(30, 25, 25);
+            } else if (roomName == "Island_14") {
+              pet.position = new BABYLON.Vector3(-30, 5, 0);
+            } else if (roomName == "Island_15") {
+              pet.position = new BABYLON.Vector3(0, 23, -10);
+            } else if (roomName == "Island_16") {
+              pet.position = new BABYLON.Vector3(15, 14, -15);
+            } else if (roomName == "Island_17") {
+              pet.position = new BABYLON.Vector3(0, 5, -10);
+            } else if (roomName == "Island_18") {
+              pet.position = new BABYLON.Vector3(0, 5, -50);
+            } else if (roomName == "Island_19") {
+              pet.position = new BABYLON.Vector3(0, -3, -50);
+            } else if (roomName == "Island_20") {
+              pet.position = new BABYLON.Vector3(-20, 13, -30);
             }
-          );
 
-          // start rendering loop
-          engine.runRenderLoop(function () {
-            scene.render();
-          });
+            pet.rotation = new BABYLON.Vector3(0, 4, 0);
+            pet.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+            if (roomName == "Island_5") {
+              pet.scaling = new BABYLON.Vector3(0.4, 0.4, 0.4);
+            }
+            pet.receiveShadows = true;
+
+            // //Scale the model down
+            // pet.scaling.scaleInPlace(0.1);
+
+            //Lock camera on the character
+            camera.target = pet;
+
+            //Get the Samba animation Group
+            const SitAnim = scene.getAnimationGroupByName("Sit");
+
+            //Play the Samba animation
+            SitAnim.start(true, 1.0, SitAnim.from, SitAnim.to, false);
+
+            pet.isPickable = true;
+
+            pet.actionManager = new BABYLON.ActionManager(scene);
+
+            pet.actionManager.registerAction(
+              new BABYLON.ExecuteCodeAction(
+                BABYLON.ActionManager.OnPickUpTrigger,
+                function () {
+                  alert("player clicked");
+                }
+              )
+            );
+            console.log(pet.actionManager);
+
+            // GUI
+            var advancedTexture =
+              BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            advancedTexture.idealWidth = 600;
+
+            var rect1 = new BABYLON.GUI.Rectangle();
+            rect1.width = 0.3;
+            rect1.height = "100px";
+            rect1.cornerRadius = 20;
+            rect1.color = "Black";
+            rect1.thickness = 0;
+            rect1.background = "White";
+            rect1.shadowColor = new BABYLON.Color4(0, 0, 0, 0.5); // 그림자 색상
+            rect1.shadowBlur = 5; // 그림자 흐림 정도
+            advancedTexture.addControl(rect1);
+            rect1.linkWithMesh(pet);
+            rect1.linkOffsetY = -180;
+
+            var randomTexts = [
+              "쭈인아\n살려줘 시팔",
+              "쭈인아~ \n 니 스마터폰 쭝독이다~",
+              "왕! 왈왈왈왕!",
+              "운동해라왕!",
+              "개드립은 싫타멍",
+            ];
+            var label = new BABYLON.GUI.TextBlock();
+            label.text = randomTexts[0];
+            label.fontSize = 14;
+            rect1.addControl(label);
+
+            function updateText() {
+              var randomIndex = Math.floor(Math.random() * randomTexts.length);
+              label.text = randomTexts[randomIndex];
+            }
+
+            setInterval(updateText, 10000);
+
+            // start rendering loop
+            engine.runRenderLoop(function () {
+              const myLoading = document.getElementById("loadingScreen");
+              myLoading.style.display = "none";
+              // var currentTime = new Date().getTime();
+              // var randomIndex =
+              //   Math.floor(currentTime / 15000) % randomTexts.length;
+              // label.text = randomTexts[randomIndex];
+              scene.render();
+            });
+
+            // var target = new BABYLON.GUI.Ellipse();
+            // target.width = "40px";
+            // target.height = "40px";
+            // target.color = "Orange";
+            // target.thickness = 4;
+            // target.background = "green";
+            // advancedTexture.addControl(target);
+            // target.linkWithMesh(pet);
+
+            // var line = new BABYLON.GUI.Line();
+            // line.lineWidth = 10;
+            // line.color = "Orange";
+            // line.y2 = 10;
+            // line.linkOffsetY = -50;
+            // advancedTexture.addControl(line);
+            // line.linkWithMesh(pet);
+            // line.connectedControl = rect1;
+          }
+        );
+      }
+
+      // setVariable(mainRoomName, mainPetName);
+
+      window.addEventListener(
+        "flutterInAppWebViewPlatformReady",
+        function (event) {
+          window.flutter_inappwebview
+            .callHandler("Print", "*** Message From Server JS ***")
+            .then(function (result) {
+              console.log(result);
+            });
         }
       );
     </script>

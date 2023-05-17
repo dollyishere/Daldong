@@ -1,3 +1,4 @@
+import 'package:daldong/services/inventory_api.dart';
 import 'package:daldong/widgets/inventory_screen/motion_block.dart';
 import 'package:flutter/material.dart';
 import 'package:group_button/group_button.dart';
@@ -6,10 +7,12 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 class InventoryDialogDetail extends StatefulWidget {
   final dynamic petInfo;
   final FocusNode unUsedFocusNode;
+  final void Function(String, int) changeAssetName;
 
   const InventoryDialogDetail({
     required this.petInfo,
     required this.unUsedFocusNode,
+    required this.changeAssetName,
     Key? key,
   }) : super(key: key);
 
@@ -116,10 +119,10 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
   @override
   void initState() {
     // TODO: implement initState
-    print(widget.petInfo['petExp']);
+    print(widget.petInfo['exp']);
     buttonController = GroupButtonController(
       disabledIndexes: motionList.map((motion) {
-        if (motion['unLockExp'] > widget.petInfo['petExp']) {
+        if (motion['unLockExp'] > widget.petInfo['exp']) {
           return int.tryParse(motion['motionId'].toString() ?? '99') ?? 99;
         } else {
           return 99;
@@ -130,12 +133,20 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
     buttonController.addListener(() {
       setState(() {});
     });
-    _nickname = widget.petInfo['petName'];
+    _nickname = widget.petInfo['assetCustomName'];
     _nicknameController = TextEditingController(text: _nickname);
     super.initState();
   }
 
   ValueNotifier<double> animationSpeed = ValueNotifier<double>(1.0);
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    buttonController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -222,7 +233,7 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
             ),
           ),
           Container(
-            width: 120,
+            width: 140,
             height: 40,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.75),
@@ -243,15 +254,12 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                       children: [
                         Container(
                           height: 30,
-                          width: 80,
+                          width: 76,
                           child: TextFormField(
-                            // onTapOutside: (PointerDownEvent event) {
-                            //   FocusScope.of(context)
-                            //       .requestFocus(widget.unUsedFocusNode);
-                            //   setState(() {
-                            //     nickNameEdit = !nickNameEdit;
-                            //   });
-                            // },
+                            onTapOutside: (PointerDownEvent event) {
+                              FocusScope.of(context)
+                                  .requestFocus(widget.unUsedFocusNode);
+                            },
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             controller: _nicknameController,
@@ -263,9 +271,9 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                               fontWeight: FontWeight.w700,
                             ),
                             // validator: _validateNickname,
-                            onSaved: (value) {
-                              _nickname = value!.trim();
-                            },
+                            // onSaved: (value) {
+                            //   _nickname = value!.trim();
+                            // },
                             onChanged: (value) {
                               setState(() {
                                 _nickname = value!.trim();
@@ -284,16 +292,47 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                           ),
                         ),
                         SizedBox(
-                          width: 2,
+                          width: 4,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            putChangePetNickname(
+                                success: (dynamic response) {
+                                  setState(() {
+                                    print(response);
+                                    widget.changeAssetName(_nickname, widget.petInfo['assetId']);
+                                    widget.petInfo['assetCustomName'] = _nickname;
+                                    nickNameEdit = !nickNameEdit;
+                                  });
+                                },
+                                fail: (error) {
+                                  print('펫 이름 변경 호출 오류 : $error');
+                                  },
+                                body: {
+                                  "assetId" : widget.petInfo['assetId'],
+                                  "setAssetName": _nickname,
+                                }
+                            );
+                          },
+                          child: Icon(
+                            Icons.save_as,
+                            color: Colors.black,
+                            size: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 4,
                         ),
                         InkWell(
                           onTap: () {
                             setState(() {
+                              _nickname = widget.petInfo['assetCustomName'];
+                              _nicknameController = TextEditingController(text: _nickname);
                               nickNameEdit = !nickNameEdit;
                             });
                           },
                           child: Icon(
-                            Icons.save_as,
+                            Icons.cancel,
                             color: Colors.black,
                             size: 16,
                           ),
@@ -302,10 +341,10 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                     )
                   : Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          widget.petInfo['petName'],
+                          widget.petInfo['assetCustomName'],
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.black,
@@ -355,7 +394,7 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${widget.petInfo['petExp']} Exp',
+                      '${widget.petInfo['exp']} Exp',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
@@ -380,12 +419,12 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                           margin: const EdgeInsets.only(
                             top: 10,
                           ),
-                          width: (1.5 * widget.petInfo['petExp'])
+                          width: (1.5 * widget.petInfo['exp'])
                               .clamp(0, 200)
                               .toDouble(),
                           height: 10,
                           decoration: BoxDecoration(
-                            borderRadius: widget.petInfo['petExp'] >= 100
+                            borderRadius: widget.petInfo['exp'] >= 100
                                 ? BorderRadius.circular(5)
                                 : const BorderRadius.only(
                                     topLeft: Radius.circular(5),
@@ -399,7 +438,7 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                   ],
                 ),
                 // Text(
-                //   '${widget.petInfo['petExp']} Exp',
+                //   '${widget.petInfo['exp']} Exp',
                 //   style: TextStyle(
                 //     fontSize: 12,
                 //   ),
@@ -420,7 +459,7 @@ class _InventoryDialogDetailState extends State<InventoryDialogDetail> {
                 GroupButton(
                   maxSelected: 1,
                   buttons: motionList.map((motion) {
-                    if (motion['unLockExp'] > widget.petInfo['petExp']) {
+                    if (motion['unLockExp'] > widget.petInfo['exp']) {
                       return '${motion['unLockExp']} Exp';
                     } else {
                       return motion['motionKRName'];

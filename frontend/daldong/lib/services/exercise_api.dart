@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:daldong/services/api.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String? baseUrl = dotenv.env['SPRING_API_URL'];
+String? fastUrl = dotenv.env['FAST_API_URL'];
 String? weatherUrl = dotenv.env['WEATHER_API_URL'];
 String? weatherApiKey = dotenv.env['WEATHER_API_KEY'];
 
@@ -26,6 +29,22 @@ void getMonthlyExerciseLog({
 }) {
   apiInstance(
     path: '${baseUrl}/exercise/monthly/${yearMonth}',
+    method: Method.get,
+    success: success,
+    fail: fail,
+  );
+}
+
+// 1개월 치 운동 기록 조회
+void getRecommendExercise({
+  required dynamic Function(dynamic) success,
+  required Function(String error) fail,
+  required String uid,
+  required String weather,
+  required double temperature,
+}) {
+  apiInstance(
+    path: '${fastUrl}/${uid}uid?whether=$weather&temperature=$temperature',
     method: Method.get,
     success: success,
     fail: fail,

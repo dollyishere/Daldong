@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 class InventoryRoomScreen extends StatefulWidget {
   final List<dynamic> roomList;
   final int mainRoomId;
+  final int userPoint;
+  final void Function(String, int) changeMainItem;
+  final void Function(String, int) buySelectItem;
 
   const InventoryRoomScreen({
     required this.roomList,
     required this.mainRoomId,
+    required this.userPoint,
+    required this.changeMainItem,
+    required this.buySelectItem,
     Key? key,
   }) : super(key: key);
 
@@ -60,22 +66,32 @@ class _InventoryRoomScreenState extends State<InventoryRoomScreen> {
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,
                       ),
-                      child: ListView(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
                             children: [
-                              RoomBlock(
-                                roomInfo: widget.roomList[0],
-                                mainRoomId: widget.mainRoomId,
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 8.0,
+                                runSpacing: 0.0,
+                                children: List.generate(
+                                  20,
+                                  (index) => RoomBlock(
+                                    roomInfo: widget.roomList[index],
+                                    mainRoomId: widget.mainRoomId,
+                                    changeMainItem: widget.changeMainItem,
+                                    buySelectItem: widget.buySelectItem,
+                                    userPoint: widget.userPoint,
+                                  ),
+                                ),
                               ),
-                              RoomBlock(
-                                roomInfo: widget.roomList[1],
-                                mainRoomId: widget.mainRoomId,
+                              SizedBox(
+                                height: 70,
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

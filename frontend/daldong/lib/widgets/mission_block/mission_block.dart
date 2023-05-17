@@ -1,29 +1,14 @@
+import 'package:daldong/services/mission_api.dart';
 import 'package:flutter/material.dart';
 
 class MissionBlock extends StatefulWidget {
-  final int missionId;
-  final String missionName;
-  final String missionContent;
-  final String qualificationName;
-  final int qualificationNum;
-  final int rewardPoint;
-
-  final bool done;
-  final bool receive;
-
+  final Map<String, dynamic> missionInfo;
   final int blockLine;
   final int blockPosition;
 
   const MissionBlock({
     Key? key,
-    required this.missionId,
-    required this.missionName,
-    required this.missionContent,
-    required this.qualificationName,
-    required this.qualificationNum,
-    required this.rewardPoint,
-    required this.done,
-    required this.receive,
+    required this.missionInfo,
     required this.blockLine,
     required this.blockPosition,
   }) : super(key: key);
@@ -44,7 +29,7 @@ class _MissionBlockState extends State<MissionBlock> {
   @override
   Widget build(BuildContext context) {
     Color getBoxColorFunc() {
-      if (widget.done) {
+      if (widget.missionInfo['done']) {
         if ((widget.blockLine == 1 && widget.blockPosition == 1) ||
             (widget.blockLine == 2 && widget.blockPosition == 3) ||
             (widget.blockLine == 3 && widget.blockPosition == 2)) {
@@ -77,7 +62,7 @@ class _MissionBlockState extends State<MissionBlock> {
       width: boxLength.toDouble(),
       height: boxLength.toDouble(),
       decoration: BoxDecoration(
-        color: widget.receive ? Colors.transparent : boxColor,
+        color: widget.missionInfo['receive'] ? Colors.transparent : boxColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(
             (widget.blockLine == 1 && widget.blockPosition == 1) ? 10.0 : 0.0,
@@ -101,10 +86,10 @@ class _MissionBlockState extends State<MissionBlock> {
               horizontal: 12,
             ),
             child: Text(
-              widget.missionName,
+              widget.missionInfo['mission']['missionName'],
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: widget.receive
+                color: widget.missionInfo['receive']
                     ? Colors.transparent
                     : (boxColor == Theme.of(context).shadowColor ||
                             boxColor == Theme.of(context).primaryColorLight)
@@ -121,7 +106,22 @@ class _MissionBlockState extends State<MissionBlock> {
             height: 4,
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              if (widget.missionInfo['done'] &&
+                  !widget.missionInfo['receive']) {
+                putMissionPoint(
+                  success: (dynamic response) {
+                    setState(() {
+                      widget.missionInfo['receive'] = true;
+                    });
+                  },
+                  fail: (error) {
+                    print('미션 포인트 받기 오류 : $error');
+                  },
+                  userMissionId: widget.missionInfo['userMissionId'],
+                );
+              }
+            },
             splashColor: Colors.transparent,
             child: Container(
               alignment: Alignment.center,
@@ -129,27 +129,31 @@ class _MissionBlockState extends State<MissionBlock> {
               height: 20,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: widget.done
-                    ? widget.receive
+                color: widget.missionInfo['done']
+                    ? widget.missionInfo['receive']
                         ? Colors.transparent
                         : Theme.of(context).primaryColorDark
                     : Theme.of(context).disabledColor,
                 boxShadow: [
                   BoxShadow(
-                    color: widget.receive ? Colors.transparent : Colors.black38,
+                    color: widget.missionInfo['receive']
+                        ? Colors.transparent
+                        : Colors.black38,
                     blurRadius: 1.0,
                     spreadRadius: 1.0,
                   )
                 ],
               ),
               child: Text(
-                widget.done
-                    ? widget.receive
+                widget.missionInfo['done']
+                    ? widget.missionInfo['receive']
                         ? '완료'
-                        : '${widget.rewardPoint}P'
+                        : '${widget.missionInfo['mission']['rewardPoint']}P'
                     : '미완',
                 style: TextStyle(
-                  color: widget.receive ? Colors.transparent : Colors.white,
+                  color: widget.missionInfo['receive']
+                      ? Colors.transparent
+                      : Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),

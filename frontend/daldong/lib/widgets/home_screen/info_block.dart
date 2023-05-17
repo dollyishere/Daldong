@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 class InfoBlock extends StatefulWidget {
-  final int petNumber;
+  final String petName;
   final String nickName;
   final int playerLevel;
   final int playerExp;
-  final int playerKcal;
+  final int requiredExp;
+  final int playerPoint;
 
   const InfoBlock({
     Key? key,
-    required this.petNumber,
+    required this.petName,
     required this.nickName,
     required this.playerLevel,
     required this.playerExp,
-    required this.playerKcal,
+    required this.requiredExp,
+    required this.playerPoint,
   }) : super(key: key);
 
   @override
@@ -55,7 +57,7 @@ class _InfoBlockState extends State<InfoBlock> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '칼로리',
+                          '현재 포인트',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -63,7 +65,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           ),
                         ),
                         Text(
-                          '${widget.playerKcal}Kcal',
+                          '${widget.playerPoint}PT',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -92,7 +94,7 @@ class _InfoBlockState extends State<InfoBlock> {
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(36, 8, 8, 8),
+                    padding: const EdgeInsets.fromLTRB(42, 8, 8, 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,7 +108,7 @@ class _InfoBlockState extends State<InfoBlock> {
                           ),
                         ),
                         Text(
-                          '${widget.playerExp}exp',
+                          '${widget.playerExp}/${widget.requiredExp} Exp',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -199,8 +201,8 @@ class _InfoBlockState extends State<InfoBlock> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
-                      image:
-                          AssetImage("lib/assets/images/animals/Cheetah.png"),
+                      image: AssetImage(
+                          "lib/assets/images/animals/${widget.petName}.png"),
                       fit: BoxFit.cover,
                     ),
                     shape: BoxShape.circle,

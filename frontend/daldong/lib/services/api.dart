@@ -21,13 +21,11 @@ Future<dynamic> apiInstance({
   final url = Uri.parse(path);
   Future<String?> futureString = storage.read(key: "accessToken");
   String? accessToken = await futureString;
-  print(accessToken);
-  print(url);
 
   // bodyList가 null이 아니라면 body 대신 사용
   final requestBody =
       bodyList != null ? json.encode(bodyList) : json.encode(body);
-
+  print(requestBody);
   // 기본 headers
   Map<String, String> headers = {
     "Content-Type": "application/json;charset=utf-8",
@@ -48,7 +46,8 @@ Future<dynamic> apiInstance({
       break;
     case Method.post:
       try {
-        response = await http.post(url, headers: headers, body: requestBody);
+        response =
+            await http.post(url, headers: headers, body: json.encode(body));
       } catch (error) {
         fail('HTTP 요청 처리 중 오류 발생: $error');
       }

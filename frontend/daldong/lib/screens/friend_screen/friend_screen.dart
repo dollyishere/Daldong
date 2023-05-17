@@ -14,50 +14,7 @@ class FriendScreen extends StatefulWidget {
 
 class _FriendScreenState extends State<FriendScreen> {
   bool isLoading = true;
-  List<dynamic> friendList = [
-    {
-      "friendId": 1,
-      "friendNickname": '팩ㄺ팍페규ㅖ',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'Dog',
-      "sting": false,
-    },
-    {
-      "friendId": 1,
-      "friendNickname": 'YouKno',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'Frog',
-      "sting": true,
-    },
-    {
-      "friendId": 1,
-      "friendNickname": '핡핡핡핵핽핽',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'SnowWeasel',
-      "sting": false,
-    },
-    {
-      "friendId": 1,
-      "friendNickname": 'Naver',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'Crocodile',
-      "sting": true,
-    },
-    {
-      "friendId": 1,
-      "friendNickname": '판다조하조하',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'RedPanda',
-      "sting": false,
-    },
-    {
-      "friendId": 1,
-      "friendNickname": '짹쨰그거ㅏㅣ',
-      "friendUserLevel": 12,
-      "mainPetAssetName": 'Tortoise',
-      "sting": true,
-    },
-  ];
+  List<dynamic> friendList = [];
 
   void changeUserState(dynamic targetId) {
     friendList.removeWhere((user) => user['friendId'] == targetId);
@@ -70,7 +27,6 @@ class _FriendScreenState extends State<FriendScreen> {
     getMyFriendList(
       success: (dynamic response) {
         setState(() {
-          print(response['data']);
           friendList = response['data'];
           print(friendList);
           isLoading = false;
@@ -127,7 +83,7 @@ class _FriendScreenState extends State<FriendScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      showDetailFriend(context);
+                      showDetailFriend(context, changeUserState);
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,

@@ -8,8 +8,7 @@ class OtherUserBlock extends StatefulWidget {
   final String mainPetAssetName;
   final String useCase;
   final void Function(int) stateFunction;
-  // final void Function(BuildContext, Function, String, String, String, String,
-  //     {dynamic data}) showConfirmationDialog;
+  final int isFriend;
 
   const OtherUserBlock({
     Key? key,
@@ -19,6 +18,7 @@ class OtherUserBlock extends StatefulWidget {
     required this.mainPetAssetName,
     required this.useCase,
     required this.stateFunction,
+    required this.isFriend,
     // required this.showConfirmationDialog,
   }) : super(key: key);
 
@@ -152,7 +152,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  if (widget.useCase == 'search') {
+                                  if (widget.isFriend == 0) {
                                     postFriendRequest(
                                         success: (dynamic response) {
                                           print(response);
@@ -165,22 +165,12 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                         },
                                         fail: (error) {
                                           print('친구 요청 오류 : $error');
-                                          // Navigator.pushNamedAndRemoveUntil(
-                                          //   context,
-                                          //   '/error',
-                                          //   arguments: {
-                                          //     'errorText': error,
-                                          //   },
-                                          //   ModalRoute.withName('/home'),
-                                          // );
                                         },
                                         body: {
-                                          'receiverId':
-                                              widget.friendId.toString(),
-                                          'senderId': '1',
+                                          'receiverId': widget.friendId,
                                         });
-                                  } else if (widget.useCase == 'send') {
-                                  } else {
+                                  } else if (widget.isFriend == 1) {
+                                  } else if (widget.isFriend == 2) {
                                     postFriendRequestResult(
                                         success: (dynamic response) {
                                           print(response);
@@ -215,11 +205,13 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      widget.useCase == 'search'
+                                      (widget.isFriend == 0)
                                           ? Icons.send
-                                          : widget.useCase == 'send'
-                                              ? Icons.cut
-                                              : Icons.handshake,
+                                          : (widget.isFriend == 3)
+                                              ? Icons.people_alt_rounded
+                                              : (widget.isFriend == 1)
+                                                  ? Icons.account_box
+                                                  : Icons.handshake,
                                       color: Colors.white,
                                       size: 16,
                                     ),
@@ -227,11 +219,13 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                       height: 4,
                                     ),
                                     Text(
-                                      widget.useCase == 'search'
-                                          ? '친구 신청'
-                                          : widget.useCase == 'send'
-                                              ? '요청 취소'
-                                              : '요청 수락',
+                                      (widget.isFriend == 0)
+                                          ? '친구신청'
+                                          : (widget.isFriend == 3)
+                                              ? '우린친구'
+                                              : (widget.isFriend == 1)
+                                                  ? '보낸요청'
+                                                  : '요청수락',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
