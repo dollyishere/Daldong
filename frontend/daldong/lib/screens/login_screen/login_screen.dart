@@ -13,7 +13,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin{
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   dynamic _isLoggedIn = false;
   Map<String, dynamic> userInfo = {};
   bool isUserInDatabase = false;
@@ -43,8 +44,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     print("credential $credential");
 
     // Once signed in, return the UserCredential
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-    print("userCredential ${userCredential}");
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    print("userCredential ${userCredential.user?.uid}");
     await storage.write(key: "uid", value: userCredential.user?.uid);
 
     final idTokenResult = await userCredential.user!.getIdToken();
@@ -63,21 +65,21 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       _isLoggedIn = isLoggedIn;
       _isLoading = true;
     });
-
   }
-   void _checkLoginStatus() async {
+
+  void _checkLoginStatus() async {
     String? isLoggedInStr = await storage.read(key: 'isLoggedIn');
     bool isLoggedIn = isLoggedInStr == 'true';
     setState(() {
       _isLoggedIn = isLoggedIn;
     });
-    if (_isLoggedIn == true){
+    if (_isLoggedIn == true) {
       print("이전에 로그인 기록이 있는 유저");
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       print("이전에 로그인 기록이 없는 유저");
     }
-   }
+  }
 
   void signOut() async {
     // storage의 정보 날린 뒤 로그아웃 시킨다.
@@ -97,10 +99,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 1),
-      vsync: this,
-      )..repeat(reverse: true);
+    vsync: this,
+  )..repeat(reverse: true);
 
-  late final Animation<double> _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInToLinear);
+  late final Animation<double> _animation =
+      CurvedAnimation(parent: _controller, curve: Curves.easeInToLinear);
 
   @override
   void dispose() {
@@ -118,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             child: TextButton(
               onPressed: () async {
                 await logInWithGoogle();
-                if (_isLoggedIn == true){
+                if (_isLoggedIn == true) {
                   Navigator.pushReplacementNamed(context, '/home');
                 } else {
                   Navigator.pushReplacementNamed(context, '/signin');
@@ -229,7 +232,6 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
               ),
             ),
           ),
-
         ],
       ),
     );

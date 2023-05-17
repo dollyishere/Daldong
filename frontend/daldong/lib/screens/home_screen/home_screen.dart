@@ -59,11 +59,11 @@ class _HomeScreenState extends State<HomeScreen> {
       String methodName = 'loginMethod';
 
       // Kotlin으로 메시지를 보냅니다.
-      await platform.invokeMethod(methodName,
-          {'uid': await storage.read(key: 'uid'),
-            'mainPetCustomName': await storage.read(key: 'mainPetCustomName'),
-            'mainPetName': await storage.read(key: 'mainPetName'),
-          }).then((result) {
+      await platform.invokeMethod(methodName, {
+        'uid': await storage.read(key: 'uid'),
+        'mainPetCustomName': await storage.read(key: 'mainPetCustomName'),
+        'mainPetName': await storage.read(key: 'mainPetName'),
+      }).then((result) {
         // Kotlin에서의 처리가 성공적으로 완료되었을 때 실행될 코드
         print('method channel 열어서 전달 성공');
       }).catchError((error) {
@@ -158,16 +158,15 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
     getLocalHost();
-
     // sendToKotlin 함수 호출
     sendToKotlin();
-
     super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
+    _webViewController!.clearCache();
     super.dispose();
   }
 
@@ -175,9 +174,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: apiLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+          ? Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             )
           : Scaffold(

@@ -8,8 +8,8 @@ import 'package:flutter/rendering.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:geolocator/geolocator.dart' as Geo;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:daldong/services/exercise_api.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class ExerciseScreen extends StatefulWidget {
   ExerciseScreen({Key? key}) : super(key: key);
@@ -20,9 +20,20 @@ class ExerciseScreen extends StatefulWidget {
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
   static const storage = FlutterSecureStorage();
+  InAppWebViewController? _webViewController;
   String uid = '0';
   bool isLoading = true;
   bool isRecommendedLoading = true;
+  bool isVideoLoading = true;
+  String nowShow = 'pre';
+  Uri nowShowVideo =
+      Uri.parse("http://openapi.kspo.or.kr/web/video/0AUDLJ08S_00546.mp4");
+
+  List<String> chartKeys = [];
+  int maxKcal = 0;
+  List<_ChartData> chartData = [];
+  late TooltipBehavior _tooltip;
+
   Map<String, dynamic> todayExInfo = {};
   Map<String, dynamic> weatherInfo = {
     "weather": [
@@ -37,17 +48,22 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       "temp": 20,
     },
   };
-  Map<String, dynamic> recommendedExercise = {};
-  List<_SplineAreaData>? chartData;
-  ChartSeriesController? _chartSeriesController1;
+  Map<String, dynamic> recommendedExercise = {
+    "daily_pre_ex_recommend": "",
+    "daily_pre_ex_video": "",
+    "daily_main_ex_recommend": "",
+    "daily_main_ex_video": "",
+    "daily_end_ex_recommend": "",
+    "daily_end_ex_video": ""
+  };
 
   void getUid() async {
-    var userId = await storage.read(key: "uid");
+    String? userId = await storage.read(key: "uid");
+    await Future.delayed(const Duration(milliseconds: 10));
     print('유저 아이디: $userId');
     setState(() {
       uid = userId ?? 'user1';
     });
-    await Future.delayed(const Duration(milliseconds: 10));
   }
 
   Future<void> getCurrentLocation() async {
@@ -65,7 +81,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         getRecommendExercise(
           success: (dynamic response) {
             setState(() {
+              recommendedExercise = response['Exercise'];
               isRecommendedLoading = false;
+              nowShowVideo =
+                  Uri.parse(recommendedExercise["daily_${nowShow}_ex_video"]);
+              isVideoLoading = false;
             });
           },
           fail: (error) {
@@ -82,7 +102,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           success: (dynamic response) {
             print(response);
             setState(() {
+              recommendedExercise = response['Exercise'];
               isRecommendedLoading = false;
+              nowShowVideo =
+                  Uri.parse(recommendedExercise["daily_${nowShow}_ex_video"]);
             });
           },
           fail: (error) {
@@ -115,6 +138,18 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       success: (dynamic response) {
         setState(() {
           todayExInfo = response['data'];
+          chartKeys = response['data']['chart'].keys.toList() ?? [];
+          print(chartKeys);
+          chartKeys.forEach((date) {
+            setState(() {
+              chartData.add(_ChartData(date, response['data']['chart'][date]));
+              if (response['data']['chart'][date] > maxKcal) {
+                maxKcal = response['data']['chart'][date];
+              }
+            });
+          });
+          print(chartData);
+          print('오늘 운동 기록');
           print(todayExInfo);
           setState(() {
             isLoading = false;
@@ -126,61 +161,35 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       },
     );
 
-    chartData = <_SplineAreaData>[
-      _SplineAreaData(0, 20),
-      _SplineAreaData(1, 0),
-      _SplineAreaData(2, 0),
-      _SplineAreaData(3, 0),
-      _SplineAreaData(4, 0),
-      _SplineAreaData(5, 0),
-      _SplineAreaData(6, 0),
-      _SplineAreaData(7, 150),
-      _SplineAreaData(8, 210),
-      _SplineAreaData(9, 10),
-      _SplineAreaData(10, 20),
-      _SplineAreaData(11, 0),
-      _SplineAreaData(12, 120),
-      _SplineAreaData(13, 1150),
-      _SplineAreaData(14, 0),
-      _SplineAreaData(15, 0),
-      _SplineAreaData(16, 0),
-      _SplineAreaData(17, 0),
-      _SplineAreaData(18, 0),
-      _SplineAreaData(19, 113),
-      _SplineAreaData(20, 218),
-      _SplineAreaData(21, 0),
-      _SplineAreaData(22, 0),
-      _SplineAreaData(23, 0),
-      _SplineAreaData(24, 0),
-    ];
-    _chartSeriesController1?.animate();
+    _tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
 
   @override
   void dispose() {
     chartData!.clear();
+    _webViewController!.clearCache();
     super.dispose();
   }
 
-  List<ChartSeries<_SplineAreaData, double>> _getSplieAreaSeries() {
-    return <ChartSeries<_SplineAreaData, double>>[
-      SplineAreaSeries<_SplineAreaData, double>(
-        dataSource: chartData!,
-        color: Theme.of(context).primaryColorLight.withOpacity(0.6),
-        borderColor: Theme.of(context).primaryColorDark,
-        borderWidth: 2,
-        name: '소비 칼로리',
-        xValueMapper: (_SplineAreaData sales, _) => sales.time,
-        yValueMapper: (_SplineAreaData sales, _) => sales.kcal,
-        animationDuration: 2000,
-        onRendererCreated: (ChartSeriesController controller) {
-          _chartSeriesController1 = controller;
-        },
-        markerSettings: MarkerSettings(isVisible: true),
-      ),
-    ];
-  }
+  // List<ChartSeries<_SplineAreaData, double>> _getSplieAreaSeries() {
+  //   return <ChartSeries<_SplineAreaData, double>>[
+  //     SplineAreaSeries<_SplineAreaData, double>(
+  //       dataSource: chartData!,
+  //       color: Theme.of(context).primaryColorLight.withOpacity(0.6),
+  //       borderColor: Theme.of(context).primaryColorDark,
+  //       borderWidth: 2,
+  //       name: '소비 칼로리',
+  //       xValueMapper: (_SplineAreaData sales, _) => sales.time,
+  //       yValueMapper: (_SplineAreaData sales, _) => sales.kcal,
+  //       animationDuration: 2000,
+  //       onRendererCreated: (ChartSeriesController controller) {
+  //         _chartSeriesController1 = controller;
+  //       },
+  //       markerSettings: MarkerSettings(isVisible: true),
+  //     ),
+  //   ];
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -194,15 +203,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               horizontal: 16,
             ),
             child: isLoading
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ],
-                  )
+                ? Expanded(
+                  child: Center(child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor,
+                  ),),
+                )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -314,7 +319,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                             width: 10,
                           ),
                           Text(
-                            '오늘의 시간 당 칼로리',
+                            '지난 7일 간 칼로리',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -333,20 +338,24 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                             width: 370,
                             height: 260,
                             child: SfCartesianChart(
-                              // legend: Legend(isVisible: true, opacity: 0.7),
-                              // title: ChartTitle(text: 'Inflation rate'),
-                              primaryXAxis: NumericAxis(
-                                  interval: 1,
-                                  majorGridLines:
-                                      const MajorGridLines(width: 0),
-                                  edgeLabelPlacement: EdgeLabelPlacement.shift),
+                              primaryXAxis: CategoryAxis(),
                               primaryYAxis: NumericAxis(
-                                  labelFormat: '{value}Kcal',
-                                  axisLine: const AxisLine(width: 0),
-                                  majorTickLines:
-                                      const MajorTickLines(size: 0)),
-                              series: _getSplieAreaSeries(),
-                              tooltipBehavior: TooltipBehavior(enable: true),
+                                  minimum: 0,
+                                  maximum: maxKcal.toDouble(),
+                                  interval: 10),
+                              tooltipBehavior: _tooltip,
+                              series: <ChartSeries<_ChartData, String>>[
+                                ColumnSeries<_ChartData, String>(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
+                                  dataSource: chartData,
+                                  xValueMapper: (_ChartData data, _) => data.x,
+                                  yValueMapper: (_ChartData data, _) => data.y,
+                                  name: '하루 소모 칼로리',
+                                  width: 0.3,
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -371,78 +380,314 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       SizedBox(
                         width: 10,
-                        height: 20,
+                        height: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: isRecommendedLoading
-                            ? Container(
-                                child: Text('추천된 운동이 없습니다.'),
-                              )
-                            : Row(
+                      isRecommendedLoading
+                          ? Container(
+                              width: double.infinity,
+                              height: 100,
+                              child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Theme.of(context)
-                                              .shadowColor
-                                              .withOpacity(0.5),
-                                          spreadRadius: 0.3,
-                                          blurRadius: 6,
-                                        ),
-                                      ],
-                                    ),
+                                  Text('추천 운동을 불러오는 중입니다.'),
+                                  SizedBox(
+                                    height: 10,
                                   ),
-                                  Icon(
-                                    Icons.next_plan,
-                                  ),
-                                  Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Theme.of(context)
-                                              .shadowColor
-                                              .withOpacity(0.5),
-                                          spreadRadius: 0.3,
-                                          blurRadius: 6,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.next_plan,
-                                  ),
-                                  Container(
-                                    width: 80,
-                                    height: 80,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Theme.of(context)
-                                              .shadowColor
-                                              .withOpacity(0.5),
-                                          spreadRadius: 0.3,
-                                          blurRadius: 6,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  CircularProgressIndicator(
+                                    color: Theme.of(context).primaryColor,
+                                  )
                                 ],
                               ),
-                      ),
+                            )
+                          : Column(
+                              children: [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      height: 200,
+                                      child: isVideoLoading
+                                          ? Center(
+                                              child: CircularProgressIndicator(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              ),
+                                            )
+                                          : InAppWebView(
+                                        initialOptions: InAppWebViewGroupOptions(
+                                          android: AndroidInAppWebViewOptions(
+
+                                          ),
+                                        ),
+                                              initialUrlRequest: URLRequest(
+                                                url: nowShowVideo,
+                                              ),
+                                              onWebViewCreated: (controller) {
+                                                _webViewController = controller;
+                                              },
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Text(
+                                      '(각 박스를 누르면 영상 변경이 가능합니다)',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 6,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                nowShow = 'pre';
+                                                nowShowVideo = Uri.parse(
+                                                    recommendedExercise[
+                                                        "daily_${nowShow}_ex_video"]);
+                                              });
+
+                                              _webViewController?.loadUrl(
+                                                  urlRequest: URLRequest(
+                                                      url: nowShowVideo));
+                                            },
+                                            child: Container(
+                                              width: 90,
+                                              height: 90,
+                                              decoration: BoxDecoration(
+                                                color: nowShow == 'pre'
+                                                    ? Colors.white
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                boxShadow: [
+                                                  nowShow == 'pre'
+                                                      ? BoxShadow(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorDark,
+                                                          spreadRadius: 0.5,
+                                                          blurRadius: 14,
+                                                        )
+                                                      : BoxShadow(
+                                                          color: Colors.black45,
+                                                          spreadRadius: 0.3,
+                                                          blurRadius: 4,
+                                                        ),
+                                                ],
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(14.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    recommendedExercise[
+                                                        'daily_pre_ex_recommend'],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: nowShow == 'pre'
+                                                          ? Theme.of(context)
+                                                              .primaryColor
+                                                          : Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            '몸풀기 운동',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.next_plan,
+                                      ),
+                                      Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                nowShow = 'main';
+                                                nowShowVideo = Uri.parse(
+                                                    recommendedExercise[
+                                                        "daily_${nowShow}_ex_video"]);
+                                              });
+                                              _webViewController?.loadUrl(
+                                                  urlRequest: URLRequest(
+                                                      url: nowShowVideo));
+                                            },
+                                            child: Container(
+                                              width: 90,
+                                              height: 90,
+                                              decoration: BoxDecoration(
+                                                color: nowShow == 'main'
+                                                    ? Colors.white
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                boxShadow: [
+                                                  nowShow == 'main'
+                                                      ? BoxShadow(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorDark,
+                                                          spreadRadius: 0.5,
+                                                          blurRadius: 14,
+                                                        )
+                                                      : BoxShadow(
+                                                          color: Colors.black45,
+                                                          spreadRadius: 0.3,
+                                                          blurRadius: 4,
+                                                        ),
+                                                ],
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(14.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    recommendedExercise[
+                                                        'daily_main_ex_recommend'],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: nowShow == 'main'
+                                                          ? Theme.of(context)
+                                                              .primaryColor
+                                                          : Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            '메인 운동',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.next_plan,
+                                      ),
+                                      Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                nowShow = 'end';
+                                                nowShowVideo = Uri.parse(
+                                                    recommendedExercise[
+                                                        "daily_${nowShow}_ex_video"]);
+                                              });
+                                              _webViewController?.loadUrl(
+                                                  urlRequest: URLRequest(
+                                                      url: nowShowVideo));
+                                            },
+                                            child: Container(
+                                              width: 90,
+                                              height: 90,
+                                              decoration: BoxDecoration(
+                                                color: nowShow == 'end'
+                                                    ? Colors.white
+                                                    : Theme.of(context)
+                                                        .primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                boxShadow: [
+                                                  nowShow == 'end'
+                                                      ? BoxShadow(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColorDark,
+                                                          spreadRadius: 0.5,
+                                                          blurRadius: 14,
+                                                        )
+                                                      : BoxShadow(
+                                                          color: Colors.black45,
+                                                          spreadRadius: 0.3,
+                                                          blurRadius: 4,
+                                                        ),
+                                                ],
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(14.0),
+                                                child: Center(
+                                                  child: Text(
+                                                    recommendedExercise[
+                                                        'daily_end_ex_recommend'],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: nowShow == 'end'
+                                                          ? Theme.of(context)
+                                                              .primaryColor
+                                                          : Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            '마무리 운동',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                       SizedBox(
                         height: 10,
                       ),
@@ -459,4 +704,11 @@ class _SplineAreaData {
   _SplineAreaData(this.time, this.kcal);
   final double time;
   final double kcal;
+}
+
+class _ChartData {
+  _ChartData(this.x, this.y);
+
+  final String x;
+  final int y;
 }

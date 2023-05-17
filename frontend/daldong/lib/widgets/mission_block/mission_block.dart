@@ -5,12 +5,14 @@ class MissionBlock extends StatefulWidget {
   final Map<String, dynamic> missionInfo;
   final int blockLine;
   final int blockPosition;
+  final void changeMissonCnt;
 
   const MissionBlock({
     Key? key,
     required this.missionInfo,
     required this.blockLine,
     required this.blockPosition,
+    required this.changeMissonCnt,
   }) : super(key: key);
 
   @override
@@ -113,6 +115,7 @@ class _MissionBlockState extends State<MissionBlock> {
                   success: (dynamic response) {
                     setState(() {
                       widget.missionInfo['receive'] = true;
+                      widget.changeMissonCnt;
                     });
                   },
                   fail: (error) {
