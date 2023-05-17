@@ -21,6 +21,7 @@ public class UserDetailDTO {
     private int userLevel;
     private int userExp;
     private int userPoint;
+    private String mainPetName;
 
     public UserDetailDTO fromEntity(User user){
         return UserDetailDTO.builder()
@@ -33,6 +34,7 @@ public class UserDetailDTO {
                 .userLevel(user.getUserLevel())
                 .userExp(user.getUserExp())
                 .userPoint(user.getUserPoint())
+                .mainPetName(user.getMainPetName())
                 .build();
     }
 
