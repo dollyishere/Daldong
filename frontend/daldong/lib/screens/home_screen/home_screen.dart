@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:daldong/widgets/home_screen/info_block.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -45,6 +46,33 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> sendToKotlin() async {
+    // MethodChannel을 초기화합니다.
+    const platform = MethodChannel('login.method.channel');
+
+    print('method channel 들어옴');
+
+    try {
+      // Kotlin에서 처리할 메소드 이름을 지정합니다.
+      String methodName = 'loginMethod';
+
+      // Kotlin으로 메시지를 보냅니다.
+      await platform.invokeMethod(methodName,
+          {'uid': await storage.read(key: 'uid'),
+            'mainPetCustomName': await storage.read(key: 'mainPetCustomName'),
+            'mainPetName': await storage.read(key: 'mainPetName'),
+          }).then((result) {
+        // Kotlin에서의 처리가 성공적으로 완료되었을 때 실행될 코드
+        print('method channel 열어서 전달 성공');
+      }).catchError((error) {
+        // Kotlin에서의 처리가 실패했을 때 실행될 코드
+        print('method channel 열어서 전달 실패: $error');
+      });
+    } catch (e) {
+      print('method channel 기타 에러: $e');
+    }
   }
 
   static const storage = FlutterSecureStorage();
@@ -130,6 +158,10 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
     getLocalHost();
+
+    // sendToKotlin 함수 호출
+    sendToKotlin();
+
     super.initState();
   }
 

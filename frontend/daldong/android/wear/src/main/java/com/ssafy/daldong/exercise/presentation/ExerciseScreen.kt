@@ -141,19 +141,6 @@ fun ExerciseScreen(
             val caloriesHistory = exerciseResult.caloriesHistory
             val heartRateHistory = exerciseResult.heartRateHistory
 
-            val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current // LocalContext를 사용하여 Context를 가져옵니다.
-
-//            val retrofit = remember {
-//                Retrofit.Builder()
-//                    .baseUrl("https://k8a104.p.ssafy.io/test/api/")
-//                    .client(OkHttpClient())
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .build()
-//            }
-//
-//            val exerciseResultService = retrofit.create(RetrofitInterface::class.java)
-
             // The ticker coroutine updates activeDuration, but the ticker fires more often than
             // once a second, so we use derivedStateOf to update the elapsedTime state only when
             // the string representing the time on the screen changes. Recomposition then only
@@ -223,14 +210,6 @@ fun ExerciseScreen(
                     )
                 } else {
                     println("운동 종료와 경과 시간 : ${activeDuration}")
-
-//                    exerciseResult.endTime = LocalDateTime.now().toString()
-//                    exerciseResult.heartRate = tempAverageHeartRate.value.toInt()
-//                    exerciseResult.distance = formatDistanceKm(tempDistance.value)
-//                    exerciseResult.calories = formatCalories(tempCalories.value)
-//                    exerciseResult.elapsedTime = formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//
-
                     chronoTickJob.value?.cancel()
                 }
             }
@@ -308,58 +287,58 @@ fun ExerciseScreen(
 
                                     println("총 결과 출력 : ${exerciseResult.toString()}")
 
-                                    LaunchedEffect(Unit) {
-                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
-                                        try {
-                                            val response = withContext(Dispatchers.IO) {
-                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
-                                            }
-                                            // 결과 처리
-                                            Log.d("운동 결과 화면", "운동 결과 전송 성공 ${response.toString()}")
+                                    navController.navigate(
+                                        Screens.SummaryScreen.route + "/" +
+                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                "${formatDistanceKm(tempDistance.value)} km/" +
+                                                "${formatCalories(tempCalories.value)} kcal/" +
+                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
-                                            navController.navigate(
-                                                Screens.SummaryScreen.route + "/" +
-                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-                                                        "${formatCalories(tempCalories.value)} kcal/" +
-                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-
-                                        }catch (e: retrofit2.HttpException) {
-                                            // HTTP 요청 실패 처리
-                                            val errorCode = e.code()
-                                            val errorBody = e.response()?.errorBody()?.string()
-                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
-
-                                            navController.navigate(
-                                                Screens.SummaryScreen.route + "/" +
-                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-                                                        "${formatCalories(tempCalories.value)} kcal/" +
-                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-
-                                        }catch (e: Exception) {
-                                            // 에러 처리
-                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
-
-                                            navController.navigate(
-                                                Screens.SummaryScreen.route + "/" +
-                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-                                                        "${formatCalories(tempCalories.value)} kcal/" +
-                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-                                        }
-                                    }
-
-//                                    navController.navigate(
-//                                        Screens.SummaryScreen.route + "/" +
-//                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
-//                                                "${formatDistanceKm(tempDistance.value)} km/" +
-//                                                "${formatCalories(tempCalories.value)} kcal/" +
-//                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//                                    LaunchedEffect(Unit) {
+//                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+//                                        try {
+//                                            val response = withContext(Dispatchers.IO) {
+//                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
+//                                            }
+//                                            // 결과 처리
+//                                            Log.d("운동 결과 화면", "운동 결과 전송 성공 ${response.toString()}")
+//
+//                                            navController.navigate(
+//                                                Screens.SummaryScreen.route + "/" +
+//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                        "${formatCalories(tempCalories.value)} kcal/" +
+//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//
+//                                        }catch (e: retrofit2.HttpException) {
+//                                            // HTTP 요청 실패 처리
+//                                            val errorCode = e.code()
+//                                            val errorBody = e.response()?.errorBody()?.string()
+//                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+//
+//                                            navController.navigate(
+//                                                Screens.SummaryScreen.route + "/" +
+//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                        "${formatCalories(tempCalories.value)} kcal/" +
+//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//
+//                                        }catch (e: Exception) {
+//                                            // 에러 처리
+//                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
+//
+//                                            navController.navigate(
+//                                                Screens.SummaryScreen.route + "/" +
+//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                        "${formatCalories(tempCalories.value)} kcal/" +
+//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//                                        }
+//                                    }
 
 //                                Button(onClick = { onStartClick() }) {
 //                                    Icon(

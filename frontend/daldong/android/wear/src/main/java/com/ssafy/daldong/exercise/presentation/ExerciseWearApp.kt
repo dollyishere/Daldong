@@ -16,6 +16,10 @@
 package com.ssafy.daldong.exercise.presentation
 
 
+import android.nfc.Tag
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +40,8 @@ fun ExerciseWearApp(
     navController: NavHostController,
     startDestination: String
 ) {
+    var isLoading by remember { mutableStateOf(false) } // 비동기 작업 처리 완료 상태
+
     SwipeDismissableNavHost(
         navController = navController, startDestination = startDestination
     ) {
@@ -58,6 +64,59 @@ fun ExerciseWearApp(
 
             )
         }
+
+//        composable(Screens.Home.route) {
+//            val viewModel = hiltViewModel<ExerciseViewModel>()
+//            val serviceState by viewModel.exerciseServiceState
+//            val permissions = viewModel.permissions
+//            val uiState by viewModel.uiState.collectAsState()
+//
+//            // 작업 완료 여부를 나타내는 상태 변수들
+//            var isPrepareExerciseFinished by remember { mutableStateOf(false) }
+//            var isStartExerciseFinished by remember { mutableStateOf(false) }
+//
+//            // Request permissions prior to launching exercise.
+//            val permissionLauncher = rememberLauncherForActivityResult(
+//                ActivityResultContracts.RequestMultiplePermissions()
+//            ) { result ->
+//                if (result.all { it.value }) {
+//                    Log.d("ㅁㅁExercise Wear App", "All required permissions granted")
+//                    viewModel.prepareExercise()
+//                    isPrepareExerciseFinished = true
+//                }
+//            }
+//
+//            val onStartClick: () -> Unit = {
+//                navController.navigate(Screens.ExerciseScreen.route) {
+//                    popUpTo(navController.graph.id) {
+//                        inclusive = false // 기존
+////                inclusive = true // 바꿈
+//                    }
+//                }
+//            }
+//
+//            LaunchedEffect(isPrepareExerciseFinished) {
+//                if (isPrepareExerciseFinished) {
+//                    // prepareExercise 비동기 작업 수행 완료 후에 실행될 코드
+//                    // onStartClick() 등을 호출하면 됩니다.
+//                    onStartClick()
+//                }
+//            }
+//
+//            Home(
+//                onStartClick = onStartClick,
+//                prepareExercise = {
+////                    viewModel.prepareExercise()
+//                                  },
+//                onStart = {
+//                    viewModel.startExercise()
+//                },
+//                serviceState = serviceState,
+//                permissions = permissions,
+////                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
+//            )
+//        }
+
         composable(Screens.Home.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
@@ -76,9 +135,11 @@ fun ExerciseWearApp(
                 onStart = { viewModel.startExercise() },
                 serviceState = serviceState,
                 permissions = permissions,
-                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
+//                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
             )
         }
+
+
         composable(Screens.ExerciseScreen.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
