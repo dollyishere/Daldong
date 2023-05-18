@@ -34,12 +34,12 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestHeader(name="idToken") String idToken,
-                                   @RequestBody Map<String, String> body) throws Exception {//@RequestBody codeDto codeDto
+                                   @RequestBody FcmDTO fcmDTO) throws Exception {//@RequestBody codeDto codeDto
 
         HttpHeaders headers = new HttpHeaders();
         ResponseDefault responseDefault = null;
         try{
-            UserLoginDTO userLoginDTO = userService.login(idToken, body.get("fcm"));
+            UserLoginDTO userLoginDTO = userService.login(idToken, fcmDTO.getFcm());
             if (userLoginDTO != null) {//가입된 유저다
                 String accessToken = jwtTokenUtil.generateAccessToken(userLoginDTO.getUserUId(),userLoginDTO.getUserId());
                 String refreshToken = jwtTokenUtil.generateRefreshToken(userLoginDTO.getUserUId(),userLoginDTO.getUserId());
