@@ -1,5 +1,9 @@
 package com.ssafy.daldong.friend.service;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.ssafy.daldong.friend.model.dto.FriendDto;
 import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
 import com.ssafy.daldong.friend.model.entity.Friend;
@@ -129,6 +133,35 @@ public class FriendServiceImpl implements FriendService{
             friendSearchDTO.setIsFriend(0);
         }
         return friendSearchDTO;
+    }
+
+    @Override
+    @Transactional
+    public String sendAlarmToFriend(long userId, long friendId) {
+        try{
+            String userName = userRepository.findByUserId(userId).orElseThrow().getNickname();
+            String fcmToken = userRepository.findByUserId(friendId).orElseThrow().getFCM();
+            Message message = Message.builder()
+                    .putData("type", "sting")
+                    .setNotification(Notification.builder()
+                            .setTitle("운동 할 시간입니다!")
+                            .setBody(userName+"님이 재촉하고 있어요!!")
+                            .build())
+                    .setToken(fcmToken)
+                    .build();
+
+            // Send a message to the device corresponding to the provided
+            // registration token.
+            String response = FirebaseMessaging.getInstance().send(message);
+            // Response is a message ID string.
+            log.info("Successfully sent message: {}", response);
+            return response;
+
+        } catch (FirebaseMessagingException e){
+            log.error("Firebase Error, {}", e.toString());
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

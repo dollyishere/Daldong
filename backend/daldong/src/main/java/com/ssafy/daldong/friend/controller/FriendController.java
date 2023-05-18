@@ -1,5 +1,9 @@
 package com.ssafy.daldong.friend.controller;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.ssafy.daldong.friend.model.dto.FriendDto;
 import com.ssafy.daldong.friend.model.dto.request.FriendRequestHandleDto;
 import com.ssafy.daldong.friend.model.dto.response.FriendSearchDTO;
@@ -26,6 +30,37 @@ public class FriendController {
     private final FriendService friendService;
     private final FriendRequestService friendRequestService;
     private final JwtTokenUtil jwtTokenUtil;
+
+    @PostMapping("/test")
+    public ResponseEntity<?> testApi(){
+        String fcmToken = "ckRGSeaSRhiL_2kLRWEAOH:APA91bFAFeQqwtLwTqsXwpt0Um0i22QP4v5wmhnxQWOIJXjayJSMzg0BlZFyLwPaEfmrSG4HKfIscnjYbL1kfRIXjxVsiNfODHQZcTsFf6Mwz2Sui7BZXChteHYdIntIHSpILH5nIBSb";
+        Message message = Message.builder()
+                .putData("type", "test")
+                .setNotification(Notification.builder()
+                        .setTitle("Test alarm")
+                        .setBody("WOW")
+                        .build())
+                .setToken(fcmToken)
+                .build();
+
+        // Send a message to the device corresponding to the provided
+        // registration token.
+        try{
+            String response = FirebaseMessaging.getInstance().send(message);
+            System.out.println("Successfully sent message: " + response);
+
+
+            ResponseDefault responseDefault = ResponseDefault.builder()
+                    .success(true)
+                    .messege("테스트 성공")
+                    .data(response)
+                    .build();
+            return new ResponseEntity<>(responseDefault, HttpStatus.OK);
+
+        } catch (FirebaseMessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Operation(summary = "user의 친구 목록 가져오기")
     @ApiResponses({
@@ -62,12 +97,14 @@ public class FriendController {
     public ResponseEntity<?> friendSting(@RequestHeader(name = "accessToken") String accessToken,
                                          @Parameter(description="friendId", example = "2") @PathVariable long friendId){
         long userId = jwtTokenUtil.getUserId(accessToken);
+
         try {
             friendService.updateFriend(userId, friendId);
+            String response = friendService.sendAlarmToFriend(userId, friendId);
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("친구 찌르기 성공")
-                    .data(null)
+                    .data(response)
                     .build();
             return new ResponseEntity<>(responseDefault, HttpStatus.OK);
         } catch (Exception e) {
