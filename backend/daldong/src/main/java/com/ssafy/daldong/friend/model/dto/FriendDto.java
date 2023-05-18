@@ -17,6 +17,7 @@ public class FriendDto {
     private String friendNickname;
     private int friendUserLevel;
     private String mainPetAssetName;
+    private String mainBackAssetName;
     private boolean isSting;
 
 }
