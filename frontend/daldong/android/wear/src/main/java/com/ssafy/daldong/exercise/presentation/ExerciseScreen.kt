@@ -15,51 +15,46 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import UserInfoViewModel
 import android.os.Build
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.health.services.client.data.DataPoint
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import com.ssafy.daldong.exercise.Screens
-import com.ssafy.daldong.exercise.service.ExerciseStateChange
-import com.ssafy.daldong.R
-import com.ssafy.daldong.exercise.data.ServiceState
-import com.ssafy.daldong.exercise.presentation.component.*
-import com.ssafy.daldong.exercise.theme.ExerciseTheme
-import java.time.Duration
-import kotlin.time.toKotlinDuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.wear.compose.material.*
 import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.ssafy.daldong.R
+import com.ssafy.daldong.exercise.Screens
 import com.ssafy.daldong.exercise.data.Room.ExerciseResult
+import com.ssafy.daldong.exercise.data.ServiceState
+import com.ssafy.daldong.exercise.presentation.component.*
+import com.ssafy.daldong.exercise.service.ExerciseStateChange
+import com.ssafy.daldong.exercise.service.RetrofitExerciseService
+import com.ssafy.daldong.exercise.theme.ExerciseTheme
+import kotlinx.coroutines.*
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlinx.coroutines.*
-import androidx.compose.runtime.Composable
-import android.os.Build.VERSION.SDK_INT
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import coil.compose.rememberAsyncImagePainter
-
+import kotlin.time.toKotlinDuration
 
 /**
  * Shows while an exercise is in progress
@@ -123,7 +118,7 @@ fun ExerciseScreen(
 
             val exerciseResult = remember {
                 ExerciseResult(
-                    userId = 1,
+                    uid = "LgjoMubicOZEUdRowUmhaXtWP5o2",
                     caloriesHistory = mutableListOf(),
                     heartRateHistory = mutableListOf(),
                     elapsedTime = "",
@@ -146,7 +141,6 @@ fun ExerciseScreen(
             val elapsedTime = derivedStateOf {
                 formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
             }
-
 
             val imageLoader = ImageLoader.Builder(LocalContext.current)
                 .components {
@@ -234,7 +228,8 @@ fun ExerciseScreen(
                             .background(MaterialTheme.colors.background),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Row( // 시계
+                        Row(
+                            // 시계
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -296,65 +291,60 @@ fun ExerciseScreen(
 
                                     println("총 결과 출력 : ${exerciseResult.toString()}")
 
-                                    navController.navigate(
-                                        Screens.SummaryScreen.route + "/" +
-                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                "${formatDistanceKm(tempDistance.value)} km/" +
-                                                "${formatCalories(tempCalories.value)} kcal/" +
-                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//                                    navController.navigate(
+//                                        Screens.SummaryScreen.route + "/" +
+//                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                "${formatCalories(tempCalories.value)} kcal/" +
+//                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
-//                                    LaunchedEffect(Unit) {
-//                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
-//                                        try {
-//                                            val response = withContext(Dispatchers.IO) {
-//                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
-//                                            }
-//                                            // 결과 처리
-//                                            Log.d("운동 결과 화면", "운동 결과 전송 성공 ${response.toString()}")
-//
-//                                            navController.navigate(
-//                                                Screens.SummaryScreen.route + "/" +
-//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-//                                                        "${formatCalories(tempCalories.value)} kcal/" +
-//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-//
-//                                        }catch (e: retrofit2.HttpException) {
-//                                            // HTTP 요청 실패 처리
-//                                            val errorCode = e.code()
-//                                            val errorBody = e.response()?.errorBody()?.string()
-//                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
-//
-//                                            navController.navigate(
-//                                                Screens.SummaryScreen.route + "/" +
-//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-//                                                        "${formatCalories(tempCalories.value)} kcal/" +
-//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-//
-//                                        }catch (e: Exception) {
-//                                            // 에러 처리
-//                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
-//
-//                                            navController.navigate(
-//                                                Screens.SummaryScreen.route + "/" +
-//                                                        "${tempAverageHeartRate.value.toInt()} bpm/" +
-//                                                        "${formatDistanceKm(tempDistance.value)} km/" +
-//                                                        "${formatCalories(tempCalories.value)} kcal/" +
-//                                                        formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//                                            ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-//                                        }
-//                                    }
+                                    LaunchedEffect(Unit) {
+                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+                                        try {
+                                            val response = withContext(Dispatchers.IO) {
+                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
+                                            }
+                                            // 결과 처리
+                                            if (response.isSuccessful) {
+                                                // 성공적인 응답인 경우 (응답 코드가 200인 경우)
+                                                val responseData = response.body()
+                                                // responseData를 처리하는 코드 작성
+                                                Log.d("운동 결과 화면", "운동 결과 전송 성공 ${responseData}")
+                                            }else {
+                                                // 서버로부터 에러 응답이 온 경우 (응답 코드가 400 등인 경우)
+                                                val errorCode = response.code()
+                                                val errorBody = response.errorBody()?.string()
+                                                Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+                                                // 에러 처리 로직을 추가하여 사용자에게 알림 또는 적절한 조치를 취할 수 있습니다.
+                                            }
 
-//                                Button(onClick = { onStartClick() }) {
-//                                    Icon(
-//                                        imageVector = startOrEnd,
-//                                        contentDescription = stringResource(id = R.string.startOrEnd)
-//                                    )
-//                                }
+                                        }catch (e: retrofit2.HttpException) {
+                                            // HTTP 요청 실패 처리
+                                            val errorCode = e.code()
+                                            val errorBody = e.response()?.errorBody()?.string()
+                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+
+                                        }catch (e: Exception) {
+                                            // 에러 처리
+                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
+                                        }
+
+                                        navController.navigate(
+                                            Screens.SummaryScreen.route + "/" +
+                                                    "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                    "${formatDistanceKm(tempDistance.value)} km/" +
+                                                    "${formatCalories(tempCalories.value)} kcal/" +
+                                                    formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                        ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                    }
+
+                                Button(onClick = { onStartClick() }) {
+                                    Icon(
+                                        imageVector = startOrEnd,
+                                        contentDescription = stringResource(id = R.string.startOrEnd)
+                                    )
+                                }
 
                                 } else { // 운동 시작 중일 때
                                     Button(
@@ -376,17 +366,19 @@ fun ExerciseScreen(
                                     .height(90.dp)
                                     .padding(10.dp)
                             ){
-//                                사진
-//                                Image(
-//                                    painter = painterResource(id = R.drawable.sparrow_png),
-//                                    contentDescription = ""
-//                                )
+//                                 운동 중 GIF
 
-                                // GIF
-                                Image(
-                                    painter = rememberAsyncImagePainter(R.drawable.sparrow_gif, imageLoader),
-                                    contentDescription = "",
-                                )
+                                if (exerciseStateChange.exerciseState.isPaused) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(R.drawable.sparrow_sit, imageLoader),
+                                        contentDescription = "",
+                                    )
+                                } else {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(R.drawable.sparrow_run, imageLoader),
+                                        contentDescription = "",
+                                    )
+                                }
                             }
                             Column(
                                 verticalArrangement = Arrangement.Center,
@@ -403,11 +395,6 @@ fun ExerciseScreen(
                                             imageVector = pauseOrResume,
                                             contentDescription = stringResource(id = R.string.pauseOrResume)
                                         )
-//                                    Image(
-//                                        painter = painterResource(id = pauseOrResume),
-//                                        contentDescription = stringResource(id = R.string.pauseOrResume),
-////                                        modifier = Modifier.size(24.dp)
-//                                    )
                                     }
                                 } else {
                                     Button(

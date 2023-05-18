@@ -36,7 +36,6 @@ import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 fun ExerciseWearApp(
     navController: NavHostController,
     startDestination: String,
-    userInfoViewModel: UserInfoViewModel
 ) {
     var isLoading by remember { mutableStateOf(false) } // 비동기 작업 처리 완료 상태
 
@@ -46,6 +45,8 @@ fun ExerciseWearApp(
         composable(Screens.StartingUp.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val permissions = viewModel.permissions
+
             StartingUp(onAvailable = {
                 navController.navigate(Screens.Home.route) {
                     popUpTo(navController.graph.id) {
@@ -58,8 +59,9 @@ fun ExerciseWearApp(
                         inclusive = false
                     }
                 }
-            }, hasCapabilities = uiState.hasExerciseCapabilities
-
+            }, hasCapabilities = uiState.hasExerciseCapabilities,
+                prepareExercise = { viewModel.prepareExercise() },
+                permissions = permissions,
             )
         }
 
@@ -133,7 +135,6 @@ fun ExerciseWearApp(
                 onStart = { viewModel.startExercise() },
                 serviceState = serviceState,
                 permissions = permissions,
-                userInfoViewModel = userInfoViewModel,
 //                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
             )
         }
@@ -174,7 +175,7 @@ fun ExerciseWearApp(
                             inclusive = true
                         }
                     }
-                }
+                },
             )
         }
     }

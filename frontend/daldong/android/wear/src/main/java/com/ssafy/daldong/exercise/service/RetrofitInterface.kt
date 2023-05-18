@@ -11,5 +11,5 @@ interface RetrofitInterface {
     @POST("exercise")
     suspend fun saveExerciseResult(
         @Body exerciseResult: ExerciseResult
-    ): Call<JsonObject>
+    ): Response<JsonObject>
 }

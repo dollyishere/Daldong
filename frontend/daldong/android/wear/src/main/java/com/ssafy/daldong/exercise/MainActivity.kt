@@ -14,8 +14,12 @@ import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
 import com.ssafy.daldong.R
+import com.ssafy.daldong.exercise.data.datastore.StoreUserManager
+import com.ssafy.daldong.exercise.data.datastore.dataStore
 import com.ssafy.daldong.exercise.presentation.ExerciseViewModel
 import com.ssafy.daldong.exercise.presentation.ExerciseWearApp
+import com.ssafy.daldong.exercise.presentation.InvalidUser
+import com.ssafy.daldong.exercise.presentation.NoReachableNodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -24,6 +28,7 @@ import kotlinx.coroutines.tasks.await
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
+    private lateinit var storeUserManager : StoreUserManager
 
     private val exerciseViewModel by viewModels<ExerciseViewModel>()
 
@@ -39,24 +44,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        storeUserManager = StoreUserManager(dataStore) // 싱글톤
+
         lifecycleScope.launch {
-
-            /** Check if we have an active exercise. If true, set our destination as the
-             * Exercise Screen. If false, route to preparing a new exercise. **/
-            Log.d("메인 액티비티", exerciseViewModel.toString())
-
+            //주위에 도달할 노드 없는경우
             val destination = when (exerciseViewModel.isExerciseInProgress()) {
                 false -> Screens.StartingUp.route
                 true -> Screens.ExerciseScreen.route
             }
-
-            // Room 데이터베이스 인스턴스 초기화
-//            val db = Room.databaseBuilder(applicationContext, ExerciseResultDatabase::class.java, "exercise_result").build()
-//            val myDao = db.exerciseResultDao()
-//
-//            lifecycleScope.launch(Dispatchers.IO) {
-//                Log.d(TAG, "db 저장된 값 ${myDao.getAll().toString()}")
-//            }
 
             setContent {
                 navController = rememberSwipeDismissableNavController()
@@ -64,7 +59,6 @@ class MainActivity : ComponentActivity() {
                 ExerciseWearApp(
                     navController,
                     startDestination = destination,
-                    userInfoViewModel = userInfoViewModel,
                 )
             }
         }
@@ -123,6 +117,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "워치 메인 액티비티"
-        private val DATA_ITEM_PATH = "/PetInfo"
+        private val PET_INIT_PATH = "/PetInit"
     }
 }

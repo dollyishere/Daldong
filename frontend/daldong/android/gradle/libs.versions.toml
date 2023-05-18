@@ -75,6 +75,7 @@ androidx-concurrent = "androidx.concurrent:concurrent-futures-ktx:1.1.0"
 play-services-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-datastore-preferences-core = {module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore"}
 
 room-runtime = {module = "androidx.room:room-runtime", version.ref = "room"}
 room-compiler = {module = "androidx.room:room-compiler", version.ref = "room"}

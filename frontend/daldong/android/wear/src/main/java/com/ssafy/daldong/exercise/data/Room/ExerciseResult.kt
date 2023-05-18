@@ -1,24 +1,23 @@
 package com.ssafy.daldong.exercise.data.Room
 
-import android.text.SpannedString
+import androidx.lifecycle.LiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.time.LocalDateTime
 
 @Entity(tableName = "exercise_result")
 @TypeConverters(Converters::class)
 data class ExerciseResult(
     @PrimaryKey
-    val userId : Int,
+    val uid: String = "LgjoMubicOZEUdRowUmhaXtWP5o2",
     val caloriesHistory: MutableList<Double>,
     val heartRateHistory: MutableList<Double>,
     var elapsedTime: String,
-    val startTime : String,
-    var endTime : String,
+    val startTime: String,
+    var endTime: String,
     var calories: String,
     var heartRate: Int = 0,
     var distance: String,

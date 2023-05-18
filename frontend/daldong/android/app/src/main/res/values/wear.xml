@@ -14,12 +14,14 @@
      limitations under the License.
 -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@array/android_wear_capabilities">
     <string-array
         name="android_wear_capabilities"
         translatable="false"
         tools:ignore="UnusedResources">
         <!-- declaring the provided capabilities -->
         <item>mobile</item>
+        <item>voice_transcription</item>
     </string-array>
 </resources>
