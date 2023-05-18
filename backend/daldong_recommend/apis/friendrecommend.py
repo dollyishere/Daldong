@@ -25,6 +25,7 @@ def read_request_friends(db, user_id: int):
            "friendNickname": rec_friend.nickname,
            "friendUserLevel": rec_friend.user_level,
            "mainPetAssetName": rec_friend.main_pet_asset_name,
+           "mainBackAssetName": rec_friend.main_back_asset_name,
            }
     return res
 

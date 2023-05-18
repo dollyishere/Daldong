@@ -84,6 +84,7 @@ def get_rec_fr(db: Session, user_id: int):
         strangers[i].gower = gower_dis
         strangers[i].last_ex = get_user_ex_log(db, strangers[i].user_id)
         strangers[i].main_pet_asset_name = get_mainpet_name(db, strangers[i].main_pet_id)
+        strangers[i].main_back_asset_name = get_mainpet_name(db, strangers[i].main_back_id)
 
     strangers_sort = sorted(strangers, key=lambda x: (x.gower, x.last_ex, x.user_id))
 
