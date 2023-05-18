@@ -52,6 +52,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                     .friendNickname(friend.getNickname())
                     .friendUserLevel(friend.getUserLevel())
                     .mainPetAssetName(friend.getMainPet().getAssetName())
+                    .mainBackAssetName(friend.getMainBack().getAssetName())
                     .isSting(false)
                     .build();
             receivedList.add(friendDto);
@@ -72,6 +73,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                     .friendNickname(friend.getNickname())
                     .friendUserLevel(friend.getUserLevel())
                     .mainPetAssetName(friend.getMainPet().getAssetName())
+                    .mainBackAssetName(friend.getMainBack().getAssetName())
                     .isSting(false)
                     .build();
             sendList.add(friendDto);
