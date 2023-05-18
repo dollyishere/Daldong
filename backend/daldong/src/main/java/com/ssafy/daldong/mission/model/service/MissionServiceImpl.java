@@ -1,6 +1,7 @@
 package com.ssafy.daldong.mission.model.service;
 
 import com.ssafy.daldong.mission.model.dto.MissionResDTO;
+import com.ssafy.daldong.mission.model.dto.UserMissionDTO;
 import com.ssafy.daldong.mission.model.entity.DailyMission;
 import com.ssafy.daldong.mission.model.entity.UserMission;
 import com.ssafy.daldong.mission.model.repository.DailyMissionRepository;
@@ -111,6 +112,18 @@ public class MissionServiceImpl implements MissionService{
         userMissionRepository.save(userMission);
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public void setMission(long userId) {
+        List<UserMission> missionList=new ArrayList<>();
+        for(int i=1;i<=9;i++){
+            User user=userRepository.findByUserId(userId).orElse(null);
+            DailyMission mission=dailyMissionRepository.getById((long)i);
+            UserMission userMission=new UserMissionDTO().toEntity(user,mission);
+            missionList.add(userMission);
+        }
+        userMissionRepository.saveAll(missionList);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
