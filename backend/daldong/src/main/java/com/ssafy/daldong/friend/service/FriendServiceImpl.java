@@ -47,6 +47,7 @@ public class FriendServiceImpl implements FriendService{
                     .friendNickname(friendUser.getNickname())
                     .friendUserLevel(friendUser.getUserLevel())
                     .mainPetAssetName(friendUser.getMainPet().getAssetName())
+                    .mainBackAssetName(friendUser.getMainBack().getAssetName())
                     .isSting(friend.isSting())
                     .build();
             friendsDto.add(friendDto);
