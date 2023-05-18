@@ -123,7 +123,7 @@ public class ExerciseServiceImpl implements ExerciseService{
     @Override
     public void endExercise(ExerciseLogResDTO exerciseLogResDTO) {
         logger.info("ExerciseServiceImpl.endExercise()");
-        User user = userRepository.findByUserId(exerciseLogResDTO.getUserId()).orElseThrow();
+        User user = userRepository.findByUserUid(exerciseLogResDTO.getUid()).orElseThrow();
 
         logger.info("exerciseLog");
         ExerciseLog exerciseLog = ExerciseLog.builder()

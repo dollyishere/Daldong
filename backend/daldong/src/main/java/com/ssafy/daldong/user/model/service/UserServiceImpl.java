@@ -45,15 +45,18 @@ public class UserServiceImpl implements UserService{
     private final JwtTokenUtil jwtTokenUtil;
     private final MissionService missionService;
 
-    public UserLoginDTO login (String idToken) throws FirebaseAuthException {
+    @Transactional
+    public UserLoginDTO login (String idToken, String fcm) throws FirebaseAuthException {
 
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
         String uId = decodedToken.getUid();
         User user =userRepository.findByUserUid(uId).orElse(null);
         if(user!=null){
-            UserLoginDTO userLoginDTO = new UserLoginDTO().fromEntity(user);
-            return userLoginDTO;
-        }else return null;
+            user.setFCM(fcm);
+            userRepository.save(user);
+            return new UserLoginDTO().fromEntity(user);
+        }else
+            return null;
 
 
     }
