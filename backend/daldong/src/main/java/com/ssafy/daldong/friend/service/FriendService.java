@@ -14,6 +14,6 @@ public interface FriendService {
     boolean isFriend(long userId, long friendId);
     void updateFriend(long userId, long friendId);
     boolean deleteFriend(long userId, long friendId) throws Exception;
-
-    FriendSearchDTO searchFriend(long userId,String nickname);
+    FriendSearchDTO searchFriend(long userId, String nickname);
+    String sendAlarmToFriend(long userId, long friendId);
 }
