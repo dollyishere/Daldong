@@ -63,7 +63,7 @@ public class ExerciseServiceImpl implements ExerciseService{
 
         Map<LocalDate, Integer> chart = new TreeMap<>();
         for (int i = 0; i < 7; i++) {
-            LocalDate date = LocalDate.now().minusDays(i);
+            LocalDate date = LocalDate.now().minusDays(1+i);
             List<DailyExerciseLog> dailyExerciseLogs = dailyExerciseLogRepository.findAllByUser_UserIdAndExDate(userId, date);
             if (dailyExerciseLogs.isEmpty()) {
                 chart.put(date, 0);
