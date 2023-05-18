@@ -9,6 +9,7 @@ import java.util.List;
 @Service
 public interface FriendRequestService {
     boolean createFriendRequest(long senderId, long receiverId);
+    String sendRequestAlarm(long senderId, long receiverId);
     List<FriendDto> getReceivedFriendRequestList(long userId);
     List<FriendDto> getSendFriendRequestList(long userId);
     void handleFriendRequest(long receiverId, FriendRequestHandleDto friendRequestHandleDto);

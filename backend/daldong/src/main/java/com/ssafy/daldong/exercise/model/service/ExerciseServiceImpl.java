@@ -2,6 +2,10 @@ package com.ssafy.daldong.exercise.model.service;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseLogResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseMonthlyResDTO;
 import com.ssafy.daldong.exercise.model.dto.response.ExerciseResDTO;
@@ -167,6 +171,36 @@ public class ExerciseServiceImpl implements ExerciseService{
 //        for (QueryDocumentSnapshot document : documents) {
 //            System.out.println("User: " + document.getLong("userid"));
 //        }
+    }
+
+    @Override
+    @Transactional
+    public String sendExerciseEndAlarm(ExerciseLogResDTO exerciseLogResDTO) {
+        User user = userRepository.findByUserUid(exerciseLogResDTO.getUid()).orElseThrow();
+        String nickname = user.getNickname();
+        String fcmToken = user.getFCM();
+        try{
+            Message message = Message.builder()
+                    .putData("type", "exercise")
+                    .setNotification(Notification.builder()
+                            .setTitle("달려동물과의 운동이 기록되었습니다.")
+                            .setBody(nickname+"님의 기록을 확인해볼까요?")
+                            .build())
+                    .setToken(fcmToken)
+                    .build();
+
+            // Send a message to the device corresponding to the provided
+            // registration token.
+            String response = FirebaseMessaging.getInstance().send(message);
+            // Response is a message ID string.
+            logger.info("Successfully sent message: {}", response);
+            return response;
+
+        } catch (FirebaseMessagingException e){
+            logger.error("Firebase Error, {}", e.toString());
+            throw new RuntimeException(e);
+        }
+
     }
 
     private LocalTime calcExerciseTime(LocalDateTime start, LocalDateTime end) {

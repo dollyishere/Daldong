@@ -1,5 +1,9 @@
 package com.ssafy.daldong.friend.service;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.ssafy.daldong.friend.model.dto.FriendDto;
 import com.ssafy.daldong.friend.model.dto.request.FriendRequestHandleDto;
 import com.ssafy.daldong.friend.model.entity.Friend;
@@ -38,6 +42,36 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         friendRequestRepository.save(friendRequest);
         log.info("[requestFriend] : 친구 신청 성공, senderId : {}, receiverId : {}", senderId, receiverId);
         return true;
+    }
+
+
+    @Override
+    @Transactional
+    public String sendRequestAlarm(long senderId, long receiverId) {
+        try{
+            String userName = userRepository.findByUserId(senderId).orElseThrow().getNickname();
+            String fcmToken = userRepository.findByUserId(receiverId).orElseThrow().getFCM();
+            Message message = Message.builder()
+                    .putData("type", "friendRequest")
+                    .setNotification(Notification.builder()
+                            .setTitle("친구 요청이 도착했어요!")
+                            .setBody(userName+"님이 보낸 요청을 확인해볼까요?")
+                            .build())
+                    .setToken(fcmToken)
+                    .build();
+
+            // Send a message to the device corresponding to the provided
+            // registration token.
+            String response = FirebaseMessaging.getInstance().send(message);
+            // Response is a message ID string.
+            log.info("Successfully sent message: {}", response);
+            return response;
+
+        } catch (FirebaseMessagingException e){
+            log.error("Firebase Error, {}", e.toString());
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

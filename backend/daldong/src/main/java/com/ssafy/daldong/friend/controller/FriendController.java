@@ -164,10 +164,11 @@ public class FriendController {
         long userId = jwtTokenUtil.getUserId(accessToken);
         try {
             friendRequestService.createFriendRequest(userId, friendId);
+            String response = friendRequestService.sendRequestAlarm(userId, friendId);
             ResponseDefault responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("친구 요청 성공")
-                    .data(null)
+                    .data(response)
                     .build();
             return new ResponseEntity<>(responseDefault, HttpStatus.CREATED);
         } catch (Exception e){
