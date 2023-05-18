@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -31,12 +33,13 @@ public class UserController {
     private String clientSecretKey;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> login(@RequestHeader(name="idToken") String idToken) throws Exception {//@RequestBody codeDto codeDto
+    public ResponseEntity<?> login(@RequestHeader(name="idToken") String idToken,
+                                   @RequestBody Map<String, String> body) throws Exception {//@RequestBody codeDto codeDto
 
         HttpHeaders headers = new HttpHeaders();
         ResponseDefault responseDefault = null;
         try{
-            UserLoginDTO userLoginDTO = userService.login(idToken);
+            UserLoginDTO userLoginDTO = userService.login(idToken, body.get("fcm"));
             if (userLoginDTO != null) {//가입된 유저다
                 String accessToken = jwtTokenUtil.generateAccessToken(userLoginDTO.getUserUId(),userLoginDTO.getUserId());
                 String refreshToken = jwtTokenUtil.generateRefreshToken(userLoginDTO.getUserUId(),userLoginDTO.getUserId());

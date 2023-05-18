@@ -68,6 +68,9 @@ public class User {
     @Column(name = "main_pet_name", nullable = false)
     private String mainPetName;
 
+    @Column(name = "fcm")
+    private String FCM;
+
     public void payPoint(int rewardPoint) {
         userPoint += rewardPoint;
     }
@@ -117,5 +120,9 @@ public class User {
         this.userLevel++;
         this.userExp = 0;
         this.requiredExp = nextRequiredExp;
+    }
+
+    public void setFCM(String fcm) {
+        this.FCM = fcm;
     }
 }

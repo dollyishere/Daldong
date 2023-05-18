@@ -49,6 +49,7 @@ public class FriendServiceImpl implements FriendService{
                     .mainPetAssetName(friendUser.getMainPet().getAssetName())
                     .mainBackAssetName(friendUser.getMainBack().getAssetName())
                     .isSting(friend.isSting())
+                    .FCM(friendUser.getFCM())
                     .build();
             friendsDto.add(friendDto);
         }
