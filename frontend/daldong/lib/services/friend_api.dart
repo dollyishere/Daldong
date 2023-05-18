@@ -2,6 +2,7 @@ import 'package:daldong/services/api.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 String? baseUrl = dotenv.env['SPRING_API_URL'];
+String? fastUrl = dotenv.env['FAST_API_URL'];
 
 // 친구 목록 가져오기
 void getMyFriendList({
@@ -47,12 +48,11 @@ void getFriendDetail({
 }
 
 // 친구 요청하기
-void postFriendRequest({
-  required dynamic Function(dynamic) success,
-  required Function(String error) fail,
-  Map<String, dynamic>? body,
-  required int friendId
-}) {
+void postFriendRequest(
+    {required dynamic Function(dynamic) success,
+    required Function(String error) fail,
+    Map<String, dynamic>? body,
+    required int friendId}) {
   apiInstance(
     path: '$baseUrl/friend/request/$friendId',
     method: Method.post,
@@ -127,6 +127,20 @@ void deleteMyFriend({
     path: '${baseUrl}/friend/${friendId}',
     method: Method.delete,
     body: body,
+    success: success,
+    fail: fail,
+  );
+}
+
+// 추천 친구 조회
+void getRecommendFriend({
+  required dynamic Function(dynamic) success,
+  required Function(String error) fail,
+  required String uid,
+}) {
+  apiInstance(
+    path: '${fastUrl}/friend/${uid}',
+    method: Method.get,
     success: success,
     fail: fail,
   );

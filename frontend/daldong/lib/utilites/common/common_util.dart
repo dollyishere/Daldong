@@ -8,21 +8,14 @@ void showInfoDialog(BuildContext context, String title,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Center(
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(content),
-          ],
-        ),
+        content: Text(content),
         actions: <Widget>[
           TextButton(
             child: Text(
@@ -58,7 +51,7 @@ void showConfirmationDialog(BuildContext context, void func, String title,
         title: Text(
           title,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:daldong/services/inventory_api.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:flutter/material.dart';
 
 class RoomBlock extends StatefulWidget {
@@ -293,7 +294,7 @@ class _RoomBlockState extends State<RoomBlock> {
                           },
                           body: {"assetId": widget.roomInfo['assetId']});
                     } else {
-                      print('포인트 부족으로 구매 불가');
+                      showInfoDialog(context, '포인트 부족', '포인트 부족으로 구매가 불가능합니다.', '확인');
                     }
                   }
                 },

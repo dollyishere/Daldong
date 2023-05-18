@@ -20,6 +20,8 @@ class _MypageScreenState extends State<MypageScreen> {
   static const storage = FlutterSecureStorage();
   Map<String, dynamic> userInfo = {};
 
+  bool isLoading = true;
+
   dynamic _nickname = '';
   dynamic _height = 0;
   dynamic _weight = 0;
@@ -55,6 +57,7 @@ class _MypageScreenState extends State<MypageScreen> {
             _userPoint = userInfo['userPoint'];
             _mainPetName = mainPetName;
             print(_mainPetName);
+            isLoading = false;
           });
         },
         fail: (error) {
@@ -101,7 +104,13 @@ class _MypageScreenState extends State<MypageScreen> {
       child: Scaffold(
         bottomNavigationBar: Footer(),
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+        body: isLoading
+            ? Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).primaryColor,
+          ),
+        )
+            : SingleChildScrollView(
           child: Stack(
             children: [
               Container(

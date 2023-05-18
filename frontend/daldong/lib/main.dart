@@ -38,7 +38,6 @@ void main() async {
       // 기본 테마 색 및 폰트 설정
       // 테마 색 사용 시 Theme.of(context).{사용하고 싶은 컬러 변수 명}로 사용 가능
       theme: ThemeData(
-
         pageTransitionsTheme: PageTransitionsTheme(
           builders: {
             TargetPlatform.android: NoTransitionPageTransitionsBuilder(),
@@ -100,12 +99,12 @@ void main() async {
 class NoTransitionPageTransitionsBuilder extends PageTransitionsBuilder {
   @override
   Widget buildTransitions<T>(
-      PageRoute<T> route,
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child,
-      ) {
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child; // Returns the child directly without any transition animation
   }
 }

@@ -35,7 +35,7 @@ void getMonthlyExerciseLog({
   );
 }
 
-// 1개월 치 운동 기록 조회
+// 추천 운동 조회
 void getRecommendExercise({
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
@@ -44,7 +44,7 @@ void getRecommendExercise({
   required double temperature,
 }) {
   apiInstance(
-    path: '${fastUrl}/${uid}?whether=$weather&temperature=$temperature',
+    path: '${fastUrl}/user/${uid}?whether=$weather&temperature=$temperature',
     method: Method.get,
     success: success,
     fail: fail,

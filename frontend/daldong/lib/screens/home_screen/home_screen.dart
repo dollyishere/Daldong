@@ -17,11 +17,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final InAppLocalhostServer localhostServer = new InAppLocalhostServer();
+  InAppLocalhostServer? localhostServer;
   InAppWebViewController? _webViewController;
 
-  bool apiLoading = false;
-  bool isLoading = false;
+  bool apiLoading = true;
+  bool isLoading = true;
 
   Map<String, dynamic> homeStatus = {};
   String nickname = '';
@@ -37,15 +37,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> getLocalHost() async {
     // start the localhost server
-    await localhostServer.start();
+    if (localhostServer == null) {
+      localhostServer = new InAppLocalhostServer();
+      await localhostServer?.start();
 
-    if (Platform.isAndroid) {
-      await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+      if (Platform.isAndroid) {
+        await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(
+            true);
+      }
     }
     await Future.delayed(const Duration(milliseconds: 10));
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<void> InitInfoSendToKotlin() async {
@@ -74,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('method channel 기타 에러: $e');
     }
   }
-
   static const storage = FlutterSecureStorage();
 
   void changeMainAsset(String itemCase, String assetName) async {
@@ -156,12 +156,16 @@ class _HomeScreenState extends State<HomeScreen> {
       }, fail: (error) {
         print('홈 화면 정보 로드 오류: $error');
       });
+      getLocalHost();
     });
-    getLocalHost();
+    // sendToKotlin 함수 호출
 
-    // 초기 값 wear에 전달하기 위해
+// 초기 값 wear에 전달하기 위해
     InitInfoSendToKotlin();
 
+    setState(() {
+      isLoading = false;
+    });
     super.initState();
   }
 
@@ -175,22 +179,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: apiLoading
-          ? Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(
+      child: Scaffold(
+        bottomNavigationBar: Footer(),
+        body: apiLoading
+            ? Center(
           child: CircularProgressIndicator(
             color: Theme.of(context).primaryColor,
           ),
-        ),
-      )
-          : Scaffold(
-        bottomNavigationBar: Footer(),
-        body: Column(
+        )
+            : Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Image.asset(
+                'lib/assets/images/common/title.png',
+                width: 300,
+                height: 72,
+              ),
+            ),
             InfoBlock(
               petName: mainPetName,
               nickName: nickname,
@@ -199,43 +207,42 @@ class _HomeScreenState extends State<HomeScreen> {
               requiredExp: requiredExp,
               playerPoint: userPoint,
             ),
-            SizedBox(
-              height: 5,
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              width: double.infinity,
+              height: 380,
+              child: isLoading
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
+                  : InAppWebView(
+                initialUrlRequest: URLRequest(
+                  url: Uri.parse(
+                      "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+                ),
+                onWebViewCreated: (controller) {
+                  _webViewController = controller;
+                  _webViewController!.evaluateJavascript(
+                    source: 'setVariable("hello!")',
+                  );
+                },
+                onLoadStart: (controller, url) async {},
+                onLoadStop: (controller, url) {
+                  _webViewController!.evaluateJavascript(
+                    source:
+                    'setVariable( "${mainBackName}", "${mainPetName}")',
+                  );
+                },
+                onConsoleMessage: (controller, consoleMessage) {
+                  print('나 여기 있어');
+                  print(consoleMessage.message);
+                },
+              ),
             ),
-            // Container(
-            //   decoration: BoxDecoration(
-            //     color: Colors.white,
-            //   ),
-            //   width: double.infinity,
-            //   height: MediaQuery.of(context).size.width,
-            //   child: isLoading
-            //       ? CircularProgressIndicator(
-            //           color: Theme.of(context).primaryColor,
-            //         )
-            //       : InAppWebView(
-            //           initialUrlRequest: URLRequest(
-            //             url: Uri.parse(
-            //                 "http://localhost:8080/lib/assets/models/daldong_webview.html"),
-            //           ),
-            //           onWebViewCreated: (controller) {
-            //             _webViewController = controller;
-            //             _webViewController!.evaluateJavascript(
-            //               source: 'setVariable("hello!")',
-            //             );
-            //           },
-            //           onLoadStart: (controller, url) async {},
-            //           onLoadStop: (controller, url) {
-            //             _webViewController!.evaluateJavascript(
-            //               source:
-            //                   'setVariable( "${mainBackName}", "${mainPetName}")',
-            //             );
-            //           },
-            //           onConsoleMessage: (controller, consoleMessage) {
-            //             print('나 여기 있어');
-            //             print(consoleMessage.message);
-            //           },
-            //         ),
-            // ),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(

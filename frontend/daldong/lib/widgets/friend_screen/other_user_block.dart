@@ -1,4 +1,5 @@
 import 'package:daldong/services/friend_api.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:daldong/utilites/friend_screen/friend_util.dart';
 import 'package:flutter/material.dart';
 
@@ -171,6 +172,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                                 .stateFunction(widget.friendId);
                                             print(widget.friendId);
                                           });
+                                          showInfoDialog(context, '친구 요청 완료', '친구 요청이 완료되었습니다.', '확인');
                                         },
                                         fail: (error) {
                                           print('친구 요청 오류 : $error');
@@ -188,7 +190,7 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                           setState(() {
                                             widget
                                                 .stateFunction(widget.friendId);
-                                            print(widget.friendId);
+                                            showInfoDialog(context, '친구 요청 수락 완료', '친구 요청이 수락되었습니다.', '확인');
                                           });
                                         },
                                         fail: (error) {

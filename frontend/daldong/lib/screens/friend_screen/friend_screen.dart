@@ -94,12 +94,57 @@ class _FriendScreenState extends State<FriendScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "현재 친구 수: ${friendList.length}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "현재 친구 수: ${friendList.length}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            isLoading= true;
+                                          });
+                                          getMyFriendList(
+                                            success: (dynamic response) {
+                                              setState(() {
+                                                friendList = response['data'];
+                                                print(friendList);
+                                                isLoading = false;
+                                              });
+                                            },
+                                            fail: (error) {
+                                              print('친구 목록 호출 오류 : $error');
+                                              // Navigator.pushNamedAndRemoveUntil(
+                                              //   context,
+                                              //   '/error',
+                                              //   arguments: {
+                                              //     'errorText': error,
+                                              //   },
+                                              //   ModalRoute.withName('/home'),
+                                              // );
+                                            },
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundColor: Theme.of(context).primaryColorDark,
+                                          radius: 12,
+                                          child: Icon(
+                                            Icons.restart_alt,
+                                            size: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 InkWell(
                                   onTap: () {
