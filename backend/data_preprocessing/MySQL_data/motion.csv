@@ -1,0 +1,10 @@
+motion_id,motion_asset_id,motion_name,motion_kr_name,motion_unlock_exp
+1,14,Run,달리기,11
+2,2,Bounce,깡총깡총,22
+3,6,Fear,겁먹음,33
+4,15,Sit,앉아있기,44
+5,12,Jump,제자리뛰기,55
+6,4,Death,죽은척,66
+7,7,Fly,날기,77
+8,13,Roll,구르기,88
+9,16,Spin,제자리돌기,100
