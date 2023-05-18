@@ -99,10 +99,11 @@ public class ExerciseController {
         ResponseDefault responseDefault;
         try{
             exerciseService.endExercise(exerciseLogResDTO);
+            String response = exerciseService.sendExerciseEndAlarm(exerciseLogResDTO);
             responseDefault = ResponseDefault.builder()
                     .success(true)
                     .messege("SUCCESS")
-                    .data(null)
+                    .data(response)
                     .build();
             return new ResponseEntity<>(responseDefault, HttpStatus.OK);
         } catch (Exception e) {

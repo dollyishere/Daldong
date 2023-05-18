@@ -10,4 +10,6 @@ public interface ExerciseService {
     public ExerciseResDTO getExercise(Long userId);
     public List<Map<String, Object>> getExerciseMonthly(Long userId, String month);
     void endExercise(ExerciseLogResDTO exerciseLogResDTO);
+    String sendExerciseEndAlarm(ExerciseLogResDTO exerciseLogResDTO);
+
 }
