@@ -113,7 +113,15 @@ class _FriendBlockState extends State<FriendBlock> {
                       ),
                       InkWell(
                         onTap: () {
-                          print('하하');
+                          putStingFriend(
+                              success: (dynamic response) {
+                                print("찌르기 성공");
+                              },
+                              fail: (error) {
+                                print("친구 찌르기 실패: $error");
+                              },
+                              friendId: widget.friendId
+                          );
                         },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
