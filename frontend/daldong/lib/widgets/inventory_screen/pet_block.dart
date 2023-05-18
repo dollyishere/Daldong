@@ -1,4 +1,5 @@
 import 'package:daldong/services/inventory_api.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:daldong/utilites/inventory_screen/inventory_util.dart';
 import 'package:flutter/material.dart';
 
@@ -321,7 +322,7 @@ class _PetBlockState extends State<PetBlock> {
                           },
                           body: {'assetId': widget.petInfo['assetId']});
                     } else {
-                      print('포인트 부족으로 구매 불가');
+                      showInfoDialog(context, '포인트 부족', '포인트 부족으로 구매가 불가능합니다.', '확인');
                     }
                   }
                 },

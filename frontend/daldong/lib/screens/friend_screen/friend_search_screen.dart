@@ -1,6 +1,7 @@
 import 'package:daldong/services/friend_api.dart';
 import 'package:daldong/widgets/friend_screen/other_user_block.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FriendSearchScreen extends StatefulWidget {
   final FocusNode unUsedFocusNode;
@@ -17,13 +18,19 @@ class FriendSearchScreen extends StatefulWidget {
 }
 
 class _FriendSearchScreenState extends State<FriendSearchScreen> {
+  static const storage = FlutterSecureStorage();
+  String uid = '0';
+
   bool isLoading = false;
   bool isSearched = false;
+  bool isRecommend = false;
+  bool hasRecommendedFriend = false;
   bool noUser = false;
   late TextEditingController inputController;
   String searchInput = '';
   List<dynamic> searchUserList = [];
   Map<String, dynamic> searchUser = {};
+  Map<String, dynamic> recommendedUser = {};
 
   void changeUserState(int targetId) {
     if (searchUser['isFriend'] == 0) {
@@ -42,9 +49,39 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
     }
   }
 
+  void getUid() async {
+    String? userId = await storage.read(key: "uid");
+
+    print('유저 아이디: $userId');
+    setState(() {
+      uid = userId ?? 'user1';
+    });
+    await Future.delayed(const Duration(milliseconds: 10));
+    getRecommendFriend(
+      success: (dynamic response) {
+        recommendedUser = response;
+        print(response);
+        setState(() {
+          hasRecommendedFriend = true;
+        });
+      },
+      fail: (error) {
+        print('추천 친구 받아오기 에러: $error');
+      },
+      uid: uid,
+    );
+    setState(() {
+      isRecommend = true;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUid();
+    });
+
     inputController = TextEditingController(text: searchInput);
     super.initState();
   }
@@ -215,41 +252,125 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                             '현재 검색된 유저가 없습니다',
                           ),
                         )
-                      : RawScrollbar(
-                          thumbVisibility: true,
-                          radius: const Radius.circular(10),
-                          thumbColor: Theme.of(context)
-                              .primaryColorDark
-                              .withOpacity(0.5),
-                          thickness: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
+                      : noUser
+                          ? Center(
+                              child: Text('해당하는 유저가 없습니다.'),
+                            )
+                          : Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              child: OtherUserBlock(
+                                friendId: searchUser['userId'],
+                                friendNickname: searchUser['nickname'],
+                                friendUserLevel: searchUser['userLevel'],
+                                mainPetAssetName: searchUser['mainPetName'],
+                                mainBackAssetName:
+                                    searchUser['mainBackAssetName'],
+                                useCase: 'search',
+                                stateFunction: changeUserState,
+                                isFriend: searchUser['isFriend'],
+                              ),
                             ),
-                            child: ListView(
-                              children: [
-                                noUser
-                                    ? Center(
-                                        child: Text('해당하는 유저가 없습니다.'),
-                                      )
-                                    : OtherUserBlock(
-                                        friendId: searchUser['userId'],
-                                        friendNickname: searchUser['nickname'],
-                                        friendUserLevel:
-                                            searchUser['userLevel'],
-                                        mainPetAssetName:
-                                            searchUser['mainPetName'],
-                                        mainBackAssetName:
-                                            searchUser['mainBackAssetName'],
-                                        useCase: 'search',
-                                        stateFunction: changeUserState,
-                                        isFriend: searchUser['isFriend'],
-                                      ),
-                              ],
-                            ),
+                ),
+          Container(
+            height: 180,
+            width: double.infinity,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 24,
+                    ),
+                    Text(
+                      '추천 유저',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            isRecommend = false;
+                          });
+                          getRecommendFriend(
+                            success: (dynamic response) {
+                              recommendedUser = response;
+                              print(response);
+                              setState(() {
+                                hasRecommendedFriend = true;
+                              });
+                            },
+                            fail: (error) {
+                              print('추천 친구 받아오기 에러: $error');
+                            },
+                            uid: uid,
+                          );
+                          setState(() {
+                            isRecommend = true;
+                          });
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColorDark,
+                          radius: 12,
+                          child: Icon(
+                            Icons.restart_alt,
+                            size: 16,
+                            color: Colors.white,
                           ),
                         ),
+                      ),
+                    ),
+                  ],
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: double.infinity,
+                  child: isRecommend
+                      ? hasRecommendedFriend
+                          ? OtherUserBlock(
+                              friendId: recommendedUser['friendId'],
+                              friendNickname: recommendedUser['friendNickname'],
+                              friendUserLevel:
+                                  recommendedUser['friendUserLevel'],
+                              mainPetAssetName:
+                                  recommendedUser['mainPetAssetName'],
+                              mainBackAssetName:
+                                  recommendedUser['mainBackAssetName'] ??
+                                      'Island_20',
+                              useCase: 'search',
+                              stateFunction: changeUserState,
+                              isFriend: 0,
+                            )
+                          : Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  '추천된 유저가 없습니다',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            )
+                      : Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                )
+              ],
+            ),
+          ),
           SizedBox(
             height: 50,
           ),

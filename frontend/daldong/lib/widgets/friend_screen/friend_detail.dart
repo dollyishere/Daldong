@@ -84,7 +84,7 @@ class _FriendDetailState extends State<FriendDetail> {
           Text(
             '친구 상세',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -105,7 +105,7 @@ class _FriendDetailState extends State<FriendDetail> {
                       child: Text(
                         '닉네임',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -181,7 +181,7 @@ class _FriendDetailState extends State<FriendDetail> {
                       child: Text(
                         '레벨',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

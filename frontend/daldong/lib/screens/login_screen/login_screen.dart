@@ -122,10 +122,21 @@ class _LoginScreenState extends State<LoginScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
+                  'lib/assets/images/common/title.png',
+                  width: 300,
+                  height: 120,
+                ),
+                SizedBox(height: 10,),
+                Image.asset(
                   'lib/assets/images/common/main_logo.png',
                   width: 50,
                   height: 50,
                 ),
+                SizedBox(height: 30,),
+                Text('혼자 운동하기 적적한', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,),),
+                SizedBox(height: 10,),
+                Text('당신을 위해', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,),),
+                SizedBox(height: 90,),
                 TextButton(
                   onPressed: () async {
                     await logInWithGoogle();
