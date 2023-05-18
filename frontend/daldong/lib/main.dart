@@ -33,6 +33,7 @@ void main() async {
 
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'daldong',
       // 기본 테마 색 및 폰트 설정
       // 테마 색 사용 시 Theme.of(context).{사용하고 싶은 컬러 변수 명}로 사용 가능

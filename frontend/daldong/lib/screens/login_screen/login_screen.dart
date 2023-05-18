@@ -118,57 +118,67 @@ class _LoginScreenState extends State<LoginScreen>
       body: Stack(
         children: [
           Center(
-            child: TextButton(
-              onPressed: () async {
-                await logInWithGoogle();
-                if (_isLoggedIn == true) {
-                  Navigator.pushReplacementNamed(context, '/home');
-                } else {
-                  Navigator.pushReplacementNamed(context, '/signin');
-                }
-              },
-              child: Container(
-                width: 240,
-                height: 40,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).shadowColor,
-                      blurRadius: 3.0,
-                      spreadRadius: 1.0,
-                    )
-                  ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'lib/assets/images/common/main_logo.png',
+                  width: 50,
+                  height: 50,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        image: const DecorationImage(
-                          image: AssetImage(
-                              'lib/assets/images/common/google_logo.png'),
+                TextButton(
+                  onPressed: () async {
+                    await logInWithGoogle();
+                    if (_isLoggedIn == true) {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    } else {
+                      Navigator.pushReplacementNamed(context, '/signin');
+                    }
+                  },
+                  child: Container(
+                    width: 240,
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor,
+                          blurRadius: 3.0,
+                          spreadRadius: 1.0,
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            image: const DecorationImage(
+                              image: AssetImage(
+                                  'lib/assets/images/common/google_logo.png'),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          "구글로 시작하기",
+                          style: TextStyle(
+                            color: Theme.of(context).secondaryHeaderColor,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Text(
-                      "구글로 시작하기",
-                      style: TextStyle(
-                        color: Theme.of(context).secondaryHeaderColor,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              ],
+            )
           ),
           Center(
             child: Visibility(
@@ -185,50 +195,6 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: signOut,
-            child: Container(
-              width: 240,
-              height: 40,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).shadowColor,
-                    blurRadius: 3.0,
-                    spreadRadius: 1.0,
-                  )
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                            'lib/assets/images/common/google_logo.png'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Text(
-                    "로그아웃하기",
-                    style: TextStyle(
-                      color: Theme.of(context).secondaryHeaderColor,
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
