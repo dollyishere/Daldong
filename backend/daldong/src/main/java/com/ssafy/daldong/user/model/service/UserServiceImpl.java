@@ -10,6 +10,7 @@ import com.ssafy.daldong.main.model.dto.UserAssetDTO;
 import com.ssafy.daldong.main.model.entity.Asset;
 import com.ssafy.daldong.main.model.repository.AssetRepository;
 import com.ssafy.daldong.main.model.repository.UserAssetRepository;
+import com.ssafy.daldong.mission.model.service.MissionService;
 import com.ssafy.daldong.user.model.dto.*;
 import com.ssafy.daldong.user.model.entity.Statistics;
 import com.ssafy.daldong.user.model.entity.User;
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserService{
     private final UserAssetRepository userAssetRepository;
     private final RedisService redisService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final MissionService missionService;
 
     public UserLoginDTO login (String idToken) throws FirebaseAuthException {
 
@@ -68,6 +70,7 @@ public class UserServiceImpl implements UserService{
         User user=userJoinDTO.toEntity(User.from(userJoinDTO,assetBack,assetPet));
         userRepository.save(user);
         Statistics userdaily=new UserStatisticsDTO().fromEntity(user);
+        missionService.setMission(user.getUserId());
         statisticsRepository.save(userdaily);
         user=userRepository.findByUserUid(userJoinDTO.getUserUId()).orElse(null);
         if(user!=null){
