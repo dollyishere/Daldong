@@ -132,7 +132,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                 initialVideoId: YoutubePlayer.convertUrlToId(
                         recommendedExercise["daily_${nowShow}_ex_video"]) ??
                     '',
-                flags: YoutubePlayerFlags(
+                flags: new YoutubePlayerFlags(
                   mute: false,
                   autoPlay: false,
                   disableDragSeek: false,
@@ -140,6 +140,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                   isLive: false,
                   forceHD: false,
                   enableCaption: true,
+                  useHybridComposition: false,
                 ),
               );
               isVideoLoading = false;
@@ -192,7 +193,6 @@ class _ExerciseScreenState extends State<ExerciseScreen>
         setState(() {
           todayExInfo = response['data'];
           chartKeys = response['data']['chart'].keys.toList() ?? [];
-          print(chartKeys);
           chartKeys.forEach((date) {
             setState(() {
               chartData.add(_ChartData(date, response['data']['chart'][date]));
@@ -201,9 +201,6 @@ class _ExerciseScreenState extends State<ExerciseScreen>
               }
             });
           });
-          print(chartData);
-          print('오늘 운동 기록');
-          print(todayExInfo);
           setState(() {
             isLoading = false;
           });
@@ -221,7 +218,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
   @override
   void dispose() {
     chartData!.clear();
-    _webViewController!.clearCache();
+    _webViewController?.clearCache();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -249,14 +246,14 @@ class _ExerciseScreenState extends State<ExerciseScreen>
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: Footer(),
-        body: SingleChildScrollView(
-          child: isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                )
-              : Padding(
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                     horizontal: 16,
@@ -298,6 +295,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                               IconButton(
                                 padding: EdgeInsets.all(0),
                                 onPressed: () {
+                                  _youtubeController?.pause();
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) =>
@@ -789,7 +787,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                     ],
                   ),
                 ),
-        ),
+              ),
       ),
     );
   }

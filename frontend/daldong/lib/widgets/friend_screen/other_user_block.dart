@@ -1,4 +1,5 @@
 import 'package:daldong/services/friend_api.dart';
+import 'package:daldong/utilites/friend_screen/friend_util.dart';
 import 'package:flutter/material.dart';
 
 class OtherUserBlock extends StatefulWidget {
@@ -6,6 +7,7 @@ class OtherUserBlock extends StatefulWidget {
   final String friendNickname;
   final int friendUserLevel;
   final String mainPetAssetName;
+  final String mainBackAssetName;
   final String useCase;
   final void Function(int) stateFunction;
   final int isFriend;
@@ -16,6 +18,7 @@ class OtherUserBlock extends StatefulWidget {
     required this.friendNickname,
     required this.friendUserLevel,
     required this.mainPetAssetName,
+    required this.mainBackAssetName,
     required this.useCase,
     required this.stateFunction,
     required this.isFriend,
@@ -101,7 +104,13 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                       // ),
                       InkWell(
                         onTap: () {
-                          print('하하');
+                          showFriendDetail(
+                            context,
+                            widget.friendNickname,
+                            widget.mainPetAssetName,
+                            widget.mainBackAssetName,
+                            widget.friendUserLevel,
+                          );
                         },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
@@ -154,25 +163,23 @@ class _OtherUserBlockState extends State<OtherUserBlock> {
                                 onTap: () {
                                   if (widget.isFriend == 0) {
                                     postFriendRequest(
-                                      success: (dynamic response) {
-                                        print(response);
-                                        print('친구 요청 완료');
-                                        setState(() {
-                                          widget
-                                              .stateFunction(widget.friendId);
-                                          print(widget.friendId);
-                                        });
-                                      },
-                                      fail: (error) {
-                                        print('친구 요청 오류 : $error');
-                                      },
-                                      body: {
-                                        'receiverId': widget.friendId,
-                                      },
-                                      friendId: widget.friendId
-                                    );
-                                  }
-                                  else if (widget.isFriend == 1) {
+                                        success: (dynamic response) {
+                                          print(response);
+                                          print('친구 요청 완료');
+                                          setState(() {
+                                            widget
+                                                .stateFunction(widget.friendId);
+                                            print(widget.friendId);
+                                          });
+                                        },
+                                        fail: (error) {
+                                          print('친구 요청 오류 : $error');
+                                        },
+                                        body: {
+                                          'receiverId': widget.friendId,
+                                        },
+                                        friendId: widget.friendId);
+                                  } else if (widget.isFriend == 1) {
                                   } else if (widget.isFriend == 2) {
                                     postFriendRequestResult(
                                         success: (dynamic response) {

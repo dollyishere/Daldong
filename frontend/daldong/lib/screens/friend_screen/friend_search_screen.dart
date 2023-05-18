@@ -239,6 +239,8 @@ class _FriendSearchScreenState extends State<FriendSearchScreen> {
                                             searchUser['userLevel'],
                                         mainPetAssetName:
                                             searchUser['mainPetName'],
+                                        mainBackAssetName:
+                                            searchUser['mainBackAssetName'],
                                         useCase: 'search',
                                         stateFunction: changeUserState,
                                         isFriend: searchUser['isFriend'],

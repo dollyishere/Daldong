@@ -165,7 +165,8 @@
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
       } else {
-        scene.clearColor = new BABYLON.Color3.FromHexString("#FAC3D5");
+        // scene.clearColor = new BABYLON.Color3.FromHexString("#FAC3D5");
+        scene.clearColor = new BABYLON.Color3.FromHexString("#E6E6FA");
       }
 
       // // 빗방울 비효과를 구현할 메시 생성 (플레인 메시 사용)
@@ -345,42 +346,42 @@
             );
             console.log(pet.actionManager);
 
-            // GUI
-            var advancedTexture =
-              BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-            advancedTexture.idealWidth = 600;
+            // // GUI
+            // var advancedTexture =
+            //   BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            // advancedTexture.idealWidth = 600;
 
-            var rect1 = new BABYLON.GUI.Rectangle();
-            rect1.width = 0.3;
-            rect1.height = "100px";
-            rect1.cornerRadius = 20;
-            rect1.color = "Black";
-            rect1.thickness = 0;
-            rect1.background = "White";
-            rect1.shadowColor = new BABYLON.Color4(0, 0, 0, 0.5); // 그림자 색상
-            rect1.shadowBlur = 5; // 그림자 흐림 정도
-            advancedTexture.addControl(rect1);
-            rect1.linkWithMesh(pet);
-            rect1.linkOffsetY = -180;
+            // var rect1 = new BABYLON.GUI.Rectangle();
+            // rect1.width = 0.3;
+            // rect1.height = "100px";
+            // rect1.cornerRadius = 20;
+            // rect1.color = "Black";
+            // rect1.thickness = 0;
+            // rect1.background = "White";
+            // rect1.shadowColor = new BABYLON.Color4(0, 0, 0, 0.5); // 그림자 색상
+            // rect1.shadowBlur = 5; // 그림자 흐림 정도
+            // advancedTexture.addControl(rect1);
+            // rect1.linkWithMesh(pet);
+            // rect1.linkOffsetY = -180;
 
-            var randomTexts = [
-              // "쭈인아\n살려줘 시팔",
-              "쭈인아~ \n 니 스마터폰 쭝독이다~",
-              "왕! 왈왈왈왕!",
-              "운동해라왕!",
-              "개드립은 싫타멍",
-            ];
-            var label = new BABYLON.GUI.TextBlock();
-            label.text = randomTexts[0];
-            label.fontSize = 14;
-            rect1.addControl(label);
+            // var randomTexts = [
+            //   // "쭈인아\n살려줘 시팔",
+            //   "쭈인아~ \n 니 스마터폰 쭝독이다~",
+            //   "왕! 왈왈왈왕!",
+            //   "운동해라왕!",
+            //   "개드립은 싫타멍",
+            // ];
+            // var label = new BABYLON.GUI.TextBlock();
+            // label.text = randomTexts[0];
+            // label.fontSize = 14;
+            // rect1.addControl(label);
 
-            function updateText() {
-              var randomIndex = Math.floor(Math.random() * randomTexts.length);
-              label.text = randomTexts[randomIndex];
-            }
+            // function updateText() {
+            //   var randomIndex = Math.floor(Math.random() * randomTexts.length);
+            //   label.text = randomTexts[randomIndex];
+            // }
 
-            setInterval(updateText, 10000);
+            // setInterval(updateText, 10000);
 
             // start rendering loop
             engine.runRenderLoop(function () {
