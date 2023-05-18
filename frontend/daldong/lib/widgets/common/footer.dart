@@ -27,7 +27,7 @@ class _FooterState extends State<Footer> {
               ),
               onPressed: () {
                 if (ModalRoute.of(context)?.settings.name != '/home') {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                 }
               },
               child: Stack(
@@ -73,7 +73,7 @@ class _FooterState extends State<Footer> {
           TextButton(
             onPressed: () {
               if (ModalRoute.of(context)?.settings.name != '/exercise') {
-                Navigator.pushNamed(context, '/exercise');
+                Navigator.pushNamedAndRemoveUntil(context, '/exercise', (route) => false);
               }
             },
             child: Column(
@@ -104,7 +104,7 @@ class _FooterState extends State<Footer> {
           TextButton(
             onPressed: () {
               if (ModalRoute.of(context)?.settings.name != '/friend') {
-                Navigator.pushNamed(context, '/friend');
+                Navigator.pushNamedAndRemoveUntil(context, '/friend', (route) => false);
               }
             },
             child: Column(
@@ -135,7 +135,7 @@ class _FooterState extends State<Footer> {
           TextButton(
             onPressed: () {
               if (ModalRoute.of(context)?.settings.name != '/mission') {
-                Navigator.pushNamed(context, '/mission');
+                Navigator.pushNamedAndRemoveUntil(context, '/mission', (route) => false);
               }
             },
             child: Column(
@@ -166,7 +166,7 @@ class _FooterState extends State<Footer> {
           TextButton(
             onPressed: () {
               if (ModalRoute.of(context)?.settings.name != '/profile') {
-                Navigator.pushNamed(context, '/profile');
+                Navigator.pushNamedAndRemoveUntil(context, '/profile', (route) => false);
               }
             },
             child: Column(
