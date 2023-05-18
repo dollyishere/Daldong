@@ -15,6 +15,7 @@ public class FriendSearchDTO {
     private String nickname;
     private int userLevel;
     private String mainPetName;
+    private String mainBackAssetName;
     private int isFriend;
     public FriendSearchDTO fromEntity(User user){
         return FriendSearchDTO.builder()
@@ -22,6 +23,7 @@ public class FriendSearchDTO {
                 .nickname(user.getNickname())
                 .userLevel(user.getUserLevel())
                 .mainPetName(user.getMainPet().getAssetName())
+                .mainBackAssetName(user.getMainBack().getAssetName())
                 .build();
     }
 
