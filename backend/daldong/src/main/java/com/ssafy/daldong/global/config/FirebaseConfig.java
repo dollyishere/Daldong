@@ -17,7 +17,7 @@ public class FirebaseConfig {
     public FirebaseAuth firebaseAuth() throws IOException {
         final String FILE = "daldong-firebase-adminsdk.json";
         ClassPathResource classPathResource = new ClassPathResource(FILE);
-        FirebaseOptions options = new FirebaseOptions.Builder()
+        FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(classPathResource.getInputStream()))
                 .build();
         FirebaseApp.initializeApp(options);
