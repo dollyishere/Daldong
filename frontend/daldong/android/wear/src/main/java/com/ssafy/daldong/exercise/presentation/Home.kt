@@ -17,18 +17,12 @@ package com.ssafy.daldong.exercise.presentation
 
 import UserInfoViewModel
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
@@ -54,12 +48,15 @@ import com.ssafy.daldong.exercise.theme.ExerciseTheme
 import com.ssafy.daldong.exercise.data.ServiceState
 import androidx.compose.runtime.Composable
 import android.os.Build.VERSION.SDK_INT
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.ssafy.daldong.exercise.presentation.component.ExerciseInProgressAlert
 
 /**
  * Screen that appears while the device is preparing the exercise.
@@ -71,7 +68,6 @@ fun Home(
     onStart: () -> Unit = {},
     serviceState: ServiceState,
     permissions: Array<String>,
-    userInfoViewModel : UserInfoViewModel,
 //    isTrackingAnotherExercise: Boolean,
 ) {
 //    if (isTrackingAnotherExercise) {
@@ -93,6 +89,16 @@ fun Home(
         }
     }
 
+    val imageLoader = ImageLoader.Builder(LocalContext.current)
+        .components {
+            if (Build.VERSION.SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }
+        .build()
+
     when (serviceState) {
         is ServiceState.Connected -> {
             LaunchedEffect(Unit) {
@@ -102,7 +108,7 @@ fun Home(
                 }
             }
 //            Log.d("위치 서비스 상태", serviceState.exerciseServiceState. toString())
-            val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
+//            val location by serviceState.locationAvailabilityState.collectAsStateWithLifecycle()
 
             ExerciseTheme {
                 Scaffold(timeText =
@@ -131,19 +137,14 @@ fun Home(
 
                         Row( // 동물
                             horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .height(100.dp)
+//                                .padding(5.dp),
+
                         ) {
-//
-//                            val drawableName = userInfoViewModel.petNamePng.value ?: ""
-//                            val drawableResId = getDrawableResourceId(drawableName)
-//                            Image(
-//                                painter = painterResource(id = drawableResId),
-//                                contentDescription = ""
-//                            )
-                            //기존
                             Image(
-                                painter = painterResource(id = R.drawable.sparrow_png),
-                                contentDescription = ""
+                                painter = rememberAsyncImagePainter(R.drawable.sparrow_basic, imageLoader),
+                                contentDescription = "",
                             )
                         }
 
@@ -202,7 +203,7 @@ fun Home(
         else -> {}
     }
 }
-//
+
 //@Composable
 //private fun getDrawableResourceId(drawableName: String?): Int {
 //    val resources = LocalContext.current.resources

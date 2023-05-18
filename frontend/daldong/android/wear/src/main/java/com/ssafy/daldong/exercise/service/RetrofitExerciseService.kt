@@ -6,6 +6,7 @@ import com.ssafy.daldong.exercise.data.Room.ExerciseResult
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
@@ -15,13 +16,13 @@ class RetrofitExerciseService  @Inject constructor() {
 
     companion object {
         val TAG = "Retrofit 운동 서비스"
-//        const val baseUrl: String = "https://k8a104.p.ssafy.io/test/api/"
-      const val baseUrl: String = "http://70.12.247.124:8080/"
+        const val baseUrl: String = "https://k8a104.p.ssafy.io/test/api/"
+//      const val baseUrl: String = "http://70.12.247.124:8080/"
         val token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyVWlkIjoidXNlcjF1aWQiLCJ1c2VySWQiOjEsImlhdCI6MTY4Mzc2OTQ5MCwiZXhwIjoxNzE1MzA1NDkwfQ.vCuovmTOlf4KCROcemtPJUuOvUKsXp1LSKVrjaIMlaY"
         var logging = HttpLoggingInterceptor()
     }
 
-    suspend fun saveExerciseResult(exerciseResult: ExerciseResult): Call<JsonObject> {
+    suspend fun saveExerciseResult(exerciseResult: ExerciseResult): Response<JsonObject> {
         Log.d(TAG, "레트로 핏 시작")
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC)
 
@@ -34,6 +35,7 @@ class RetrofitExerciseService  @Inject constructor() {
         Log.d(TAG, "클라이언트 : ${client.toString()}")
 
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
+
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         clientBuilder.addInterceptor(loggingInterceptor)

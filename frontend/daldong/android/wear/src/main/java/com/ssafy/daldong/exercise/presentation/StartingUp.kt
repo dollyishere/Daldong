@@ -15,6 +15,9 @@
  */
 package com.ssafy.daldong.exercise.presentation
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -39,6 +43,7 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.TimeTextDefaults
 import com.ssafy.daldong.R
 import com.ssafy.daldong.exercise.theme.ExerciseTheme
+import kotlinx.coroutines.launch
 
 /**
  * Screen that shows while the app is starting up. If the exercise capability is available,
@@ -50,8 +55,21 @@ import com.ssafy.daldong.exercise.theme.ExerciseTheme
 fun StartingUp(
     onAvailable: () -> Unit = {},
     onUnavailable: () -> Unit = {},
-    hasCapabilities: Boolean
+    hasCapabilities: Boolean,
+    prepareExercise: () -> Unit,
+    permissions: Array<String>,
 ) {
+
+    /** Request permissions prior to launching exercise.**/
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        if (result.all { it.value }) {
+            Log.d("스타팅 화면 권한", "All required permissions granted")
+            prepareExercise() //이동
+        }
+    }
+
     if (hasCapabilities) {
         onAvailable()
     } else {
@@ -96,12 +114,12 @@ fun StartingUp(
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun StartingUpPreview() {
-    StartingUp(
-        onAvailable = {},
-        onUnavailable = {},
-        hasCapabilities = true
-    )
-}
+//@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+//@Composable
+//fun StartingUpPreview() {
+//    StartingUp(
+//        onAvailable = {},
+//        onUnavailable = {},
+//        hasCapabilities = true
+//    )
+//}

@@ -17,11 +17,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  InAppLocalhostServer? localhostServer;
+  final InAppLocalhostServer localhostServer = new InAppLocalhostServer();
   InAppWebViewController? _webViewController;
 
-  bool apiLoading = true;
-  bool isLoading = true;
+  bool apiLoading = false;
+  bool isLoading = false;
 
   Map<String, dynamic> homeStatus = {};
   String nickname = '';
@@ -37,19 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> getLocalHost() async {
     // start the localhost server
-    if (localhostServer == null) {
-      localhostServer = new InAppLocalhostServer();
-      await localhostServer?.start();
+    await localhostServer.start();
 
-      if (Platform.isAndroid) {
-        await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(
-            true);
-      }
+    if (Platform.isAndroid) {
+      await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
     }
     await Future.delayed(const Duration(milliseconds: 10));
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<void> sendToKotlin() async {
+  Future<void> InitInfoSendToKotlin() async {
     // MethodChannel을 초기화합니다.
     const platform = MethodChannel('login.method.channel');
 
@@ -57,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       // Kotlin에서 처리할 메소드 이름을 지정합니다.
-      String methodName = 'loginMethod';
+      String methodName = 'InitInfoSendToKotlin';
 
       // Kotlin으로 메시지를 보냅니다.
       await platform.invokeMethod(methodName, {
@@ -103,15 +102,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   saveHomeInfo(
-    String nickname,
-    String mainPetCustomName,
-    int userLevel,
-    int userExp,
-    int requiredExp,
-    int userPoint,
-    String mainBackName,
-    String mainPetName,
-  ) async {
+      String nickname,
+      String mainPetCustomName,
+      int userLevel,
+      int userExp,
+      int requiredExp,
+      int userPoint,
+      String mainBackName,
+      String mainPetName,
+      ) async {
     await storage.write(key: "nickname", value: nickname);
     await storage.write(key: "mainPetCustomName", value: mainPetCustomName);
     await storage.write(key: "userLevel", value: userLevel.toString());
@@ -157,13 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
       }, fail: (error) {
         print('홈 화면 정보 로드 오류: $error');
       });
-      getLocalHost();
     });
-    // sendToKotlin 함수 호출
-    sendToKotlin();
-    setState(() {
-      isLoading = false;
-    });
+    getLocalHost();
+
+    // 초기 값 wear에 전달하기 위해
+    InitInfoSendToKotlin();
+
     super.initState();
   }
 
@@ -177,100 +175,105 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
+      child: apiLoading
+          ? Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+      )
+          : Scaffold(
         bottomNavigationBar: Footer(),
-        body: apiLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InfoBlock(
+              petName: mainPetName,
+              nickName: nickname,
+              playerLevel: userLevel,
+              playerExp: userExp,
+              requiredExp: requiredExp,
+              playerPoint: userPoint,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            // Container(
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //   ),
+            //   width: double.infinity,
+            //   height: MediaQuery.of(context).size.width,
+            //   child: isLoading
+            //       ? CircularProgressIndicator(
+            //           color: Theme.of(context).primaryColor,
+            //         )
+            //       : InAppWebView(
+            //           initialUrlRequest: URLRequest(
+            //             url: Uri.parse(
+            //                 "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+            //           ),
+            //           onWebViewCreated: (controller) {
+            //             _webViewController = controller;
+            //             _webViewController!.evaluateJavascript(
+            //               source: 'setVariable("hello!")',
+            //             );
+            //           },
+            //           onLoadStart: (controller, url) async {},
+            //           onLoadStop: (controller, url) {
+            //             _webViewController!.evaluateJavascript(
+            //               source:
+            //                   'setVariable( "${mainBackName}", "${mainPetName}")',
+            //             );
+            //           },
+            //           onConsoleMessage: (controller, consoleMessage) {
+            //             print('나 여기 있어');
+            //             print(consoleMessage.message);
+            //           },
+            //         ),
+            // ),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  fixedSize: const Size(180, 30),
+                  backgroundColor: Theme.of(context).primaryColor,
                 ),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  InfoBlock(
-                    petName: mainPetName,
-                    nickName: nickname,
-                    playerLevel: userLevel,
-                    playerExp: userExp,
-                    requiredExp: requiredExp,
-                    playerPoint: userPoint,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.width,
-                    child: isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          )
-                        : InAppWebView(
-                            initialUrlRequest: URLRequest(
-                              url: Uri.parse(
-                                  "http://localhost:8080/lib/assets/models/daldong_webview.html"),
-                            ),
-                            onWebViewCreated: (controller) {
-                              _webViewController = controller;
-                              _webViewController!.evaluateJavascript(
-                                source: 'setVariable("hello!")',
-                              );
-                            },
-                            onLoadStart: (controller, url) async {},
-                            onLoadStop: (controller, url) {
-                              _webViewController!.evaluateJavascript(
-                                source:
-                                    'setVariable( "${mainBackName}", "${mainPetName}")',
-                              );
-                            },
-                            onConsoleMessage: (controller, consoleMessage) {
-                              print('나 여기 있어');
-                              print(consoleMessage.message);
-                            },
-                          ),
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        fixedSize: const Size(180, 30),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => InventoryScreen(
-                                    mainPetAssetName: mainPetName,
-                                    mainRoomAssetName: mainBackName,
-                                    changeMainAsset: changeMainAsset,
-                                    changeUserPoint: changeUserPoint,
-                                  )),
-                        );
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            '인벤토리',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InventoryScreen(
+                          mainPetAssetName: mainPetName,
+                          mainRoomAssetName: mainBackName,
+                          changeMainAsset: changeMainAsset,
+                          changeUserPoint: changeUserPoint,
+                        )),
+                  );
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      '인벤토리',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -118,6 +118,8 @@ dependencies {
     implementation libs.wear.remote.interactions
 
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.core)
+
     implementation(libs.squareup.okhttp)
     implementation(libs.squareup.okhttp.urlconnection)
     implementation(libs.squareup.okhttp.logging)

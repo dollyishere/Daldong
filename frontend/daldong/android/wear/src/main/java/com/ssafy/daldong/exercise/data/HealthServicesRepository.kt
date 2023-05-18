@@ -81,7 +81,9 @@ class HealthServicesRepository @Inject constructor(
 
     fun createService() {
         Intent(applicationContext, ForegroundService::class.java).also { intent ->
-            applicationContext.startService(intent)
+
+//            applicationContext.startService(intent) 기존
+            applicationContext.startForegroundService(intent)
             applicationContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
