@@ -74,8 +74,8 @@ public class UserServiceImpl implements UserService{
         statisticsRepository.save(userdaily);
         user=userRepository.findByUserUid(userJoinDTO.getUserUId()).orElse(null);
         if(user!=null){
-            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),"참새"));
-            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetBack.getAssetId(),"시냇물"));
+            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetPet.getAssetId(),true,"참새"));
+            userAssetRepository.save(new UserAssetDTO().newUser(user.getUserId(),assetBack.getAssetId(),false,"시냇물"));
         }
 
     }
