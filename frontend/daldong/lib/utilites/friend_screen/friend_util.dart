@@ -1,18 +1,19 @@
 import 'package:daldong/screens/friend_screen/friend_received_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_search_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_send_screen.dart';
+import 'package:daldong/widgets/friend_screen/friend_detail.dart';
 import 'package:flutter/material.dart';
 
-void showDetailFriend(
+void showDetailModalFriend(
     BuildContext context, void Function(dynamic) changeUserState) {
   FocusNode unUsedFocusNode = FocusNode();
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        // backgroundColor: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
         child: Container(
+          color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.7,
           width: MediaQuery.of(context).size.width * 0.9,
           padding: const EdgeInsets.all(4),
@@ -117,6 +118,34 @@ void showDetailFriend(
               ),
             ],
           ),
+        ),
+      );
+    },
+  );
+}
+
+void showFriendDetail(
+  BuildContext context,
+  String friendNickname,
+  String mainPetAssetName,
+  String mainBackAssetName,
+  int friendUserLevel,
+) {
+  FocusNode unUsedFocusNode = FocusNode();
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Theme.of(context).primaryColorLight,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.all(4),
+          child: FriendDetail(
+              friendNickname: friendNickname,
+              mainPetAssetName: mainPetAssetName,
+              mainBackAssetName: mainBackAssetName,
+              friendUserLevel: friendUserLevel),
         ),
       );
     },

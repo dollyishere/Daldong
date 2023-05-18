@@ -98,6 +98,7 @@ class _FriendReceivedScreenState extends State<FriendReceivedScreen> {
                                 friendNickname: user['friendNickname'],
                                 friendUserLevel: user['friendUserLevel'],
                                 mainPetAssetName: user['mainPetAssetName'],
+                                mainBackAssetName: user['mainBackAssetName'],
                                 useCase: 'received',
                                 stateFunction: changeUserState,
                                 isFriend: 2,

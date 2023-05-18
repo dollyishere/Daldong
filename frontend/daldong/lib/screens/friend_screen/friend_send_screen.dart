@@ -96,6 +96,7 @@ class _FriendSendScreenState extends State<FriendSendScreen> {
                                 friendNickname: user['friendNickname'],
                                 friendUserLevel: user['friendUserLevel'],
                                 mainPetAssetName: user['mainPetAssetName'],
+                                mainBackAssetName: user['mainBackAssetName'],
                                 useCase: 'send',
                                 stateFunction: changeUserState,
                                 isFriend: 1,

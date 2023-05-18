@@ -1,5 +1,6 @@
 import 'package:daldong/services/friend_api.dart';
 import 'package:daldong/utilites/common/common_util.dart';
+import 'package:daldong/utilites/friend_screen/friend_util.dart';
 import 'package:flutter/material.dart';
 
 class FriendBlock extends StatefulWidget {
@@ -7,6 +8,7 @@ class FriendBlock extends StatefulWidget {
   final String friendNickname;
   final int friendUserLevel;
   final String mainPetAssetName;
+  final String mainBackAssetName;
   final bool isSting;
   final void Function(dynamic) stateFunction;
 
@@ -16,6 +18,7 @@ class FriendBlock extends StatefulWidget {
     required this.friendNickname,
     required this.friendUserLevel,
     required this.mainPetAssetName,
+    required this.mainBackAssetName,
     required this.isSting,
     required this.stateFunction,
   }) : super(key: key);
@@ -66,7 +69,14 @@ class _FriendBlockState extends State<FriendBlock> {
                         color: Theme.of(context).primaryColorDark,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          showFriendDetail(
+                              context,
+                              widget.friendNickname,
+                              widget.mainPetAssetName,
+                              widget.mainBackAssetName,
+                              widget.friendUserLevel);
+                        },
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         child: Container(
