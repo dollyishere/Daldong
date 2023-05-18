@@ -8,4 +8,6 @@ public interface MissionService {
     public List<MissionResDTO> getUserMissions(Long userId);
 
     public boolean getReward(Long userId, Long missionId) throws Exception;
+
+    public void setMission(long userId);
 }

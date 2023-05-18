@@ -14,7 +14,6 @@ import javax.persistence.Id;
  * @TimeToLive
  * > 설정한 시간 만큰 데이터를 저장, 시간이 자나면 자동으로 해당데이터가 사라지는 휘발 역할
  */
-@Getter
 @RedisHash("refreshToken")
 @AllArgsConstructor
 @Builder
