@@ -23,6 +23,7 @@ public class UserAssetDTO implements Serializable {
     private int petExp;
     private String petName;
     private String assetName;
+    private boolean isPet;
 
 
     public static UserAsset toEntity(long userId,long assetId,String petName,int exp){
@@ -47,11 +48,12 @@ public class UserAssetDTO implements Serializable {
 
 
     }
-    public static UserAsset newUser(long userId,long assetId,String petName){
+    public static UserAsset newUser(long userId,long assetId,boolean isPet,String petName){
         return UserAsset.builder()
                 .userAssetId(new UserAssetId().from(userId,assetId))
                 .petExp(0)
                 .petName(petName)
+                .assetType(isPet)
                 .build();
     }
 
