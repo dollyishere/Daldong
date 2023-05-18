@@ -61,7 +61,6 @@ class _MissionScreenState extends State<MissionScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.black,
         bottomNavigationBar: Footer(),
         body: isLoading
             ? Center(
@@ -69,133 +68,137 @@ class _MissionScreenState extends State<MissionScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
               )
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Text(
-                        '미션',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+            : Stack(
+              children: [
+
+                Container(
+                  height: 220,
+                  color: Theme.of(context).primaryColorLight,
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text(
+                            '미션',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      '(매일 12시에 초기화 됩니다.)',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 42,
-                            ),
-                            Text(
-                              doneMissionCnt == 9
-                                  ? '모든 미션을 완료했습니다!'
-                                  : '오늘 완료한 미션: $doneMissionCnt개 (남은 미션 ${9 - doneMissionCnt}개)',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 24,
-                            ),
-                            Stack(
-                              alignment: Alignment.center,
+                        Text(
+                          '(매일 12시에 초기화 됩니다.)',
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 330,
-                                  height: 330,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fitHeight,
-                                      image: AssetImage(
-                                          'lib/assets/images/animals/$mainPetName.png'),
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
+                                SizedBox(
+                                  height: 42,
+                                ),
+                                Text(
+                                  doneMissionCnt == 9
+                                      ? '모든 미션을 완료했습니다!'
+                                      : '오늘 완료한 미션: $doneMissionCnt개 (남은 미션 ${9 - doneMissionCnt}개)',
+                                  style: TextStyle(
+                                    fontSize: 14,
                                   ),
                                 ),
-                                Column(
+                                SizedBox(
+                                  height: 24,
+                                ),
+                                Stack(
+                                  alignment: Alignment.center,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        MissionBlock(
-                                          missionInfo: missionList[0],
-                                          blockLine: 1,
-                                          blockPosition: 1,
-                                          changeMissonCnt: changeMissonCnt,
+                                    Container(
+                                      width: 330,
+                                      height: 330,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          fit: BoxFit.fitHeight,
+                                          image: AssetImage(
+                                              'lib/assets/images/animals/$mainPetName.png'),
                                         ),
-                                        MissionBlock(
-                                          missionInfo: missionList[1],
-                                          blockLine: 1,
-                                          blockPosition: 2,
-                                          changeMissonCnt: changeMissonCnt,
-                                        ),
-                                        MissionBlock(
-                                          missionInfo: missionList[2],
-                                          blockLine: 1,
-                                          blockPosition: 3,
-                                          changeMissonCnt: changeMissonCnt,
-                                        ),
-                                      ],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                    Column(
                                       children: [
-                                        MissionBlock(
-                                          missionInfo: missionList[3],
-                                          blockLine: 2,
-                                          blockPosition: 1,
-                                          changeMissonCnt: changeMissonCnt,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            MissionBlock(
+                                              missionInfo: missionList[0],
+                                              blockLine: 1,
+                                              blockPosition: 1,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[1],
+                                              blockLine: 1,
+                                              blockPosition: 2,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[2],
+                                              blockLine: 1,
+                                              blockPosition: 3,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                          ],
                                         ),
-                                        MissionBlock(
-                                          missionInfo: missionList[4],
-                                          blockLine: 2,
-                                          blockPosition: 2,
-                                          changeMissonCnt: changeMissonCnt,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            MissionBlock(
+                                              missionInfo: missionList[3],
+                                              blockLine: 2,
+                                              blockPosition: 1,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[4],
+                                              blockLine: 2,
+                                              blockPosition: 2,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[5],
+                                              blockLine: 2,
+                                              blockPosition: 3,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                          ],
                                         ),
-                                        MissionBlock(
-                                          missionInfo: missionList[5],
-                                          blockLine: 2,
-                                          blockPosition: 3,
-                                          changeMissonCnt: changeMissonCnt,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        MissionBlock(
-                                          missionInfo: missionList[6],
-                                          blockLine: 3,
-                                          blockPosition: 1,
-                                          changeMissonCnt: changeMissonCnt,
-                                        ),
-                                        MissionBlock(
-                                          missionInfo: missionList[7],
-                                          blockLine: 3,
-                                          blockPosition: 2,
-                                          changeMissonCnt: changeMissonCnt,
-                                        ),
-                                        MissionBlock(
-                                          missionInfo: missionList[8],
-                                          blockLine: 3,
-                                          blockPosition: 3,
-                                          changeMissonCnt: changeMissonCnt,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            MissionBlock(
+                                              missionInfo: missionList[6],
+                                              blockLine: 3,
+                                              blockPosition: 1,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[7],
+                                              blockLine: 3,
+                                              blockPosition: 2,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                            MissionBlock(
+                                              missionInfo: missionList[8],
+                                              blockLine: 3,
+                                              blockPosition: 3,
+                                              changeMissonCnt: changeMissonCnt,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -203,13 +206,13 @@ class _MissionScreenState extends State<MissionScreen> {
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
+            ),
       ),
     );
   }

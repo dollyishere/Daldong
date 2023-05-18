@@ -253,36 +253,141 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                 ),
               )
             : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text(
-                            '운동',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 240,
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Text(
+                                '운동',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    '오늘의 기록',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    onPressed: () {
+                                      _youtubeController?.pause();
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ExerciseDetailScreen(),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.calendar_month_rounded,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.0), // Adjust the radius value as per your preference
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ExerciseInfoBlock(
+                                        infoName: '칼로리',
+                                        infoIcon: Icon(
+                                          Icons.local_fire_department,
+                                          size: 24,
+                                          color: Color.fromRGBO(246, 114, 128, 1),
+                                        ),
+                                        infoValue: todayExInfo['dailyKcal'] ?? 0,
+                                        infoUnit: 'Kcal',
+                                      ),
+                                      ExerciseInfoBlock(
+                                        infoName: '소비시간',
+                                        infoIcon: Icon(
+                                          Icons.timer,
+                                          size: 20,
+                                          color: Color.fromRGBO(192, 108, 132, 1),
+                                        ),
+                                        infoValue: changeTimeMinute(
+                                            todayExInfo['dailyExTime'] ??
+                                                '00:00:00') ??
+                                            0,
+                                        infoUnit: '분',
+                                      ),
+                                      ExerciseInfoBlock(
+                                        infoName: '운동 횟수',
+                                        infoIcon: Icon(
+                                          Icons.flag_circle,
+                                          size: 22,
+                                          color: Color.fromRGBO(75, 135, 185, 1),
+                                        ),
+                                        infoValue: todayExInfo['dailyCount'] ?? 0,
+                                        infoUnit: 'Count',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          ),
+                          // SizedBox(
+                          //   width: 10,
+                          //   height: 10,
+                          // ),
+                          // ExerciseChart(dailyExTime: todayExInfo['dailyExTime'] ?? 0, dailyKcal: todayExInfo['dailyKcal'] ?? 0, dailyCount: todayExInfo['dailyCount'] ?? 0,),
+                          SizedBox(
+                            width: 10,
+                            height: 32,
+                          ),
                           Row(
                             children: [
                               SizedBox(
                                 width: 10,
                               ),
                               Text(
-                                '오늘의 기록',
+                                '지난 7일 간 소비 칼로리',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
@@ -290,502 +395,416 @@ class _ExerciseScreenState extends State<ExerciseScreen>
                               ),
                             ],
                           ),
+                          SizedBox(
+                            width: 10,
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                width: 370,
+                                height: 260,
+                                child: SfCartesianChart(
+                                  primaryXAxis: CategoryAxis(),
+                                  primaryYAxis: NumericAxis(
+                                      minimum: 0,
+                                      maximum: maxKcal.toDouble(),
+                                      interval: 10),
+                                  tooltipBehavior: _tooltip,
+                                  series: <ChartSeries<_ChartData, String>>[
+                                    ColumnSeries<_ChartData, String>(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                      dataSource: chartData,
+                                      xValueMapper: (_ChartData data, _) => data.x,
+                                      yValueMapper: (_ChartData data, _) => data.y,
+                                      name: '하루 소모 칼로리',
+                                      width: 0.3,
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                            height: 32,
+                          ),
                           Row(
                             children: [
-                              IconButton(
-                                padding: EdgeInsets.all(0),
-                                onPressed: () {
-                                  _youtubeController?.pause();
-                                  Navigator.of(context).push(
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                '오늘의 추천 운동',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          ExerciseDetailScreen(),
+                                      builder: (context) => Player(
+                                          YoutubePlayer.convertUrlToId(
+                                                  nowYoutubeLink) ??
+                                              ''),
                                     ),
                                   );
                                 },
-                                icon: Icon(
-                                  Icons.calendar_month_rounded,
+                                splashColor: Colors.transparent,
+                                child: Container(
+                                  height: 20,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.black, // 테두리 색상
+                                      width: 2.0, // 테두리 두께
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.question_mark,
+                                    size: 14,
+                                  ),
                                 ),
                               ),
                               SizedBox(
                                 width: 10,
                               ),
                             ],
-                          )
-                        ],
-                      ),
-                      // SizedBox(
-                      //   width: 10,
-                      //   height: 10,
-                      // ),
-                      // ExerciseChart(dailyExTime: todayExInfo['dailyExTime'] ?? 0, dailyKcal: todayExInfo['dailyKcal'] ?? 0, dailyCount: todayExInfo['dailyCount'] ?? 0,),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ExerciseInfoBlock(
-                              infoName: '칼로리',
-                              infoIcon: Icon(
-                                Icons.local_fire_department,
-                                size: 24,
-                                color: Color.fromRGBO(246, 114, 128, 1),
-                              ),
-                              infoValue: todayExInfo['dailyKcal'] ?? 0,
-                              infoUnit: 'Kcal',
-                            ),
-                            ExerciseInfoBlock(
-                              infoName: '소비시간',
-                              infoIcon: Icon(
-                                Icons.timer,
-                                size: 20,
-                                color: Color.fromRGBO(192, 108, 132, 1),
-                              ),
-                              infoValue: changeTimeMinute(
-                                      todayExInfo['dailyExTime'] ??
-                                          '00:00:00') ??
-                                  0,
-                              infoUnit: '분',
-                            ),
-                            ExerciseInfoBlock(
-                              infoName: '포인트',
-                              infoIcon: Icon(
-                                Icons.flag_circle,
-                                size: 22,
-                                color: Color.fromRGBO(75, 135, 185, 1),
-                              ),
-                              infoValue: todayExInfo['dailyCount'] ?? 0,
-                              infoUnit: 'Point',
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                        height: 32,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            '지난 7일 간 소비 칼로리',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            width: 370,
-                            height: 260,
-                            child: SfCartesianChart(
-                              primaryXAxis: CategoryAxis(),
-                              primaryYAxis: NumericAxis(
-                                  minimum: 0,
-                                  maximum: maxKcal.toDouble(),
-                                  interval: 10),
-                              tooltipBehavior: _tooltip,
-                              series: <ChartSeries<_ChartData, String>>[
-                                ColumnSeries<_ChartData, String>(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                  dataSource: chartData,
-                                  xValueMapper: (_ChartData data, _) => data.x,
-                                  yValueMapper: (_ChartData data, _) => data.y,
-                                  name: '하루 소모 칼로리',
-                                  width: 0.3,
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                        height: 32,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            '오늘의 추천 운동',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Player(
-                                      YoutubePlayer.convertUrlToId(
-                                              nowYoutubeLink) ??
-                                          ''),
-                                ),
-                              );
-                            },
-                            splashColor: Colors.transparent,
-                            child: Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.black, // 테두리 색상
-                                  width: 2.0, // 테두리 두께
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.question_mark,
-                                size: 14,
-                              ),
-                            ),
                           ),
                           SizedBox(
                             width: 10,
+                            height: 10,
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                        height: 10,
-                      ),
-                      isRecommendedLoading
-                          ? Container(
-                              width: double.infinity,
-                              height: 100,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text('추천 운동을 불러오는 중입니다.'),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CircularProgressIndicator(
-                                    color: Theme.of(context).primaryColor,
-                                  )
-                                ],
-                              ),
-                            )
-                          : Column(
-                              children: [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      height: 200,
-                                      child: isVideoLoading
-                                          ? Center(
-                                              child: CircularProgressIndicator(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                              ),
-                                            )
-                                          : YoutubePlayer(
-                                              // key:
-                                              //     ObjectKey(_youtubeController),
-                                              controller: _youtubeController ??
-                                                  new YoutubePlayerController(
-                                                      initialVideoId: ''),
-                                              actionsPadding:
-                                                  const EdgeInsets.only(
-                                                      left: 16.0),
-                                              bottomActions: [
-                                                CurrentPosition(),
-                                                const SizedBox(width: 10.0),
-                                                ProgressBar(isExpanded: true),
-                                                const SizedBox(width: 10.0),
-                                                RemainingDuration(),
-                                                PlaybackSpeedButton(),
-                                                const SizedBox(width: 10.0),
-                                              ],
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                    child: Text(
-                                      '(각 박스를 누르면 영상 변경이 가능합니다)',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 6,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
+                          isRecommendedLoading
+                              ? Container(
+                                  width: double.infinity,
+                                  height: 100,
+                                  child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
                                     children: [
-                                      Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                nowShow = 'pre';
-                                                nowShowVideo = Uri.parse(
-                                                    recommendedExercise[
-                                                        "daily_${nowShow}_ex_video"]);
-                                              });
-
-                                              // _webViewController?.loadUrl(
-                                              //     urlRequest: URLRequest(
-                                              //         url: nowShowVideo));
-                                              changeVideo();
-                                            },
-                                            child: Container(
-                                              width: 90,
-                                              height: 90,
-                                              decoration: BoxDecoration(
-                                                color: nowShow == 'pre'
-                                                    ? Colors.white
-                                                    : Theme.of(context)
-                                                        .primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                boxShadow: [
-                                                  nowShow == 'pre'
-                                                      ? BoxShadow(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColorDark,
-                                                          spreadRadius: 0.5,
-                                                          blurRadius: 14,
-                                                        )
-                                                      : BoxShadow(
-                                                          color: Colors.black45,
-                                                          spreadRadius: 0.3,
-                                                          blurRadius: 4,
-                                                        ),
-                                                ],
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(14.0),
-                                                child: Center(
-                                                  child: Text(
-                                                    recommendedExercise[
-                                                        'daily_pre_ex_recommend'],
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: nowShow == 'pre'
-                                                          ? Theme.of(context)
-                                                              .primaryColor
-                                                          : Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            '몸풀기 운동',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
+                                      Text('추천 운동을 불러오는 중입니다.'),
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                      Icon(
-                                        Icons.next_plan,
-                                      ),
-                                      Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                nowShow = 'main';
-                                                nowShowVideo = Uri.parse(
-                                                    recommendedExercise[
-                                                        "daily_${nowShow}_ex_video"]);
-                                              });
-                                              // _webViewController?.loadUrl(
-                                              //     urlRequest: URLRequest(
-                                              //         url: nowShowVideo));
-                                              changeVideo();
-                                            },
-                                            child: Container(
-                                              width: 90,
-                                              height: 90,
-                                              decoration: BoxDecoration(
-                                                color: nowShow == 'main'
-                                                    ? Colors.white
-                                                    : Theme.of(context)
-                                                        .primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                boxShadow: [
-                                                  nowShow == 'main'
-                                                      ? BoxShadow(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColorDark,
-                                                          spreadRadius: 0.5,
-                                                          blurRadius: 14,
-                                                        )
-                                                      : BoxShadow(
-                                                          color: Colors.black45,
-                                                          spreadRadius: 0.3,
-                                                          blurRadius: 4,
-                                                        ),
-                                                ],
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(14.0),
-                                                child: Center(
-                                                  child: Text(
-                                                    recommendedExercise[
-                                                        'daily_main_ex_recommend'],
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: nowShow == 'main'
-                                                          ? Theme.of(context)
-                                                              .primaryColor
-                                                          : Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            '메인 운동',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.next_plan,
-                                      ),
-                                      Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                nowShow = 'end';
-                                                nowShowVideo = Uri.parse(
-                                                    recommendedExercise[
-                                                        "daily_${nowShow}_ex_video"]);
-                                              });
-                                              // _webViewController?.loadUrl(
-                                              //     urlRequest: URLRequest(
-                                              //         url: nowShowVideo));
-                                              changeVideo();
-                                            },
-                                            child: Container(
-                                              width: 90,
-                                              height: 90,
-                                              decoration: BoxDecoration(
-                                                color: nowShow == 'end'
-                                                    ? Colors.white
-                                                    : Theme.of(context)
-                                                        .primaryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                boxShadow: [
-                                                  nowShow == 'end'
-                                                      ? BoxShadow(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColorDark,
-                                                          spreadRadius: 0.5,
-                                                          blurRadius: 14,
-                                                        )
-                                                      : BoxShadow(
-                                                          color: Colors.black45,
-                                                          spreadRadius: 0.3,
-                                                          blurRadius: 4,
-                                                        ),
-                                                ],
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(14.0),
-                                                child: Center(
-                                                  child: Text(
-                                                    recommendedExercise[
-                                                        'daily_end_ex_recommend'],
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: nowShow == 'end'
-                                                          ? Theme.of(context)
-                                                              .primaryColor
-                                                          : Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            '마무리 운동',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      CircularProgressIndicator(
+                                        color: Theme.of(context).primaryColor,
+                                      )
                                     ],
                                   ),
+                                )
+                              : Column(
+                                  children: [
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width *
+                                              0.8,
+                                          height: 200,
+                                          child: isVideoLoading
+                                              ? Center(
+                                                  child: CircularProgressIndicator(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
+                                                )
+                                              : YoutubePlayer(
+                                                  // key:
+                                                  //     ObjectKey(_youtubeController),
+                                                  controller: _youtubeController ??
+                                                      new YoutubePlayerController(
+                                                          initialVideoId: ''),
+                                                  actionsPadding:
+                                                      const EdgeInsets.only(
+                                                          left: 16.0),
+                                                  bottomActions: [
+                                                    CurrentPosition(),
+                                                    const SizedBox(width: 10.0),
+                                                    ProgressBar(isExpanded: true),
+                                                    const SizedBox(width: 10.0),
+                                                    RemainingDuration(),
+                                                    PlaybackSpeedButton(),
+                                                    const SizedBox(width: 10.0),
+                                                  ],
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                        child: Text(
+                                          '(각 박스를 누르면 영상 변경이 가능합니다)',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    nowShow = 'pre';
+                                                    nowShowVideo = Uri.parse(
+                                                        recommendedExercise[
+                                                            "daily_${nowShow}_ex_video"]);
+                                                  });
+
+                                                  // _webViewController?.loadUrl(
+                                                  //     urlRequest: URLRequest(
+                                                  //         url: nowShowVideo));
+                                                  changeVideo();
+                                                },
+                                                child: Container(
+                                                  width: 90,
+                                                  height: 90,
+                                                  decoration: BoxDecoration(
+                                                    color: nowShow == 'pre'
+                                                        ? Colors.white
+                                                        : Theme.of(context)
+                                                            .primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      nowShow == 'pre'
+                                                          ? BoxShadow(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorDark,
+                                                              spreadRadius: 0.5,
+                                                              blurRadius: 14,
+                                                            )
+                                                          : BoxShadow(
+                                                              color: Colors.black45,
+                                                              spreadRadius: 0.3,
+                                                              blurRadius: 4,
+                                                            ),
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(14.0),
+                                                    child: Center(
+                                                      child: Text(
+                                                        recommendedExercise[
+                                                            'daily_pre_ex_recommend'],
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: nowShow == 'pre'
+                                                              ? Theme.of(context)
+                                                                  .primaryColor
+                                                              : Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                '몸풀기 운동',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Icon(
+                                            Icons.next_plan,
+                                          ),
+                                          Column(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    nowShow = 'main';
+                                                    nowShowVideo = Uri.parse(
+                                                        recommendedExercise[
+                                                            "daily_${nowShow}_ex_video"]);
+                                                  });
+                                                  // _webViewController?.loadUrl(
+                                                  //     urlRequest: URLRequest(
+                                                  //         url: nowShowVideo));
+                                                  changeVideo();
+                                                },
+                                                child: Container(
+                                                  width: 90,
+                                                  height: 90,
+                                                  decoration: BoxDecoration(
+                                                    color: nowShow == 'main'
+                                                        ? Colors.white
+                                                        : Theme.of(context)
+                                                            .primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      nowShow == 'main'
+                                                          ? BoxShadow(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorDark,
+                                                              spreadRadius: 0.5,
+                                                              blurRadius: 14,
+                                                            )
+                                                          : BoxShadow(
+                                                              color: Colors.black45,
+                                                              spreadRadius: 0.3,
+                                                              blurRadius: 4,
+                                                            ),
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(14.0),
+                                                    child: Center(
+                                                      child: Text(
+                                                        recommendedExercise[
+                                                            'daily_main_ex_recommend'],
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: nowShow == 'main'
+                                                              ? Theme.of(context)
+                                                                  .primaryColor
+                                                              : Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                '메인 운동',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Icon(
+                                            Icons.next_plan,
+                                          ),
+                                          Column(
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    nowShow = 'end';
+                                                    nowShowVideo = Uri.parse(
+                                                        recommendedExercise[
+                                                            "daily_${nowShow}_ex_video"]);
+                                                  });
+                                                  // _webViewController?.loadUrl(
+                                                  //     urlRequest: URLRequest(
+                                                  //         url: nowShowVideo));
+                                                  changeVideo();
+                                                },
+                                                child: Container(
+                                                  width: 90,
+                                                  height: 90,
+                                                  decoration: BoxDecoration(
+                                                    color: nowShow == 'end'
+                                                        ? Colors.white
+                                                        : Theme.of(context)
+                                                            .primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      nowShow == 'end'
+                                                          ? BoxShadow(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorDark,
+                                                              spreadRadius: 0.5,
+                                                              blurRadius: 14,
+                                                            )
+                                                          : BoxShadow(
+                                                              color: Colors.black45,
+                                                              spreadRadius: 0.3,
+                                                              blurRadius: 4,
+                                                            ),
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(14.0),
+                                                    child: Center(
+                                                      child: Text(
+                                                        recommendedExercise[
+                                                            'daily_end_ex_recommend'],
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: nowShow == 'end'
+                                                              ? Theme.of(context)
+                                                                  .primaryColor
+                                                              : Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                '마무리 운동',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                      SizedBox(
-                        height: 10,
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
       ),
