@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 public class ExerciseLogResDTO {
-    private long userId;
+    private String uid;
     private List<Double> caloriesHistory;
     private List<Double> heartRateHistory;
     private LocalDateTime startTime;
