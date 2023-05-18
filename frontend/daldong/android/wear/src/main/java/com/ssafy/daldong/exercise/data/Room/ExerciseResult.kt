@@ -12,7 +12,7 @@ import com.google.gson.reflect.TypeToken
 @TypeConverters(Converters::class)
 data class ExerciseResult(
     @PrimaryKey
-    val userId: String,
+    val uid: String,
     val caloriesHistory: MutableList<Double>,
     val heartRateHistory: MutableList<Double>,
     var elapsedTime: String,

@@ -43,6 +43,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.activity.viewModels
 import com.google.android.gms.wearable.DataMap
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 
 /**
  * Manages Wearable clients to showcase the [DataClient], [MessageClient], [CapabilityClient] and
@@ -58,6 +62,7 @@ import com.google.android.gms.wearable.DataMap
  */
 @SuppressLint("VisibleForTests")
 class MainActivity : FlutterActivity() {
+
     private val CHANNEL = "login.method.channel"
 
     private val dataClient by lazy { Wearable.getDataClient(this) }

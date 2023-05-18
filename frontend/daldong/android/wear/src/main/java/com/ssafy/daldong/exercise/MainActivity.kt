@@ -1,17 +1,12 @@
 package com.ssafy.daldong.exercise
 
 import UserInfoViewModel
-import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -19,8 +14,11 @@ import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
 import com.ssafy.daldong.R
+import com.ssafy.daldong.exercise.data.datastore.StoreUserManager
+import com.ssafy.daldong.exercise.data.datastore.dataStore
 import com.ssafy.daldong.exercise.presentation.ExerciseViewModel
 import com.ssafy.daldong.exercise.presentation.ExerciseWearApp
+import com.ssafy.daldong.exercise.presentation.InvalidUser
 import com.ssafy.daldong.exercise.presentation.NoReachableNodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,6 +28,7 @@ import kotlinx.coroutines.tasks.await
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
+    private lateinit var storeUserManager : StoreUserManager
 
     private val exerciseViewModel by viewModels<ExerciseViewModel>()
 
@@ -44,6 +43,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        storeUserManager = StoreUserManager(dataStore) // 싱글톤
 
         lifecycleScope.launch {
             /** Check if we have an active exercise. If true, set our destination as the
@@ -71,21 +72,35 @@ class MainActivity : ComponentActivity() {
                 Log.d(TAG, "도달 가능한 폰 있음")
                 // capabilities.values()를 사용하여 노드의 기능 목록을 얻을 수 있습니다.
                 // capabilities.keys()를 사용하여 노드 목록을 얻을 수 있습니다.
-            }
 
-            val destination = when (exerciseViewModel.isExerciseInProgress()) {
-                false -> Screens.StartingUp.route
-                true -> Screens.ExerciseScreen.route
-            }
+                // 블루 투스 방식 X, app 프로젝트 wear.xml 때문에 연결 가능한 것 같음
+                // app을 지우면 폰 목록 안뜸
 
-            setContent {
-                navController = rememberSwipeDismissableNavController()
+                Log.d(TAG, "도달 가능한 폰 목록 : ${nodes.keys}")
+                Log.d(TAG, "도달 가능한 폰 기능 목록 : ${nodes.values}")
 
-                ExerciseWearApp(
-                    navController,
-                    startDestination = destination,
-                    userInfoViewModel = userInfoViewModel,
-                )
+                Log.d(TAG, "유저아이디: ${userInfoViewModel.userId.value}")
+
+                if (userInfoViewModel.userId.value.isNullOrEmpty() ){
+                    setContent{
+                        InvalidUser()
+                    }
+                }else{
+                    val destination = when (exerciseViewModel.isExerciseInProgress()) {
+                        false -> Screens.StartingUp.route
+                        true -> Screens.ExerciseScreen.route
+                    }
+
+                    setContent {
+                        navController = rememberSwipeDismissableNavController()
+
+                        ExerciseWearApp(
+                            navController,
+                            startDestination = destination,
+                            userInfoViewModel = userInfoViewModel,
+                        )
+                    }
+                }
             }
         }
     }

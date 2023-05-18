@@ -15,8 +15,19 @@
  */
 package com.ssafy.daldong.exercise
 
+import UserInfoViewModel
 import android.app.Application
+import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class DaldongWearApplication : Application()
+class DaldongWearApplication : Application(){
+
+//    override fun onCreate() {
+//        super.onCreate()
+//
+//        ViewModelProvider.AndroidViewModelFactory(this).apply {
+//            registerClass(UserInfoViewModel::class.java)
+//        }
+//    }
+}

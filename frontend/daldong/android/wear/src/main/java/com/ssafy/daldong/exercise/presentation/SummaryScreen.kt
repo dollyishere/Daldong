@@ -25,10 +25,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.WatchLater
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -62,6 +60,8 @@ fun SummaryScreen(
 ) {
     val listState = rememberScalingLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val petCustomName by userInfoViewModel.petCustomName.observeAsState()
+    val petGifName by userInfoViewModel.petGifName.observeAsState()
 
     val imageLoader = ImageLoader.Builder(LocalContext.current)
         .components {
@@ -111,14 +111,20 @@ fun SummaryScreen(
 //                    )
                     // 운동 종료 GIF
 
+                    val context = LocalContext.current
+                    val drawableId = remember(petGifName+"_jump") {
+                        context.resources.getIdentifier(
+                            petGifName+"_jump",
+                            "drawable",
+                            context.packageName
+                        )
+                    }
 
                     Image(
-                        painter = rememberAsyncImagePainter(petGifNameWithJump, imageLoader),
+                        painter = rememberAsyncImagePainter(drawableId, imageLoader),
                         contentDescription = "",
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(5.dp)
                     )
+
                 }
 
                 item {

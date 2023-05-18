@@ -1,8 +1,11 @@
 import android.app.Application
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
@@ -11,12 +14,18 @@ import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataMap
+import com.ssafy.daldong.exercise.data.datastore.StoreUserManager
+import kotlinx.coroutines.launch
 
-class UserInfoViewModel(application: Application) :
+class UserInfoViewModel(
+    application: Application,
+    private val dataStore: DataStore<Preferences>) :
     AndroidViewModel(application),
     DataClient.OnDataChangedListener,
     MessageClient.OnMessageReceivedListener,
     CapabilityClient.OnCapabilityChangedListener {
+
+    private val storeUserManager: StoreUserManager
 
     private val _petCustomName = MutableLiveData<String>()
     val petCustomName: LiveData<String>
@@ -29,6 +38,20 @@ class UserInfoViewModel(application: Application) :
     private val _userId = MutableLiveData<String>()
     val userId: LiveData<String>
         get() = _userId
+
+    init {
+        storeUserManager = StoreUserManager(dataStore)
+
+        // userIdFlow를 관찰하여 petCustomName을 업데이트합니다.
+        viewModelScope.launch {
+            storeUserManager.userIdFlow.collect { userId ->
+                // userId 값에 따라 필요한 처리를 수행합니다.
+                // 예: userId 값으로 API 호출 또는 다른 데이터 업데이트 등
+
+                _userId.value = userId
+            }
+        }
+    }
 
     override fun onDataChanged(dataEventBuffer: DataEventBuffer) {
         for (event in dataEventBuffer) {
@@ -70,6 +93,7 @@ class UserInfoViewModel(application: Application) :
     }
     companion object {
         private const val TAG = "워치 유저 정보 뷰모델"
+
         private val PET_INIT_PATH = "/PetInit"
         private val PET_CHANGE_COSTOM_NAME = "/PetChangeCostomName"
 

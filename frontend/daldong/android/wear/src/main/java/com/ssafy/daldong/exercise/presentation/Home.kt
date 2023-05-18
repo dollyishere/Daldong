@@ -56,6 +56,7 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.ssafy.daldong.exercise.presentation.component.ExerciseInProgressAlert
 
 /**
  * Screen that appears while the device is preparing the exercise.
@@ -68,16 +69,17 @@ fun Home(
     serviceState: ServiceState,
     permissions: Array<String>,
     userInfoViewModel : UserInfoViewModel,
-//    isTrackingAnotherExercise: Boolean,
+    isTrackingAnotherExercise: Boolean,
 ) {
-//    if (isTrackingAnotherExercise) {
-//        ExerciseInProgressAlert(true)
-//    }
+    if (isTrackingAnotherExercise) {
+        ExerciseInProgressAlert(true)
+    }
 
     // 작업 완료 여부를 나타내는 상태 변수들
     var isPrepareExerciseFinished by remember { mutableStateOf(false) }
     var isStartExerciseFinished by remember { mutableStateOf(false) }
     val petCustomName by userInfoViewModel.petCustomName.observeAsState()
+    val petGifName by userInfoViewModel.petGifName.observeAsState()
 
     /** Request permissions prior to launching exercise.**/
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -143,24 +145,17 @@ fun Home(
 //                                .padding(5.dp),
 
                         ) {
-//
-//                            val drawableName = userInfoViewModel.petNamePng.value ?: ""
-//                            val drawableResId = getDrawableResourceId(drawableName)
-//                            Image(
-//                                painter = painterResource(id = drawableResId),
-//                                contentDescription = ""
-//                            )
-                            //기존
-//                            Image(
-//                                painter = painterResource(id = R.drawable.sparrow_png),
-//                                contentDescription = ""
-//                            )
-                            // 운동 준비 GIF
+                            val context = LocalContext.current
+                            val drawableId = remember(petGifName+"_basic") {
+                                context.resources.getIdentifier(
+                                    petGifName+"_basic",
+                                    "drawable",
+                                    context.packageName
+                                )
+                            }
 
-                            // 되는 버전
                             Image(
-                                painter = rememberAsyncImagePainter(R.drawable.cow_basic, imageLoader),
-//                                painter = rememberAsyncImagePainter(test, imageLoader),
+                                painter = rememberAsyncImagePainter(drawableId, imageLoader),
                                 contentDescription = "",
                             )
                         }

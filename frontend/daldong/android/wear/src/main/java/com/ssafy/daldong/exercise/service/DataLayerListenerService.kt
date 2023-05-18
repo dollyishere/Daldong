@@ -37,64 +37,63 @@ class DataLayerListenerService : WearableListenerService() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-//    @SuppressLint("VisibleForTests")
-//    override fun onDataChanged(dataEvents: DataEventBuffer) {
-//        super.onDataChanged(dataEvents)
+    @SuppressLint("VisibleForTests")
+    override fun onDataChanged(dataEvents: DataEventBuffer) {
+        super.onDataChanged(dataEvents)
+
+        dataEvents.forEach { dataEvent ->
+            val uri = dataEvent.dataItem.uri
+            when (uri.path) {
+//                COUNT_PATH -> {
+//                    scope.launch {
+//                        try {
+//                            val nodeId = uri.host!!
+//                            val payload = uri.toString().toByteArray()
+//                            messageClient.sendMessage(
+//                                nodeId,
+//                                DATA_ITEM_RECEIVED_PATH,
+//                                payload
+//                            )
+//                                .await()
+//                            Log.d(TAG, "메세지 전송 성공")
+//                        } catch (cancellationException: CancellationException) {
+//                            throw cancellationException
+//                        } catch (exception: Exception) {
+//                            Log.d(TAG, "메세지 전송 실패")
+//                        }
+//                    }
+//                }
+//                PET_INFO_PATH->{
+//                    Log.d(TAG, "워치 onDataChanged 들어옴")
+//                    scope.launch {
+//                        try {
+//                            val dataMap = DataMap.fromByteArray(dataEvent.dataItem)
 //
-//        dataEvents.forEach { dataEvent ->
-//            val uri = dataEvent.dataItem.uri
-//            when (uri.path) {
-////                COUNT_PATH -> {
-////                    scope.launch {
-////                        try {
-////                            val nodeId = uri.host!!
-////                            val payload = uri.toString().toByteArray()
-////                            messageClient.sendMessage(
-////                                nodeId,
-////                                DATA_ITEM_RECEIVED_PATH,
-////                                payload
-////                            )
-////                                .await()
-////                            Log.d(TAG, "메세지 전송 성공")
-////                        } catch (cancellationException: CancellationException) {
-////                            throw cancellationException
-////                        } catch (exception: Exception) {
-////                            Log.d(TAG, "메세지 전송 실패")
-////                        }
-////                    }
-////                }
-////                PET_INFO_PATH->{
-////                    Log.d(TAG, "워치 onDataChanged 들어옴")
-////
-////                    scope.launch {
-////                        try {
-////                            val dataMap = DataMap.fromByteArray(dataEvent.dataItem)
-////
-////                            // 데이터 수신 처리
-////                            val uid = dataMap.getString("uid")
-////                            val mainPetCustomName = dataMap.getString("mainPetCustomName")
-////                            val mainPetName = dataMap.getString("mainPetName")
-////
-////                            Log.d(TAG, "Received PetInfo:")
-////                            Log.d(TAG, "uid: $uid")
-////                            Log.d(TAG, "mainPetCustomName: $mainPetCustomName")
-////                            Log.d(TAG, "mainPetName: $mainPetName")
-////
-////                            // 수신한 데이터를 ViewModel에 전달
-////                            wearDataViewModel.onDataReceived(uid, mainPetCustomName, mainPetName)
-////
-////                        } catch (cancellationException: CancellationException) {
-////                            Log.d(TAG, "워치 onDataChanged 취소: $cancellationException")
-////                            throw cancellationException
-////                        } catch (exception: Exception) {
-////                            Log.d(TAG, "워치 onDataChanged 실패")
-////                        }
-////                    }
-////
-////                }
-//            }
-//        }
-//    }
+//                            // 데이터 수신 처리
+//                            val uid = dataMap.getString("uid")
+//                            val mainPetCustomName = dataMap.getString("mainPetCustomName")
+//                            val mainPetName = dataMap.getString("mainPetName")
+//
+//                            Log.d(TAG, "Received PetInfo:")
+//                            Log.d(TAG, "uid: $uid")
+//                            Log.d(TAG, "mainPetCustomName: $mainPetCustomName")
+//                            Log.d(TAG, "mainPetName: $mainPetName")
+//
+//                            // 수신한 데이터를 ViewModel에 전달
+//                            wearDataViewModel.onDataReceived(uid, mainPetCustomName, mainPetName)
+//
+//                        } catch (cancellationException: CancellationException) {
+//                            Log.d(TAG, "워치 onDataChanged 취소: $cancellationException")
+//                            throw cancellationException
+//                        } catch (exception: Exception) {
+//                            Log.d(TAG, "워치 onDataChanged 실패")
+//                        }
+//                    }
+//
+//                }
+            }
+        }
+    }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
@@ -117,6 +116,7 @@ class DataLayerListenerService : WearableListenerService() {
 
     companion object {
         private const val TAG = "워치 데이터 계층 서비스"
+        private val USER_INIT_PATH = "/UserInit"
         private val PET_INFO_PATH = "/PetInfo"
 
         private const val START_ACTIVITY_PATH = "/start-activity"

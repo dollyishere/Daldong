@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -70,6 +71,8 @@ fun ExerciseScreen(
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+    val petCustomName by userInfoViewModel.petCustomName.observeAsState()
+    val petGifName by userInfoViewModel.petGifName.observeAsState()
 
     /** Only collect metrics while we are connected to the Foreground Service. **/
     when (serviceState) {
@@ -116,7 +119,7 @@ fun ExerciseScreen(
 
             val exerciseResult = remember {
                 ExerciseResult(
-                    userId = userInfoViewModel.userId.toString(),
+                    uid = userInfoViewModel.userId.toString(),
                     caloriesHistory = mutableListOf(),
                     heartRateHistory = mutableListOf(),
                     elapsedTime = "",
@@ -371,9 +374,9 @@ fun ExerciseScreen(
                             ){
 //                                 운동 중 GIF
                                 val context = LocalContext.current
-                                val drawableId = remember("cow_run") {
+                                val drawableId = remember(petGifName+"_run") {
                                     context.resources.getIdentifier(
-                                        "cow_run",
+                                        petGifName+"_run",
                                         "drawable",
                                         context.packageName
                                     )
@@ -399,10 +402,17 @@ fun ExerciseScreen(
                                             imageVector = pauseOrResume,
                                             contentDescription = stringResource(id = R.string.pauseOrResume)
                                         )
-                                        val petGifNameWithSit = userInfoViewModel.petGifName.toString() + "sit"
+                                        val context = LocalContext.current
+                                        val drawableId = remember(petGifName+"_sit") {
+                                            context.resources.getIdentifier(
+                                                petGifName+"_sit",
+                                                "drawable",
+                                                context.packageName
+                                            )
+                                        }
 
                                         Image(
-                                            painter = rememberAsyncImagePainter(petGifNameWithSit, imageLoader),
+                                            painter = rememberAsyncImagePainter(drawableId, imageLoader),
                                             contentDescription = "",
                                         )
                                     }

@@ -21,7 +21,7 @@ fun NoReachableNodes() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "근처에 연결 가능한 휴대전화가 없습니다.",
+            text = "달려동물 앱을 설치 후 실행해주시기 바랍니다.",
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(16.dp)
         )
