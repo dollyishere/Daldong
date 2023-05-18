@@ -9,13 +9,17 @@ Future<dynamic> getLoggedIn({
   required String idToken,
   required dynamic Function(dynamic) success,
   required Function(String error) fail,
+  required Map<String, String> body
+
 }) async{
   try {
     final response = await http.post(
       Uri.parse("$baseUrl/user/signin"),
       headers: {
+        "Content-Type": "application/json;charset=utf-8",
         "idToken": idToken,
-      }
+      },
+      body: json.encode(body)
     );
     print("getLoggedIn 결과: ${response.statusCode}\n${response.headers}");
     return success(response);
