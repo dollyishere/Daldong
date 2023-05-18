@@ -1,6 +1,53 @@
 import 'package:daldong/services/friend_api.dart';
 import 'package:flutter/material.dart';
 
+void showInfoDialog(BuildContext context, String title,
+    String content, String noText,
+    {dynamic data}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(content),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              noText,
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).primaryColor),
+            ),
+            onPressed: () {
+              // No 버튼을 눌렀을 때 수행할 작업
+              Navigator.of(context).pop(false);
+            },
+          ),
+        ],
+      );
+    },
+  ).then((value) {
+    if (value == true) {
+
+    } else if (value == false) {
+      // No 버튼을 눌렀을 때 수행할 작업
+    }
+  });
+}
+
+
 void showConfirmationDialog(BuildContext context, void func, String title,
     String content, String yesText, String noText, String confirmCase,
     {dynamic data}) {

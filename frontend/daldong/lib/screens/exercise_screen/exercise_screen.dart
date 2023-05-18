@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
+import 'package:daldong/screens/exercise_screen/youtube_player.dart';
+import 'package:daldong/utilites/common/common_util.dart';
 import 'package:daldong/widgets/common/exercise_info_block.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,7 @@ import 'package:geolocator/geolocator.dart' as Geo;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:daldong/services/exercise_api.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ExerciseScreen extends StatefulWidget {
   ExerciseScreen({Key? key}) : super(key: key);
@@ -18,9 +22,10 @@ class ExerciseScreen extends StatefulWidget {
   State<ExerciseScreen> createState() => _ExerciseScreenState();
 }
 
-class _ExerciseScreenState extends State<ExerciseScreen> {
+class _ExerciseScreenState extends State<ExerciseScreen>
+    with WidgetsBindingObserver {
   static const storage = FlutterSecureStorage();
-  InAppWebViewController? _webViewController;
+
   String uid = '0';
   bool isLoading = true;
   bool isRecommendedLoading = true;
@@ -28,7 +33,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   String nowShow = 'pre';
   Uri nowShowVideo =
       Uri.parse("http://openapi.kspo.or.kr/web/video/0AUDLJ08S_00546.mp4");
+  String nowYoutubeLink = "https://www.youtube.com/watch?v=s0UjELAUMjE";
 
+  InAppWebViewController? _webViewController;
+  YoutubePlayerController? _youtubeController;
   List<String> chartKeys = [];
   int maxKcal = 0;
   List<_ChartData> chartData = [];
@@ -38,7 +46,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   Map<String, dynamic> weatherInfo = {
     "weather": [
       {
-        "id": 800,
         "main": "Clear",
         "description": "맑음",
         "icon": "01d",
@@ -85,6 +92,20 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               isRecommendedLoading = false;
               nowShowVideo =
                   Uri.parse(recommendedExercise["daily_${nowShow}_ex_video"]);
+              _youtubeController = new YoutubePlayerController(
+                initialVideoId: YoutubePlayer.convertUrlToId(
+                        recommendedExercise["daily_${nowShow}_ex_video"]) ??
+                    '',
+                flags: YoutubePlayerFlags(
+                  mute: false,
+                  autoPlay: false,
+                  disableDragSeek: false,
+                  loop: false,
+                  isLive: false,
+                  forceHD: false,
+                  enableCaption: true,
+                ),
+              );
               isVideoLoading = false;
             });
           },
@@ -102,10 +123,26 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           success: (dynamic response) {
             print(response);
             setState(() {
+              print(response['Exercise']);
               recommendedExercise = response['Exercise'];
               isRecommendedLoading = false;
               nowShowVideo =
                   Uri.parse(recommendedExercise["daily_${nowShow}_ex_video"]);
+              _youtubeController = new YoutubePlayerController(
+                initialVideoId: YoutubePlayer.convertUrlToId(
+                        recommendedExercise["daily_${nowShow}_ex_video"]) ??
+                    '',
+                flags: YoutubePlayerFlags(
+                  mute: false,
+                  autoPlay: false,
+                  disableDragSeek: false,
+                  loop: false,
+                  isLive: false,
+                  forceHD: false,
+                  enableCaption: true,
+                ),
+              );
+              isVideoLoading = false;
             });
           },
           fail: (error) {
@@ -121,6 +158,21 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     );
   }
 
+  void changeVideo() async {
+    setState(() {
+      _youtubeController?.load(
+        YoutubePlayer.convertUrlToId(
+                recommendedExercise["daily_${nowShow}_ex_video"]) ??
+            '',
+      );
+    });
+    await Future.delayed(const Duration(milliseconds: 10));
+    setState(() {
+      isVideoLoading = false;
+    });
+    setState(() {});
+  }
+
   int changeTimeMinute(String time) {
     List<String> hourMinuteSecond = time.split(':');
     int minuteTime =
@@ -130,6 +182,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUid();
       getCurrentLocation();
@@ -169,27 +222,27 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   void dispose() {
     chartData!.clear();
     _webViewController!.clearCache();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  // List<ChartSeries<_SplineAreaData, double>> _getSplieAreaSeries() {
-  //   return <ChartSeries<_SplineAreaData, double>>[
-  //     SplineAreaSeries<_SplineAreaData, double>(
-  //       dataSource: chartData!,
-  //       color: Theme.of(context).primaryColorLight.withOpacity(0.6),
-  //       borderColor: Theme.of(context).primaryColorDark,
-  //       borderWidth: 2,
-  //       name: '소비 칼로리',
-  //       xValueMapper: (_SplineAreaData sales, _) => sales.time,
-  //       yValueMapper: (_SplineAreaData sales, _) => sales.kcal,
-  //       animationDuration: 2000,
-  //       onRendererCreated: (ChartSeriesController controller) {
-  //         _chartSeriesController1 = controller;
-  //       },
-  //       markerSettings: MarkerSettings(isVisible: true),
-  //     ),
-  //   ];
-  // }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state = $state');
+    if (_webViewController != null) {
+      if (state == AppLifecycleState.paused) {
+        _webViewController?.pauseTimers();
+        if (Platform.isAndroid) {
+          _webViewController?.android.pause();
+        }
+      } else {
+        _webViewController?.resumeTimers();
+        if (Platform.isAndroid) {
+          _webViewController?.android.resume();
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,18 +250,18 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
       child: Scaffold(
         bottomNavigationBar: Footer(),
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 16,
-            ),
-            child: isLoading
-                ? Expanded(
-                  child: Center(child: CircularProgressIndicator(
+          child: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
                     color: Theme.of(context).primaryColor,
-                  ),),
+                  ),
                 )
-                : Column(
+              : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
@@ -319,7 +372,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                             width: 10,
                           ),
                           Text(
-                            '지난 7일 간 칼로리',
+                            '지난 7일 간 소비 칼로리',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -376,6 +429,39 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               fontWeight: FontWeight.w800,
                             ),
                           ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Player(
+                                      YoutubePlayer.convertUrlToId(
+                                              nowYoutubeLink) ??
+                                          ''),
+                                ),
+                              );
+                            },
+                            splashColor: Colors.transparent,
+                            child: Container(
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black, // 테두리 색상
+                                  width: 2.0, // 테두리 두께
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.question_mark,
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
                         ],
                       ),
                       SizedBox(
@@ -416,18 +502,24 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                                     .primaryColor,
                                               ),
                                             )
-                                          : InAppWebView(
-                                        initialOptions: InAppWebViewGroupOptions(
-                                          android: AndroidInAppWebViewOptions(
-
-                                          ),
-                                        ),
-                                              initialUrlRequest: URLRequest(
-                                                url: nowShowVideo,
-                                              ),
-                                              onWebViewCreated: (controller) {
-                                                _webViewController = controller;
-                                              },
+                                          : YoutubePlayer(
+                                              // key:
+                                              //     ObjectKey(_youtubeController),
+                                              controller: _youtubeController ??
+                                                  new YoutubePlayerController(
+                                                      initialVideoId: ''),
+                                              actionsPadding:
+                                                  const EdgeInsets.only(
+                                                      left: 16.0),
+                                              bottomActions: [
+                                                CurrentPosition(),
+                                                const SizedBox(width: 10.0),
+                                                ProgressBar(isExpanded: true),
+                                                const SizedBox(width: 10.0),
+                                                RemainingDuration(),
+                                                PlaybackSpeedButton(),
+                                                const SizedBox(width: 10.0),
+                                              ],
                                             ),
                                     ),
                                   ),
@@ -465,9 +557,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                                         "daily_${nowShow}_ex_video"]);
                                               });
 
-                                              _webViewController?.loadUrl(
-                                                  urlRequest: URLRequest(
-                                                      url: nowShowVideo));
+                                              // _webViewController?.loadUrl(
+                                              //     urlRequest: URLRequest(
+                                              //         url: nowShowVideo));
+                                              changeVideo();
                                             },
                                             child: Container(
                                               width: 90,
@@ -542,9 +635,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                                     recommendedExercise[
                                                         "daily_${nowShow}_ex_video"]);
                                               });
-                                              _webViewController?.loadUrl(
-                                                  urlRequest: URLRequest(
-                                                      url: nowShowVideo));
+                                              // _webViewController?.loadUrl(
+                                              //     urlRequest: URLRequest(
+                                              //         url: nowShowVideo));
+                                              changeVideo();
                                             },
                                             child: Container(
                                               width: 90,
@@ -619,9 +713,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                                     recommendedExercise[
                                                         "daily_${nowShow}_ex_video"]);
                                               });
-                                              _webViewController?.loadUrl(
-                                                  urlRequest: URLRequest(
-                                                      url: nowShowVideo));
+                                              // _webViewController?.loadUrl(
+                                              //     urlRequest: URLRequest(
+                                              //         url: nowShowVideo));
+                                              changeVideo();
                                             },
                                             child: Container(
                                               width: 90,
@@ -693,7 +788,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                     ],
                   ),
-          ),
+                ),
         ),
       ),
     );
