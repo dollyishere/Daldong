@@ -160,6 +160,7 @@ public class ExerciseServiceImpl implements ExerciseService{
         userAssetRepository.save(userAsset);
         exerciseLogRepository.save(exerciseLog);
         stasticsRepository.save(statistics);
+        userRepository.save(user);
 
         logger.info("firebase 저장");
         Firestore db = FirestoreClient.getFirestore();
