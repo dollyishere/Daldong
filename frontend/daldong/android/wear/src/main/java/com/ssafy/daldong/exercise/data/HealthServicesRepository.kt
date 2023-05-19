@@ -48,14 +48,14 @@ class HealthServicesRepository @Inject constructor(
             binder.getService().let {
                 exerciseService = it
                 serviceState.value = ServiceState.Connected(
-                    exerciseServiceState = it.exerciseServiceState,
+                    exerciseServiceState = it.exerciseServiceState,// 기존
+                    //exerciseServiceState = it.exerciseServiceState ?: ExerciseServiceState(), // 수정된 부분
                     locationAvailabilityState = it.locationAvailabilityState,
                     activeDurationUpdate = it.exerciseServiceState.value.exerciseDurationUpdate,
                 )
             }
             bound.value = true
         }
-
         override fun onServiceDisconnected(arg0: ComponentName) {
             bound.value = false
             exerciseService = null
@@ -82,8 +82,9 @@ class HealthServicesRepository @Inject constructor(
     fun createService() {
         Intent(applicationContext, ForegroundService::class.java).also { intent ->
 
-//            applicationContext.startService(intent) 기존
-            applicationContext.startForegroundService(intent)
+            applicationContext.startService(intent) //기존
+//            applicationContext.startForegroundService(intent) //변경
+
             applicationContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
