@@ -55,6 +55,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.time.toKotlinDuration
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 /**
  * Shows while an exercise is in progress
@@ -71,7 +77,10 @@ fun ExerciseScreen(
     navController: NavHostController,
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+
+    val zoneId = ZoneId.of("Asia/Seoul")
+    val inputFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
+    val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
 
     /** Only collect metrics while we are connected to the Foreground Service. **/
     when (serviceState) {
@@ -116,14 +125,19 @@ fun ExerciseScreen(
                     false -> Icons.Default.Stop
                 }
 
+            val startTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toString()
+            val zonedStartTime = ZonedDateTime.parse(startTime, inputFormatter)
+            val localDateStartTime = zonedStartTime.toLocalDateTime()
+            val formattedStartDateTime = localDateStartTime.format(outputFormatter)
+
             val exerciseResult = remember {
                 ExerciseResult(
                     uid = "LgjoMubicOZEUdRowUmhaXtWP5o2",
                     caloriesHistory = mutableListOf(),
                     heartRateHistory = mutableListOf(),
                     elapsedTime = "",
-                    startTime = LocalDateTime.now().toString(),
-                    endTime = LocalDateTime.now().toString(),
+                    startTime = formattedStartDateTime,
+                    endTime = formattedStartDateTime,
                     calories = "0.0",
                     heartRate = 0,
                     distance = "0.0",
@@ -283,7 +297,12 @@ fun ExerciseScreen(
                                     // you ensure that the suspend function is executed within a valid coroutine context.
                                     // val coroutineScope = rememberCoroutineScope()
 
-                                    exerciseResult.endTime = LocalDateTime.now().toString()
+                                    val endTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toString()
+                                    val zonedEndTime = ZonedDateTime.parse(endTime, inputFormatter)
+                                    val localDateEndTime = zonedEndTime.toLocalDateTime()
+                                    val formattedEndDateTime = localDateEndTime.format(outputFormatter)
+
+                                    exerciseResult.endTime = formattedEndDateTime
                                     exerciseResult.heartRate = tempAverageHeartRate.value.toInt()
                                     exerciseResult.distance = formatDistanceKm(tempDistance.value).toString()
                                     exerciseResult.calories = formatCalories(tempCalories.value).toString()
@@ -301,6 +320,7 @@ fun ExerciseScreen(
 
                                     LaunchedEffect(Unit) {
                                         // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+//
                                         try {
                                             val response = withContext(Dispatchers.IO) {
                                                 RetrofitExerciseService().saveExerciseResult(exerciseResult)
@@ -339,23 +359,28 @@ fun ExerciseScreen(
                                         ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
                                     }
 
-                                Button(onClick = { onStartClick() }) {
-                                    Icon(
-                                        imageVector = startOrEnd,
-                                        contentDescription = stringResource(id = R.string.startOrEnd)
-                                    )
-                                }
+//                                Button(onClick = { onStartClick() }) {
+//                                    Icon(
+//                                        imageVector = startOrEnd,
+//                                        contentDescription = stringResource(id = R.string.startOrEnd)
+//                                    )
+//                                }
 
-                                } else { // 운동 시작 중일 때
-                                    Button(
+                                } else {
+                                    // 운동 시작 중일 때
+                                    if (!(exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding)){
+                                        Button(
 //                                        onClick = { onEndClick(exerciseResult) },
-                                        onClick = { onEndClick() },
+                                            onClick = { onEndClick() },
 //                                    Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = startOrEnd,
-                                            contentDescription = stringResource(id = R.string.startOrEnd)
-                                        )
+                                        ) {
+                                            Icon(
+                                                imageVector = startOrEnd,
+                                                contentDescription = stringResource(id = R.string.startOrEnd)
+                                            )
+                                        }
+                                    }else{
+
                                     }
                                 }
                             }
@@ -366,8 +391,8 @@ fun ExerciseScreen(
                                     .height(90.dp)
                                     .padding(10.dp)
                             ){
+                                
 //                                 운동 중 GIF
-
                                 if (exerciseStateChange.exerciseState.isPaused) {
                                     Image(
                                         painter = rememberAsyncImagePainter(R.drawable.sparrow_sit, imageLoader),
@@ -385,27 +410,32 @@ fun ExerciseScreen(
                                 modifier = Modifier.height(90.dp)
 //                                modifier = Modifier.padding(5.dp)
                             ){
-                                //운동 정지
-                                if (exerciseStateChange.exerciseState.isPaused) {
-                                    Button(
-                                        onClick = { onResumeClick() },
+                                //운동 정지 관련
+                                // 운동 중일 떄
+                                if((!(exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding))){
+                                    if (exerciseStateChange.exerciseState.isPaused) {
+                                        Button(
+                                            onClick = { onResumeClick() },
 //                                    Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = pauseOrResume,
-                                            contentDescription = stringResource(id = R.string.pauseOrResume)
-                                        )
-                                    }
-                                } else {
-                                    Button(
-                                        onClick = { onPauseClick() },
+                                        ) {
+                                            Icon(
+                                                imageVector = pauseOrResume,
+                                                contentDescription = stringResource(id = R.string.pauseOrResume)
+                                            )
+                                        }
+                                    } else {
+                                        Button(
+                                            onClick = { onPauseClick() },
 //                                        Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = pauseOrResume,
-                                            contentDescription = stringResource(id = R.string.pauseOrResume)
-                                        )
+                                        ) {
+                                            Icon(
+                                                imageVector = pauseOrResume,
+                                                contentDescription = stringResource(id = R.string.pauseOrResume)
+                                            )
+                                        }
                                     }
+                                }else{
+                                    
                                 }
                             }
                         }
