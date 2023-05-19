@@ -55,6 +55,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.time.toKotlinDuration
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 /**
  * Shows while an exercise is in progress
@@ -71,7 +77,10 @@ fun ExerciseScreen(
     navController: NavHostController,
 ) {
     val chronoTickJob = remember { mutableStateOf<Job?>(null) }
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+
+    val zoneId = ZoneId.of("Asia/Seoul")
+    val inputFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
+    val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
 
     /** Only collect metrics while we are connected to the Foreground Service. **/
     when (serviceState) {
@@ -116,14 +125,19 @@ fun ExerciseScreen(
                     false -> Icons.Default.Stop
                 }
 
+            val startTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toString()
+            val zonedStartTime = ZonedDateTime.parse(startTime, inputFormatter)
+            val localDateStartTime = zonedStartTime.toLocalDateTime()
+            val formattedStartDateTime = localDateStartTime.format(outputFormatter)
+
             val exerciseResult = remember {
                 ExerciseResult(
                     uid = "LgjoMubicOZEUdRowUmhaXtWP5o2",
                     caloriesHistory = mutableListOf(),
                     heartRateHistory = mutableListOf(),
                     elapsedTime = "",
-                    startTime = LocalDateTime.now().toString(),
-                    endTime = LocalDateTime.now().toString(),
+                    startTime = formattedStartDateTime,
+                    endTime = formattedStartDateTime,
                     calories = "0.0",
                     heartRate = 0,
                     distance = "0.0",
@@ -283,7 +297,12 @@ fun ExerciseScreen(
                                     // you ensure that the suspend function is executed within a valid coroutine context.
                                     // val coroutineScope = rememberCoroutineScope()
 
-                                    exerciseResult.endTime = LocalDateTime.now().toString()
+                                    val endTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toString()
+                                    val zonedEndTime = ZonedDateTime.parse(endTime, inputFormatter)
+                                    val localDateEndTime = zonedEndTime.toLocalDateTime()
+                                    val formattedEndDateTime = localDateEndTime.format(outputFormatter)
+
+                                    exerciseResult.endTime = formattedEndDateTime
                                     exerciseResult.heartRate = tempAverageHeartRate.value.toInt()
                                     exerciseResult.distance = formatDistanceKm(tempDistance.value).toString()
                                     exerciseResult.calories = formatCalories(tempCalories.value).toString()
@@ -299,53 +318,46 @@ fun ExerciseScreen(
 //                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
 //                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
-                                    navController.navigate(
-                                        Screens.SummaryScreen.route + "/" +
-                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                "${formatDistanceKm(tempDistance.value)} km/" +
-                                                "${formatCalories(tempCalories.value)} kcal/" +
-                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                    LaunchedEffect(Unit) {
+                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+//
+                                        try {
+                                            val response = withContext(Dispatchers.IO) {
+                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
+                                            }
+                                            // 결과 처리
+                                            if (response.isSuccessful) {
+                                                // 성공적인 응답인 경우 (응답 코드가 200인 경우)
+                                                val responseData = response.body()
+                                                // responseData를 처리하는 코드 작성
+                                                Log.d("운동 결과 화면", "운동 결과 전송 성공 ${responseData}")
+                                            }else {
+                                                // 서버로부터 에러 응답이 온 경우 (응답 코드가 400 등인 경우)
+                                                val errorCode = response.code()
+                                                val errorBody = response.errorBody()?.string()
+                                                Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+                                                // 에러 처리 로직을 추가하여 사용자에게 알림 또는 적절한 조치를 취할 수 있습니다.
+                                            }
 
-//                                    LaunchedEffect(Unit) {
-//                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
-//                                        try {
-//                                            val response = withContext(Dispatchers.IO) {
-//                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
-//                                            }
-//                                            // 결과 처리
-//                                            if (response.isSuccessful) {
-//                                                // 성공적인 응답인 경우 (응답 코드가 200인 경우)
-//                                                val responseData = response.body()
-//                                                // responseData를 처리하는 코드 작성
-//                                                Log.d("운동 결과 화면", "운동 결과 전송 성공 ${responseData}")
-//                                            }else {
-//                                                // 서버로부터 에러 응답이 온 경우 (응답 코드가 400 등인 경우)
-//                                                val errorCode = response.code()
-//                                                val errorBody = response.errorBody()?.string()
-//                                                Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
-//                                                // 에러 처리 로직을 추가하여 사용자에게 알림 또는 적절한 조치를 취할 수 있습니다.
-//                                            }
-//
-//                                        }catch (e: retrofit2.HttpException) {
-//                                            // HTTP 요청 실패 처리
-//                                            val errorCode = e.code()
-//                                            val errorBody = e.response()?.errorBody()?.string()
-//                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
-//
-//                                        }catch (e: Exception) {
-//                                            // 에러 처리
-//                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
-//                                        }
-//
-//                                        navController.navigate(
-//                                            Screens.SummaryScreen.route + "/" +
-//                                                    "${tempAverageHeartRate.value.toInt()} bpm/" +
-//                                                    "${formatDistanceKm(tempDistance.value)} km/" +
-//                                                    "${formatCalories(tempCalories.value)} kcal/" +
-//                                                    formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-//                                        ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-//                                    }
+                                        }catch (e: retrofit2.HttpException) {
+                                            // HTTP 요청 실패 처리
+                                            val errorCode = e.code()
+                                            val errorBody = e.response()?.errorBody()?.string()
+                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+
+                                        }catch (e: Exception) {
+                                            // 에러 처리
+                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
+                                        }
+
+                                        navController.navigate(
+                                            Screens.SummaryScreen.route + "/" +
+                                                    "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                    "${formatDistanceKm(tempDistance.value)} km/" +
+                                                    "${formatCalories(tempCalories.value)} kcal/" +
+                                                    formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                        ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+                                    }
 
 //                                Button(onClick = { onStartClick() }) {
 //                                    Icon(
