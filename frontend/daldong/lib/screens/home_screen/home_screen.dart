@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/services/home_api.dart';
+import 'package:daldong/utilites/common/notification_util.dart';
 import 'package:daldong/widgets/common/footer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -129,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
+    NotificationUtil.setupInteractedMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getMainStatus(success: (dynamic response) {
@@ -168,17 +171,20 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = false;
     });
     super.initState();
+    debugPrint('home Screen mounted');
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     _webViewController!.clearCache();
+    debugPrint('home Screen dispose');
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: Footer(),

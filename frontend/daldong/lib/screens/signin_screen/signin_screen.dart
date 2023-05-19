@@ -47,6 +47,7 @@ class _SigninScreenState extends State<SigninScreen> {
       });
     }
   }
+
   void _handleStepCancel() async {
     setState(() {
       _currentStep -= 1;
@@ -58,7 +59,8 @@ class _SigninScreenState extends State<SigninScreen> {
 
     bool isSignedIn = false;
     bool isLoggedIn = false;
-    if (_formKey1.currentState!.validate() && _formKey2.currentState!.validate()) {
+    if (_formKey1.currentState!.validate() &&
+        _formKey2.currentState!.validate()) {
       _formKey1.currentState!.save();
       _formKey2.currentState!.save();
 
@@ -78,7 +80,7 @@ class _SigninScreenState extends State<SigninScreen> {
             isSignedIn = true;
           });
         },
-        fail: (error){
+        fail: (error) {
           print("회원가입 호출 오류: $error");
         },
         body: body,
@@ -86,7 +88,7 @@ class _SigninScreenState extends State<SigninScreen> {
       );
       if (isSignedIn == true) {
         isLoggedIn = await login();
-        if (isLoggedIn != false){
+        if (isLoggedIn != false) {
           setState(() {
             _isLoggedIn = isLoggedIn;
           });
@@ -94,9 +96,9 @@ class _SigninScreenState extends State<SigninScreen> {
       }
 
       print("_isLoggedIn: $_isLoggedIn");
-      if (_isLoggedIn == true){
+      if (_isLoggedIn == true) {
         Navigator.pushReplacementNamed(context, '/home');
-      } else{
+      } else {
         print("로그인 오류 발생");
         // TODO: 모달 띄우기?
       }
@@ -104,32 +106,31 @@ class _SigninScreenState extends State<SigninScreen> {
     }
   }
 
-  void _checkNickname(){
+  void _checkNickname() {
     setState(() {
       _isLoading = true;
     });
     getNicknameCheck(
-      result: (dynamic response) {
-        setState(() {
-        });
-        Future.delayed(const Duration(milliseconds: 500), () {
-          setState(() {
-            _isLoading = false;
-            _isNicknameChecked = true;
-            if (response.statusCode == 200) {
-              _isValidatedNickname = true;
-            } else {
-              _isValidatedNickname = false;
-            }
+        result: (dynamic response) {
+          setState(() {});
+          Future.delayed(const Duration(milliseconds: 500), () {
+            setState(() {
+              _isLoading = false;
+              _isNicknameChecked = true;
+              if (response.statusCode == 200) {
+                _isValidatedNickname = true;
+              } else {
+                _isValidatedNickname = false;
+              }
+            });
           });
-        });
-      },
-      fail: (error) {
-        print('닉네임 중복 확인 호출 오류: $error');
-      },
-      nickname: _nickname
-    );
+        },
+        fail: (error) {
+          print('닉네임 중복 확인 호출 오류: $error');
+        },
+        nickname: _nickname);
   }
+
   String? _validateDouble(String? value) {
     if (value == null || value.isEmpty) {
       return '';
@@ -145,14 +146,15 @@ class _SigninScreenState extends State<SigninScreen> {
     if (value == null || value.isEmpty || value.trim().isEmpty) {
       return '닉네임을 입력해주세요.';
     }
-    if (value.length < 2 || value.length > 6){
+    if (value.length < 2 || value.length > 6) {
       return '닉네임은 2~6자여야합니다';
     }
-    if (_isNicknameChecked == true && _isValidatedNickname == false){
+    if (_isNicknameChecked == true && _isValidatedNickname == false) {
       return "중복 닉네임입니다.";
     }
     return null;
   }
+
   String? _validateHeight(String? value) {
     if (value == null || value.isEmpty) {
       return '';
@@ -163,6 +165,7 @@ class _SigninScreenState extends State<SigninScreen> {
     }
     return null;
   }
+
   String? _validateWeight(String? value) {
     if (value == null || value.isEmpty) {
       return '';
@@ -180,8 +183,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
     super.initState();
     _nicknameController.addListener(() {
-
-      if (_isNicknameChecked == true){
+      if (_isNicknameChecked == true) {
         setState(() {
           _isNicknameChecked = false;
           _isValidatedNickname = false;
@@ -208,7 +210,6 @@ class _SigninScreenState extends State<SigninScreen> {
     });
   }
 
-
   @override
   void dispose() {
     _nicknameController.dispose();
@@ -220,273 +221,294 @@ class _SigninScreenState extends State<SigninScreen> {
     return SafeArea(
       child: Scaffold(
           body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30, left: 30),
-                  child: Image.asset(
-                    'lib/assets/images/common/main_logo.png',
-                    width: imageSize,
-                    height: imageSize,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 30),
-                  child: Text(
-                      "달려동물과 함께\n달려볼까요?",
-                      style: Theme.of(context).textTheme.titleLarge
-                  ),
-                ),
-                // SizedBox(height: 16),
-                Theme(
-                  data: ThemeData(
-                    colorScheme: Theme.of(context).colorScheme.copyWith(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 30, left: 30),
+              child: Image.asset(
+                'lib/assets/images/common/main_logo.png',
+                width: imageSize,
+                height: imageSize,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16, left: 30),
+              child: Text("달려동물과 함께\n달려볼까요?",
+                  style: Theme.of(context).textTheme.titleLarge),
+            ),
+            // SizedBox(height: 16),
+            Theme(
+              data: ThemeData(
+                colorScheme: Theme.of(context).colorScheme.copyWith(
                       primary: Theme.of(context).primaryColor,
                       secondary: Theme.of(context).secondaryHeaderColor,
                     ),
-                  ),
-                  child: Center(
-                    child: Stepper(
-                      controlsBuilder: (BuildContext ctx, ControlsDetails dtl){
-                        return Row(
-                          children: [
-                            const SizedBox(height: 30,),
-                            if (_currentStep == 0) ElevatedButton(
-                              style: _isValidatedNickname && _isNicknameChecked
+              ),
+              child: Center(
+                child: Stepper(
+                  controlsBuilder: (BuildContext ctx, ControlsDetails dtl) {
+                    return Row(
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        if (_currentStep == 0)
+                          ElevatedButton(
+                            style: _isValidatedNickname && _isNicknameChecked
                                 ? null
                                 : TextButton.styleFrom(
-                                  foregroundColor: Colors.black54,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                ),
-                              onPressed: _isValidatedNickname && _isNicknameChecked && _formKey1.currentState?.validate() == true? dtl.onStepContinue : null,
-                              child: const Text("다음"),
-                            ),
-                            if (_currentStep == 0) ElevatedButton(
-                                style: _isValidatedNickname
-                                  ? TextButton.styleFrom(
                                     foregroundColor: Colors.black54,
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,
-                                    )
-                                  : null,
-                                onPressed: _formKey1.currentState?.validate() == true ? _checkNickname : null,
-                                child: const Text("닉네임 중복 확인"),
-                            ),
-                            if (_currentStep == 1) ElevatedButton(
-                              onPressed: _handleComplete,
-                              child: const Text("완료"),
-                            ),
-                            if (_currentStep != 0) ElevatedButton(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.black54,
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                              ),
-                              onPressed: _handleStepCancel,
-                              child: const Text("뒤로"),
-                            ),
-                          ],
-                        );
-                      },
-                      currentStep: _currentStep,
-                      onStepCancel: _handleStepCancel,
-                      onStepContinue: _handleStepContinue,
-                      steps: [
-                        Step(
-                          isActive: _currentStep == 0,
-                          title: const Text('닉네임 입력'),
-                          content: Container(
-                            alignment: Alignment.centerLeft,
-                            child: Form(
-                              key: _formKey1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 6),
-                                child: TextFormField(
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  controller: _nicknameController,
-                                  validator: _validateNickname,
-                                  onSaved: (value) {
-                                    _nickname = value!.trim();
-                                  },
-                                  decoration: InputDecoration(
-                                    suffixIcon: _isLoading
-                                      ? const Icon(Icons.more_horiz, color: Colors.grey)
-                                      : _isValidatedNickname
-                                        ? const Icon(Icons.check, color: Colors.green)
-                                        : null,
-                                    labelText: '닉네임',
-                                    border: const OutlineInputBorder(),
                                   ),
-                                ),
+                            onPressed: _isValidatedNickname &&
+                                    _isNicknameChecked &&
+                                    _formKey1.currentState?.validate() == true
+                                ? dtl.onStepContinue
+                                : null,
+                            child: const Text("다음"),
+                          ),
+                        if (_currentStep == 0)
+                          ElevatedButton(
+                            style: _isValidatedNickname
+                                ? TextButton.styleFrom(
+                                    foregroundColor: Colors.black54,
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                  )
+                                : null,
+                            onPressed:
+                                _formKey1.currentState?.validate() == true
+                                    ? _checkNickname
+                                    : null,
+                            child: const Text("닉네임 중복 확인"),
+                          ),
+                        if (_currentStep == 1)
+                          ElevatedButton(
+                            onPressed: _handleComplete,
+                            child: const Text("완료"),
+                          ),
+                        if (_currentStep != 0)
+                          ElevatedButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.black54,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            onPressed: _handleStepCancel,
+                            child: const Text("뒤로"),
+                          ),
+                      ],
+                    );
+                  },
+                  currentStep: _currentStep,
+                  onStepCancel: _handleStepCancel,
+                  onStepContinue: _handleStepContinue,
+                  steps: [
+                    Step(
+                      isActive: _currentStep == 0,
+                      title: const Text('닉네임 입력'),
+                      content: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Form(
+                          key: _formKey1,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              controller: _nicknameController,
+                              validator: _validateNickname,
+                              onSaved: (value) {
+                                _nickname = value!.trim();
+                              },
+                              decoration: InputDecoration(
+                                suffixIcon: _isLoading
+                                    ? const Icon(Icons.more_horiz,
+                                        color: Colors.grey)
+                                    : _isValidatedNickname
+                                        ? const Icon(Icons.check,
+                                            color: Colors.green)
+                                        : null,
+                                labelText: '닉네임',
+                                border: const OutlineInputBorder(),
                               ),
                             ),
                           ),
                         ),
-                        Step(
-                          isActive: _currentStep == 1,
-                          title: const Text('신체 정보 입력'),
-                          content: Form(
-                            key: _formKey2,
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 4),
-                                          child: TextFormField(
-                                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                                            controller: _ageController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly
-                                            ],
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return '';
-                                              }
-                                              if (int.tryParse(value) == null || int.tryParse(value)! < 5 || int.tryParse(value)! > 100) {
-                                                return '';
-                                              }
-                                              return null;
-                                            },
-                                            onSaved: (value) {
-                                              _age = int.tryParse(value!)!;
-                                            },
-                                            decoration: const InputDecoration(
-                                              labelText: '나이',
-                                            ),
-                                          ),
+                      ),
+                    ),
+                    Step(
+                      isActive: _currentStep == 1,
+                      title: const Text('신체 정보 입력'),
+                      content: Form(
+                        key: _formKey2,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: TextFormField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        controller: _ageController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return '';
+                                          }
+                                          if (int.tryParse(value) == null ||
+                                              int.tryParse(value)! < 5 ||
+                                              int.tryParse(value)! > 100) {
+                                            return '';
+                                          }
+                                          return null;
+                                        },
+                                        onSaved: (value) {
+                                          _age = int.tryParse(value!)!;
+                                        },
+                                        decoration: const InputDecoration(
+                                          labelText: '나이',
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 4),
-                                          child: TextFormField(
-                                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                                            controller: _heightController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}?$')),
-                                            ],
-                                            validator: _validateHeight,
-                                            onSaved: (value) {
-                                              _height = int.tryParse(value!)!;
-                                            },
-                                            decoration: const InputDecoration(
-                                              labelText: '키',
-                                            ),
-                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: TextFormField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        controller: _heightController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'^\d+\.?\d{0,2}?$')),
+                                        ],
+                                        validator: _validateHeight,
+                                        onSaved: (value) {
+                                          _height = int.tryParse(value!)!;
+                                        },
+                                        decoration: const InputDecoration(
+                                          labelText: '키',
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 4),
-                                          child: TextFormField(
-                                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                                            controller: _weightController,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}?$')),
-                                            ],
-                                            validator: _validateWeight,
-                                            onSaved: (value) {
-                                              _weight = int.tryParse(value!)!;
-                                            },
-                                            decoration: const InputDecoration(
-                                              labelText: '몸무게',
-                                            ),
-                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: TextFormField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        controller: _weightController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'^\d+\.?\d{0,2}?$')),
+                                        ],
+                                        validator: _validateWeight,
+                                        onSaved: (value) {
+                                          _weight = int.tryParse(value!)!;
+                                        },
+                                        decoration: const InputDecoration(
+                                          labelText: '몸무게',
                                         ),
                                       ),
-
-                                    ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                const Text('성별'),
+                                Expanded(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Theme.of(context).primaryColor,
+                                    title: const Text('남성'),
+                                    value: true,
+                                    groupValue: _isMale,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _isMale = value!;
+                                      });
+                                    },
                                   ),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    const Text('성별'),
-                                    Expanded(
-                                      child: RadioListTile<bool>(
-                                        activeColor: Theme.of(context).primaryColor,
-                                        title: const Text('남성'),
-                                        value: true,
-                                        groupValue: _isMale,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            _isMale = value!;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: RadioListTile<bool>(
-                                        activeColor: Theme.of(context).primaryColor,
-                                        title: const Text('여성'),
-                                        value: false,
-                                        groupValue: _isMale,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            _isMale = value!;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                  width: double.infinity,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text("운동 수준"),
-                                      Container(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: GroupButton(
-                                          buttons: const [
-                                            '입문자',
-                                            '초심자',
-                                            '중급자',
-                                            '고급자'
-                                          ],
-                                          controller: GroupButtonController(selectedIndex: 0),
-                                          options: GroupButtonOptions(
-                                            selectedShadow: const [],
-                                            unselectedShadow: const [],
-                                            unselectedColor: Colors.grey[300],
-                                            unselectedTextStyle: TextStyle(
-                                              color: Colors.grey[600],
-                                            ),
-                                            borderRadius: BorderRadius.circular(30),
-                                          ),
-                                          onSelected: (val, i, selected) {
-                                            debugPrint('Button: $val index: $i $selected');
-                                            _ability = i;
-                                          }
-                                        ),
-                                      ),
-                                    ],
+                                Expanded(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Theme.of(context).primaryColor,
+                                    title: const Text('여성'),
+                                    value: false,
+                                    groupValue: _isMale,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _isMale = value!;
+                                      });
+                                    },
                                   ),
                                 ),
                               ],
                             ),
-                          ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16.0),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("운동 수준"),
+                                  Container(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: GroupButton(
+                                        buttons: const [
+                                          '입문자',
+                                          '초심자',
+                                          '중급자',
+                                          '고급자'
+                                        ],
+                                        controller: GroupButtonController(
+                                            selectedIndex: 0),
+                                        options: GroupButtonOptions(
+                                          selectedShadow: const [],
+                                          unselectedShadow: const [],
+                                          unselectedColor: Colors.grey[300],
+                                          unselectedTextStyle: TextStyle(
+                                            color: Colors.grey[600],
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        onSelected: (val, i, selected) {
+                                          debugPrint(
+                                              'Button: $val index: $i $selected');
+                                          _ability = i;
+                                        }),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          )
-
-      ),
+          ],
+        ),
+      )),
     );
   }
 }
