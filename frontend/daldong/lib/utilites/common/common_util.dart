@@ -1,8 +1,8 @@
 import 'package:daldong/services/friend_api.dart';
 import 'package:flutter/material.dart';
 
-void showInfoDialog(BuildContext context, String title,
-    String content, String noText,
+void showInfoDialog(
+    BuildContext context, String title, String content, String noText,
     {dynamic data}) {
   showDialog(
     context: context,
@@ -33,13 +33,11 @@ void showInfoDialog(BuildContext context, String title,
     },
   ).then((value) {
     if (value == true) {
-
     } else if (value == false) {
       // No 버튼을 눌렀을 때 수행할 작업
     }
   });
 }
-
 
 void showConfirmationDialog(BuildContext context, void func, String title,
     String content, String yesText, String noText, String confirmCase,

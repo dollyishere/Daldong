@@ -1,6 +1,7 @@
 import 'package:daldong/services/inventory_api.dart';
 import 'package:daldong/utilites/common/common_util.dart';
 import 'package:daldong/utilites/inventory_screen/inventory_util.dart';
+import 'package:daldong/widgets/inventory_screen/buy_confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class PetBlock extends StatefulWidget {
@@ -38,6 +39,23 @@ class _PetBlockState extends State<PetBlock> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  void showBuyDialog(
+    String assetType,
+    dynamic assetInfo,
+    void Function(String, int) buySelectItem,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BuyConfirmDialog(
+            assetType: assetType,
+            assetInfo: assetInfo,
+            buySelectItem: buySelectItem,
+        );
+      },
+    );
   }
 
   @override
@@ -311,18 +329,10 @@ class _PetBlockState extends State<PetBlock> {
                     }
                   } else if (widget.petInfo['assetStatus'] == 1) {
                     if (widget.userPoint >= widget.petInfo['assetPrice']) {
-                      postBuyAsset(
-                          success: (dynamic response) {
-                            widget.buySelectItem(
-                                'pet', widget.petInfo['assetId']);
-                            print('에셋 구매 완료');
-                          },
-                          fail: (error) {
-                            print('에셋 구매 에러: $error');
-                          },
-                          body: {'assetId': widget.petInfo['assetId']});
+                      showBuyDialog("펫", widget.petInfo, widget.buySelectItem);
                     } else {
-                      showInfoDialog(context, '포인트 부족', '포인트 부족으로 구매가 불가능합니다.', '확인');
+                      showInfoDialog(
+                          context, '포인트 부족', '포인트 부족으로 구매가 불가능합니다.', '확인');
                     }
                   }
                 },
