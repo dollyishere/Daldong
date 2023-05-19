@@ -183,8 +183,8 @@ public class ExerciseServiceImpl implements ExerciseService{
             Message message = Message.builder()
                     .putData("type", "exercise")
                     .setNotification(Notification.builder()
-                            .setTitle("달려동물과의 운동이 기록되었습니다.")
-                            .setBody(nickname+"님의 기록을 확인해볼까요?")
+                            .setTitle("운동이 기록되었습니다!")
+                            .setBody("운동 페이지의 캘린더에서 확인 가능합니다.")
                             .build())
                     .setToken(fcmToken)
                     .build();
