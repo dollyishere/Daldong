@@ -299,63 +299,76 @@ fun ExerciseScreen(
 //                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
 //                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
-                                    LaunchedEffect(Unit) {
-                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
-                                        try {
-                                            val response = withContext(Dispatchers.IO) {
-                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
-                                            }
-                                            // 결과 처리
-                                            if (response.isSuccessful) {
-                                                // 성공적인 응답인 경우 (응답 코드가 200인 경우)
-                                                val responseData = response.body()
-                                                // responseData를 처리하는 코드 작성
-                                                Log.d("운동 결과 화면", "운동 결과 전송 성공 ${responseData}")
-                                            }else {
-                                                // 서버로부터 에러 응답이 온 경우 (응답 코드가 400 등인 경우)
-                                                val errorCode = response.code()
-                                                val errorBody = response.errorBody()?.string()
-                                                Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
-                                                // 에러 처리 로직을 추가하여 사용자에게 알림 또는 적절한 조치를 취할 수 있습니다.
-                                            }
+                                    navController.navigate(
+                                        Screens.SummaryScreen.route + "/" +
+                                                "${tempAverageHeartRate.value.toInt()} bpm/" +
+                                                "${formatDistanceKm(tempDistance.value)} km/" +
+                                                "${formatCalories(tempCalories.value)} kcal/" +
+                                                formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+                                    ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
 
-                                        }catch (e: retrofit2.HttpException) {
-                                            // HTTP 요청 실패 처리
-                                            val errorCode = e.code()
-                                            val errorBody = e.response()?.errorBody()?.string()
-                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+//                                    LaunchedEffect(Unit) {
+//                                        // Retrofit을 사용한 비동기 호출을 위한 코루틴입니다.
+//                                        try {
+//                                            val response = withContext(Dispatchers.IO) {
+//                                                RetrofitExerciseService().saveExerciseResult(exerciseResult)
+//                                            }
+//                                            // 결과 처리
+//                                            if (response.isSuccessful) {
+//                                                // 성공적인 응답인 경우 (응답 코드가 200인 경우)
+//                                                val responseData = response.body()
+//                                                // responseData를 처리하는 코드 작성
+//                                                Log.d("운동 결과 화면", "운동 결과 전송 성공 ${responseData}")
+//                                            }else {
+//                                                // 서버로부터 에러 응답이 온 경우 (응답 코드가 400 등인 경우)
+//                                                val errorCode = response.code()
+//                                                val errorBody = response.errorBody()?.string()
+//                                                Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+//                                                // 에러 처리 로직을 추가하여 사용자에게 알림 또는 적절한 조치를 취할 수 있습니다.
+//                                            }
+//
+//                                        }catch (e: retrofit2.HttpException) {
+//                                            // HTTP 요청 실패 처리
+//                                            val errorCode = e.code()
+//                                            val errorBody = e.response()?.errorBody()?.string()
+//                                            Log.d("운동 결과 화면", "HTTP 요청 실패 - 코드: $errorCode, 에러 메시지: $errorBody")
+//
+//                                        }catch (e: Exception) {
+//                                            // 에러 처리
+//                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
+//                                        }
+//
+//                                        navController.navigate(
+//                                            Screens.SummaryScreen.route + "/" +
+//                                                    "${tempAverageHeartRate.value.toInt()} bpm/" +
+//                                                    "${formatDistanceKm(tempDistance.value)} km/" +
+//                                                    "${formatCalories(tempCalories.value)} kcal/" +
+//                                                    formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
+//                                        ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
+//                                    }
 
-                                        }catch (e: Exception) {
-                                            // 에러 처리
-                                            Log.d("운동 결과 화면", "운동 결과 전송 에러 : ${e.toString()}")
-                                        }
+//                                Button(onClick = { onStartClick() }) {
+//                                    Icon(
+//                                        imageVector = startOrEnd,
+//                                        contentDescription = stringResource(id = R.string.startOrEnd)
+//                                    )
+//                                }
 
-                                        navController.navigate(
-                                            Screens.SummaryScreen.route + "/" +
-                                                    "${tempAverageHeartRate.value.toInt()} bpm/" +
-                                                    "${formatDistanceKm(tempDistance.value)} km/" +
-                                                    "${formatCalories(tempCalories.value)} kcal/" +
-                                                    formatElapsedTime(activeDuration.toKotlinDuration(), true).toString()
-                                        ) { popUpTo(Screens.ExerciseScreen.route) { inclusive = true } }
-                                    }
-
-                                Button(onClick = { onStartClick() }) {
-                                    Icon(
-                                        imageVector = startOrEnd,
-                                        contentDescription = stringResource(id = R.string.startOrEnd)
-                                    )
-                                }
-
-                                } else { // 운동 시작 중일 때
-                                    Button(
+                                } else {
+                                    // 운동 시작 중일 때
+                                    if (!(exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding)){
+                                        Button(
 //                                        onClick = { onEndClick(exerciseResult) },
-                                        onClick = { onEndClick() },
+                                            onClick = { onEndClick() },
 //                                    Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = startOrEnd,
-                                            contentDescription = stringResource(id = R.string.startOrEnd)
-                                        )
+                                        ) {
+                                            Icon(
+                                                imageVector = startOrEnd,
+                                                contentDescription = stringResource(id = R.string.startOrEnd)
+                                            )
+                                        }
+                                    }else{
+
                                     }
                                 }
                             }
@@ -366,8 +379,8 @@ fun ExerciseScreen(
                                     .height(90.dp)
                                     .padding(10.dp)
                             ){
+                                
 //                                 운동 중 GIF
-
                                 if (exerciseStateChange.exerciseState.isPaused) {
                                     Image(
                                         painter = rememberAsyncImagePainter(R.drawable.sparrow_sit, imageLoader),
@@ -385,27 +398,32 @@ fun ExerciseScreen(
                                 modifier = Modifier.height(90.dp)
 //                                modifier = Modifier.padding(5.dp)
                             ){
-                                //운동 정지
-                                if (exerciseStateChange.exerciseState.isPaused) {
-                                    Button(
-                                        onClick = { onResumeClick() },
+                                //운동 정지 관련
+                                // 운동 중일 떄
+                                if((!(exerciseStateChange.exerciseState.isEnded || exerciseStateChange.exerciseState.isEnding))){
+                                    if (exerciseStateChange.exerciseState.isPaused) {
+                                        Button(
+                                            onClick = { onResumeClick() },
 //                                    Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = pauseOrResume,
-                                            contentDescription = stringResource(id = R.string.pauseOrResume)
-                                        )
-                                    }
-                                } else {
-                                    Button(
-                                        onClick = { onPauseClick() },
+                                        ) {
+                                            Icon(
+                                                imageVector = pauseOrResume,
+                                                contentDescription = stringResource(id = R.string.pauseOrResume)
+                                            )
+                                        }
+                                    } else {
+                                        Button(
+                                            onClick = { onPauseClick() },
 //                                        Modifier.size(40.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = pauseOrResume,
-                                            contentDescription = stringResource(id = R.string.pauseOrResume)
-                                        )
+                                        ) {
+                                            Icon(
+                                                imageVector = pauseOrResume,
+                                                contentDescription = stringResource(id = R.string.pauseOrResume)
+                                            )
+                                        }
                                     }
+                                }else{
+                                    
                                 }
                             }
                         }

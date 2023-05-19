@@ -92,10 +92,10 @@ class ExerciseViewModel @Inject constructor(
         return healthServicesRepository.isExerciseInProgress()
     }
 
-    fun prepareExercise() = viewModelScope.launch { healthServicesRepository.prepareExercise() }
-    fun startExercise() = viewModelScope.launch { healthServicesRepository.startExercise() }
-    fun pauseExercise() = viewModelScope.launch { healthServicesRepository.pauseExercise() }
-    fun endExercise() = viewModelScope.launch {
+    suspend fun prepareExercise() = viewModelScope.launch { healthServicesRepository.prepareExercise() }
+    suspend fun startExercise() = viewModelScope.launch { healthServicesRepository.startExercise() }
+    suspend fun pauseExercise() = viewModelScope.launch { healthServicesRepository.pauseExercise() }
+    suspend fun endExercise() = viewModelScope.launch {
 
 //    fun endExercise(exerciseResult : ExerciseResult) = viewModelScope.launch {
         healthServicesRepository.endExercise()

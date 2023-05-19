@@ -42,10 +42,44 @@ fun ExerciseWearApp(
     SwipeDismissableNavHost(
         navController = navController, startDestination = startDestination
     ) {
+        
+        /**StartingUp 기존*/
+//        composable(Screens.StartingUp.route) {
+//            val viewModel = hiltViewModel<ExerciseViewModel>()
+//            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+//            val permissions = viewModel.permissions
+//
+//            StartingUp(onAvailable = {
+//                navController.navigate(Screens.Home.route) {
+//                    popUpTo(navController.graph.id) {
+//                        inclusive = true
+//                    }
+//                }
+//            }, onUnavailable = {
+//                navController.navigate(Screens.ExerciseNotAvailable.route) {
+//                    popUpTo(navController.graph.id) {
+//                        inclusive = false
+//                    }
+//                }
+//            }, hasCapabilities = uiState.hasExerciseCapabilities,
+//                prepareExercise = { viewModel.prepareExercise() },
+//                permissions = permissions,
+//            )
+//        }
+
+        /**StartingUp 변경*/
         composable(Screens.StartingUp.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val permissions = viewModel.permissions
+
+            var prepareExerciseClicked by remember { mutableStateOf(false) }
+
+            LaunchedEffect(prepareExerciseClicked) {
+                if (prepareExerciseClicked) {
+                    viewModel.prepareExercise()
+                }
+            }
 
             StartingUp(onAvailable = {
                 navController.navigate(Screens.Home.route) {
@@ -60,7 +94,7 @@ fun ExerciseWearApp(
                     }
                 }
             }, hasCapabilities = uiState.hasExerciseCapabilities,
-                prepareExercise = { viewModel.prepareExercise() },
+                prepareExercise = { prepareExerciseClicked = true },
                 permissions = permissions,
             )
         }
@@ -117,11 +151,51 @@ fun ExerciseWearApp(
 //            )
 //        }
 
+        /** 홈 기존*/
+//        composable(Screens.Home.route) {
+//            val viewModel = hiltViewModel<ExerciseViewModel>()
+//            val serviceState by viewModel.exerciseServiceState
+//            val permissions = viewModel.permissions
+//            val uiState by viewModel.uiState.collectAsState()
+//            Home(
+//                onStartClick = {
+//                    navController.navigate(Screens.ExerciseScreen.route) {
+//                        popUpTo(navController.graph.id) {
+//                            inclusive = false // 기존
+////                            inclusive = true // 바꿈
+//                        }
+//                    }
+//                },
+//                prepareExercise = { viewModel.prepareExercise() },
+//                onStart = { viewModel.startExercise() },
+//                serviceState = serviceState,
+//                permissions = permissions,
+////                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
+//            )
+//        }
+
+        /** 홈 변경*/
         composable(Screens.Home.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
             val permissions = viewModel.permissions
             val uiState by viewModel.uiState.collectAsState()
+
+            var startExerciseClicked by remember { mutableStateOf(false) }
+            var prepareExerciseClicked by remember { mutableStateOf(false) }
+
+            LaunchedEffect(startExerciseClicked) {
+                if (startExerciseClicked) {
+                    viewModel.startExercise()
+                }
+            }
+
+            LaunchedEffect(prepareExerciseClicked) {
+                if (prepareExerciseClicked) {
+                    viewModel.prepareExercise()
+                }
+            }
+
             Home(
                 onStartClick = {
                     navController.navigate(Screens.ExerciseScreen.route) {
@@ -131,30 +205,79 @@ fun ExerciseWearApp(
                         }
                     }
                 },
-                prepareExercise = { viewModel.prepareExercise() },
-                onStart = { viewModel.startExercise() },
+                prepareExercise = { startExerciseClicked = true },
+                onStart = { startExerciseClicked = true },
                 serviceState = serviceState,
                 permissions = permissions,
 //                isTrackingAnotherExercise = uiState.isTrackingAnotherExercise,
             )
         }
 
+        /** 기존 */
+//        composable(Screens.ExerciseScreen.route) {
+//            val viewModel = hiltViewModel<ExerciseViewModel>()
+//            val serviceState by viewModel.exerciseServiceState
+//
+//            var exerciseResult by remember { mutableStateOf<ExerciseResult?>(null) }
+//
+//            ExerciseScreen(
+//                onPauseClick = { viewModel.pauseExercise() },
+//                onEndClick = { viewModel.endExercise() },
+////                onEndClick = { exerciseResult?.let { result -> viewModel.endExercise(exerciseResult = result) } },
+//                onResumeClick = { viewModel.resumeExercise() },
+//                onStartClick = { viewModel.startExercise() },
+//                serviceState = serviceState,
+//                navController = navController,
+//            )
+//        }
+
+        /** 변경 */
         composable(Screens.ExerciseScreen.route) {
             val viewModel = hiltViewModel<ExerciseViewModel>()
             val serviceState by viewModel.exerciseServiceState
 
             var exerciseResult by remember { mutableStateOf<ExerciseResult?>(null) }
+            var endExerciseClicked by remember { mutableStateOf(false) }
+            var pauseExerciseClicked by remember { mutableStateOf(false) }
+            var startExerciseClicked by remember { mutableStateOf(false) }
+
+            LaunchedEffect(endExerciseClicked) {
+                if (endExerciseClicked) {
+                    viewModel.endExercise()
+                }
+            }
+
+            LaunchedEffect(pauseExerciseClicked) {
+                if (pauseExerciseClicked) {
+                    viewModel.pauseExercise()
+                }
+            }
+
+            LaunchedEffect(startExerciseClicked) {
+                if (startExerciseClicked) {
+                    viewModel.startExercise()
+                }
+            }
 
             ExerciseScreen(
-                onPauseClick = { viewModel.pauseExercise() },
-                onEndClick = { viewModel.endExercise() },
-//                onEndClick = { exerciseResult?.let { result -> viewModel.endExercise(exerciseResult = result) } },
+                onPauseClick = {
+                    pauseExerciseClicked = true
+                },
+                onEndClick = {
+                    endExerciseClicked = true
+                },
                 onResumeClick = { viewModel.resumeExercise() },
-                onStartClick = { viewModel.startExercise() },
+                onStartClick = {
+                    startExerciseClicked = true
+                },
                 serviceState = serviceState,
                 navController = navController,
             )
         }
+
+
+
+
         composable(Screens.ExerciseNotAvailable.route) {
             ExerciseNotAvailable()
         }
