@@ -3,7 +3,6 @@ import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/services/home_api.dart';
 import 'package:daldong/utilites/common/notification_util.dart';
 import 'package:daldong/widgets/common/footer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -214,42 +213,42 @@ class _HomeScreenState extends State<HomeScreen> {
                     requiredExp: requiredExp,
                     playerPoint: userPoint,
                   ),
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //   ),
-                  //   width: double.infinity,
-                  //   height: 380,
-                  //   child: isLoading
-                  //       ? Center(
-                  //           child: CircularProgressIndicator(
-                  //             color: Theme.of(context).primaryColor,
-                  //           ),
-                  //         )
-                  //       : InAppWebView(
-                  //           initialUrlRequest: URLRequest(
-                  //             url: Uri.parse(
-                  //                 "http://localhost:8080/lib/assets/models/daldong_webview.html"),
-                  //           ),
-                  //           onWebViewCreated: (controller) {
-                  //             _webViewController = controller;
-                  //             _webViewController!.evaluateJavascript(
-                  //               source: 'setVariable("hello!")',
-                  //             );
-                  //           },
-                  //           onLoadStart: (controller, url) async {},
-                  //           onLoadStop: (controller, url) {
-                  //             _webViewController!.evaluateJavascript(
-                  //               source:
-                  //                   'setVariable( "${mainBackName}", "${mainPetName}")',
-                  //             );
-                  //           },
-                  //           onConsoleMessage: (controller, consoleMessage) {
-                  //             print('나 여기 있어');
-                  //             print(consoleMessage.message);
-                  //           },
-                  //         ),
-                  // ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    width: double.infinity,
+                    height: 380,
+                    child: isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          )
+                        : InAppWebView(
+                            initialUrlRequest: URLRequest(
+                              url: Uri.parse(
+                                  "http://localhost:8080/lib/assets/models/daldong_webview.html"),
+                            ),
+                            onWebViewCreated: (controller) {
+                              _webViewController = controller;
+                              _webViewController!.evaluateJavascript(
+                                source: 'setVariable("hello!")',
+                              );
+                            },
+                            onLoadStart: (controller, url) async {},
+                            onLoadStop: (controller, url) {
+                              _webViewController!.evaluateJavascript(
+                                source:
+                                    'setVariable( "${mainBackName}", "${mainPetName}")',
+                              );
+                            },
+                            onConsoleMessage: (controller, consoleMessage) {
+                              print('나 여기 있어');
+                              print(consoleMessage.message);
+                            },
+                          ),
+                  ),
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
