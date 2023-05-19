@@ -4,6 +4,8 @@ import 'package:daldong/widgets/mission_block/mission_block.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../utilites/common/notification_util.dart';
+
 class MissionScreen extends StatefulWidget {
   @override
   State<MissionScreen> createState() => _MissionScreenState();
@@ -38,6 +40,7 @@ class _MissionScreenState extends State<MissionScreen> {
 
   @override
   void initState() {
+    NotificationUtil.setupInteractedMessage(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getMainPetName();
     });

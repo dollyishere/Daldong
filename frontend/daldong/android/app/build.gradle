@@ -146,5 +146,7 @@ dependencies {
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
     implementation libs.androidx.activity.compose
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'com.google.firebase:firebase-messaging'
 
 }

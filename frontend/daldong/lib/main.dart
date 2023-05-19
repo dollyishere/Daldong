@@ -1,19 +1,27 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_screen.dart';
-import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
 import 'package:daldong/screens/mypage_screen/mypage_screen.dart';
 import 'package:daldong/screens/root_screen/root_screen.dart';
 import 'package:daldong/screens/signin_screen/signin_screen.dart';
 import 'package:daldong/screens/splash_screen/splash_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:daldong/screens/home_screen/home_screen.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   // 앱 처음 실행 시 flutter 엔진 초기화 메소드 호출
@@ -22,7 +30,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // LocalNotificationService.initialize();
+  // initializeSignalListener();
   await dotenv.load(fileName: ".env");
+
   // 세로 방향으로 고정
   // SystemChrome.setPreferredOrientations(
   //   [
@@ -31,8 +43,35 @@ void main() async {
   //   ],
   // );
 
-  runApp(
-    MaterialApp(
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Run code required to handle interacted messages in an async function
+    // as initState() must not be async
+    // setupInteractedMessage();
+    // setupInteractedMessage(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Open the NotificationPage when a notification is clicked
+      Navigator.pushNamed(context, '/friend');
+    });
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'daldong',
       // 기본 테마 색 및 폰트 설정
@@ -66,6 +105,7 @@ void main() async {
       themeMode: ThemeMode.system,
       // 앱 시작 시 초기 경로
       initialRoute: '/',
+
       // 라우팅 이동 지정
       // 이동 방법은 'Navigator.pushName(context, '{하단에 지정해둔 라우팅 경로}')
       // 만약 기존 라우팅 경로를 초기화하고 이동하고 싶다면,
@@ -91,8 +131,9 @@ void main() async {
         '/mission': (context) => MissionScreen(),
       },
       // home: const HomeScreen(),
-    ),
-  );
+    );
+
+  }
 }
 
 // Custom PageTransitionsBuilder that disables the transition animation
@@ -108,3 +149,4 @@ class NoTransitionPageTransitionsBuilder extends PageTransitionsBuilder {
     return child; // Returns the child directly without any transition animation
   }
 }
+

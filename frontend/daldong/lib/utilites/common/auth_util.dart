@@ -1,4 +1,5 @@
 import 'package:daldong/services/login_api.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = FlutterSecureStorage();
@@ -36,8 +37,10 @@ Future<bool> login() async {
   String? idToken = await storage.read(key: "idToken");
   bool isLoggedIn = false;
   String uid = "";
-  Map<String, String> body = {"fcm": "fcm"};
 
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  Map<String, String> body = {"fcm": fcmToken!};
+  print("fcmToken: $fcmToken");
   await getLoggedIn(
     success: (dynamic response) async {
       if (response.statusCode == 200) {

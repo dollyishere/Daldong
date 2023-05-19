@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/youtube_player.dart';
 import 'package:daldong/utilites/common/common_util.dart';
+import 'package:daldong/utilites/common/notification_util.dart';
 import 'package:daldong/widgets/common/exercise_info_block.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:flutter/material.dart';
@@ -183,6 +184,7 @@ class _ExerciseScreenState extends State<ExerciseScreen>
 
   @override
   void initState() {
+    NotificationUtil.setupInteractedMessage(context);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUid();

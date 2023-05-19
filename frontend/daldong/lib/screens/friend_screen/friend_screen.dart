@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:daldong/services/friend_api.dart';
+import 'package:daldong/utilites/common/notification_util.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/friend_screen/friend_block.dart';
 import 'package:daldong/widgets/friend_screen/my_progress_bar.dart';
@@ -31,7 +31,9 @@ class _FriendScreenState extends State<FriendScreen> {
 
   @override
   void initState() {
+    NotificationUtil.setupInteractedMessage(context);
     // TODO: implement initState
+    print("friend screen mounted");
     getMyFriendList(
       success: (dynamic response) {
         setState(() {
@@ -57,111 +59,113 @@ class _FriendScreenState extends State<FriendScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(context.toString());
     return SafeArea(
         child: Scaffold(
-          bottomNavigationBar: Footer(),
-          body: isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                )
-              : Stack(
-                children: [
-                  Container(
-                    height: 250,
-                    color: Theme.of(context).primaryColorLight,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Text(
-                              '친구',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
+      bottomNavigationBar: Footer(),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            )
+          : Stack(
+              children: [
+                Container(
+                  height: 250,
+                  color: Theme.of(context).primaryColorLight,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Text(
+                          '친구',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
                           ),
-                          MyProgressBar(progressNum: friendList.length),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                      ),
+                      MyProgressBar(progressNum: friendList.length),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "현재 친구 수: ${friendList.length}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                      ),
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            isLoading= true;
-                                          });
-                                          getMyFriendList(
-                                            success: (dynamic response) {
-                                              setState(() {
-                                                friendList = response['data'];
-                                                print(friendList);
-                                                isLoading = false;
-                                              });
-                                            },
-                                            fail: (error) {
-                                              print('친구 목록 호출 오류 : $error');
-                                              // Navigator.pushNamedAndRemoveUntil(
-                                              //   context,
-                                              //   '/error',
-                                              //   arguments: {
-                                              //     'errorText': error,
-                                              //   },
-                                              //   ModalRoute.withName('/home'),
-                                              // );
-                                            },
-                                          );
-                                        },
-                                        child: CircleAvatar(
-                                          backgroundColor: Theme.of(context).primaryColorDark,
-                                          radius: 12,
-                                          child: Icon(
-                                            Icons.restart_alt,
-                                            size: 16,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showDetailModalFriend(context, changeUserState);
-                                  },
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  child: Icon(
-                                    Icons.add_circle,
-                                    size: 24,
-                                    color: Theme.of(context).primaryColorDark,
+                                Text(
+                                  "현재 친구 수: ${friendList.length}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                )
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      getMyFriendList(
+                                        success: (dynamic response) {
+                                          setState(() {
+                                            friendList = response['data'];
+                                            print(friendList);
+                                            isLoading = false;
+                                          });
+                                        },
+                                        fail: (error) {
+                                          print('친구 목록 호출 오류 : $error');
+                                          // Navigator.pushNamedAndRemoveUntil(
+                                          //   context,
+                                          //   '/error',
+                                          //   arguments: {
+                                          //     'errorText': error,
+                                          //   },
+                                          //   ModalRoute.withName('/home'),
+                                          // );
+                                        },
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColorDark,
+                                      radius: 12,
+                                      child: Icon(
+                                        Icons.restart_alt,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                          friendList.length > 0
+                            InkWell(
+                              onTap: () {
+                                showDetailModalFriend(context, changeUserState);
+                              },
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              child: Icon(
+                                Icons.add_circle,
+                                size: 24,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      friendList.length > 0
                           ? Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(4),
@@ -206,9 +210,9 @@ class _FriendScreenState extends State<FriendScreen> {
                             )
                     ],
                   ),
+                ),
+              ],
             ),
-                ],
-              ),
     ));
   }
 }
