@@ -1,7 +1,6 @@
 import 'package:daldong/screens/exercise_detail_screen/exercise_detail_screen.dart';
 import 'package:daldong/screens/exercise_screen/exercise_screen.dart';
 import 'package:daldong/screens/friend_screen/friend_screen.dart';
-import 'package:daldong/screens/inventory_screen/inventory_screen.dart';
 import 'package:daldong/screens/login_screen/login_screen.dart';
 import 'package:daldong/screens/mission_screen/mission_screen.dart';
 import 'package:daldong/screens/mypage_screen/mypage_screen.dart';
@@ -55,32 +54,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<void> setupInteractedMessage() async {
-    // Get any messages which caused the application to open from
-    // a terminated state.
-    RemoteMessage? initialMessage =
-    await FirebaseMessaging.instance.getInitialMessage();
-
-    // If the message also contains a data property with a "type" of "chat",
-    // navigate to a chat screen
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-
-    // Also handle any interaction when the app is in the background via a
-    // Stream listener
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    if (message.data['type'] == 'sting') {
-      Navigator.pushNamedAndRemoveUntil(context, '/friend', (route) => false);
-    } else if (message.data['type'] == 'exercise') {
-      Navigator.pushNamedAndRemoveUntil(context, '/exercise', (route) => false);
-    } else if (message.data['type'] == 'test') {
-      print("wa!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    }
-  }
 
   @override
   void initState() {
@@ -88,11 +61,16 @@ class _MyAppState extends State<MyApp> {
 
     // Run code required to handle interacted messages in an async function
     // as initState() must not be async
-    setupInteractedMessage();
+    // setupInteractedMessage();
+    // setupInteractedMessage(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Open the NotificationPage when a notification is clicked
+      Navigator.pushNamed(context, '/friend');
+    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'daldong',

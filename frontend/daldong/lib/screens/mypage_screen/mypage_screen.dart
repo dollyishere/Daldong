@@ -1,6 +1,5 @@
-import 'package:daldong/screens/login_screen/login_screen.dart';
-import 'package:daldong/services/login_api.dart';
 import 'package:daldong/services/user_api.dart';
+import 'package:daldong/utilites/common/notification_util.dart';
 import 'package:daldong/widgets/common/button.dart';
 import 'package:daldong/widgets/common/footer.dart';
 import 'package:daldong/widgets/mypage_screen/update_nickname_dialog.dart';
@@ -35,6 +34,7 @@ class _MypageScreenState extends State<MypageScreen> {
   @override
   void initState() {
     super.initState();
+    NotificationUtil.setupInteractedMessage(context);
     // 비동기로 flutter secure storage 정보를 불러오는 작업
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getMypageInfo();
@@ -43,27 +43,24 @@ class _MypageScreenState extends State<MypageScreen> {
 
   void getMypageInfo() async {
     String? mainPetName = await storage.read(key: "mainPetName");
-    getUserMypage(
-        success: (dynamic response) {
-          setState(() {
-            userInfo = response['data'];
-            _nickname = userInfo['nickname'];
-            _height = userInfo['height'];
-            _weight = userInfo['weight'];
-            _gender = userInfo['gender'];
-            _age = userInfo['age'];
-            _ability = userInfo['ability'];
-            _userLevel = userInfo['userLevel'];
-            _userPoint = userInfo['userPoint'];
-            _mainPetName = mainPetName;
-            print(_mainPetName);
-            isLoading = false;
-          });
-        },
-        fail: (error) {
-          print("마이페이지 정보 로드 오류: $error");
-        }
-    );
+    getUserMypage(success: (dynamic response) {
+      setState(() {
+        userInfo = response['data'];
+        _nickname = userInfo['nickname'];
+        _height = userInfo['height'];
+        _weight = userInfo['weight'];
+        _gender = userInfo['gender'];
+        _age = userInfo['age'];
+        _ability = userInfo['ability'];
+        _userLevel = userInfo['userLevel'];
+        _userPoint = userInfo['userPoint'];
+        _mainPetName = mainPetName;
+        print(_mainPetName);
+        isLoading = false;
+      });
+    }, fail: (error) {
+      print("마이페이지 정보 로드 오류: $error");
+    });
   }
 
   String getUserAbility(int ability) {
@@ -106,262 +103,267 @@ class _MypageScreenState extends State<MypageScreen> {
         backgroundColor: Colors.white,
         body: isLoading
             ? Center(
-          child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
-          ),
-        )
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
             : SingleChildScrollView(
-          child: Stack(
-            children: [
-              Container(
-                height: 220,
-                color: Theme.of(context).primaryColorLight,
-              ),
-              Center(
-                child: Column(
+                child: Stack(
                   children: [
-                    SizedBox(height: 30,),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFF4F5E5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5),
-                                spreadRadius: 0.3,
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 80,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image:
-                              AssetImage("lib/assets/images/animals/${_mainPetName}.png"),
-                              fit: BoxFit.cover,
-                            ),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context).secondaryHeaderColor,
-                              width: 10,
-                              strokeAlign: BorderSide.strokeAlignOutside,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).shadowColor.withOpacity(0.5),
-                                spreadRadius: 0.3,
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
                     Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: (){
-                            },
-                            icon: Icon(Icons.edit, color: Colors.transparent),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 17),
-                            child: Text(
-                              '$_nickname',
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: (){
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return UpdateNicknameDialog(updateNickname: getMypageInfo, originalNickname: _nickname,);
-                                },
-                              );
-                            },
-                            icon: Icon(Icons.edit)
-                          ),
-                        ],
-                      ),
+                      height: 220,
+                      color: Theme.of(context).primaryColorLight,
                     ),
-                    WhiteBox(
-                      widget: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Center(
+                      child: Column(
                         children: [
-                          Column(
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Text(
-                                "$_userLevel",
-                                style: TextStyle(
-                                  fontSize: 20
+                              Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFFF4F5E5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 0.3,
+                                      blurRadius: 6,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                "Level",
-                                style: TextStyle(
-                                  color: Colors.grey
+                              Container(
+                                width: 80,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "lib/assets/images/animals/${_mainPetName}.png"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    width: 10,
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context)
+                                          .shadowColor
+                                          .withOpacity(0.5),
+                                      spreadRadius: 0.3,
+                                      blurRadius: 6,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                           Container(
-                            width: 2, // Width of the vertical line
-                            height: 35,
-                            color: Colors.grey.shade300, // Color of the vertical line
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.edit,
+                                      color: Colors.transparent),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 17),
+                                  child: Text(
+                                    '$_nickname',
+                                    style: TextStyle(fontSize: 20.0),
+                                  ),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return UpdateNicknameDialog(
+                                            updateNickname: getMypageInfo,
+                                            originalNickname: _nickname,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: Icon(Icons.edit)),
+                              ],
+                            ),
                           ),
-                          Column(
+                          WhiteBox(
+                            widget: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      "$_userLevel",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      "Level",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  width: 2, // Width of the vertical line
+                                  height: 35,
+                                  color: Colors.grey
+                                      .shade300, // Color of the vertical line
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "$_userPoint",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Points",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          WhiteBox(
+                              widget: Column(
                             children: [
-                              Text(
-                                "$_userPoint",
-                                style: TextStyle(
-                                    fontSize: 20,
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "나이",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                    GreenButton(title: "$_age세")
+                                  ],
                                 ),
                               ),
-                              Text(
-                                "Points",
-                                style: TextStyle(
-                                    color: Colors.grey
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "키",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                    GreenButton(title: "${_height}cm")
+                                  ],
                                 ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "몸무게",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                    GreenButton(title: "${_weight}kg")
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "성별",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                    GreenButton(title: _gender ? "남성" : "여성")
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "운동 수준",
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                    GreenButton(title: getUserAbility(_ability))
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return UpdateUserInfoDialog(
+                                        updateInfo: getMypageInfo,
+                                        originalAge: _age,
+                                        originalHeight: _height,
+                                        originalWeight: _weight,
+                                        originalAbility: _ability,
+                                        originalGender: _gender,
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const GreenButton(title: "나의 정보 수정"),
                               ),
                             ],
+                          )),
+                          SizedBox(
+                            height: 10,
                           ),
+                          WhiteBox(
+                              widget: Column(
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    signOut();
+                                  },
+                                  child: GreenButton(title: "로그아웃")),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              GestureDetector(
+                                onTap: () {},
+                                child: Text(
+                                  "회원 탈퇴",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              )
+                            ],
+                          )),
                         ],
                       ),
-                    ),
-                    SizedBox(height: 10,),
-                    WhiteBox(
-                      widget: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "나이",
-                                  style: TextStyle(
-                                      fontSize: 15
-                                  ),
-                                ),
-                                GreenButton(title: "$_age세")
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "키",
-                                  style: TextStyle(
-                                      fontSize: 15
-                                  ),
-                                ),
-                                GreenButton(title: "${_height}cm")
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "몸무게",
-                                  style: TextStyle(
-                                      fontSize: 15
-                                  ),
-                                ),
-                                GreenButton(title: "${_weight}kg")
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "성별",
-                                  style: TextStyle(
-                                      fontSize: 15
-                                  ),
-                                ),
-                                GreenButton(title: _gender ? "남성" : "여성")
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "운동 수준",
-                                  style: TextStyle(
-                                      fontSize: 15
-                                  ),
-                                ),
-                                GreenButton(title: getUserAbility(_ability))
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: (){
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return UpdateUserInfoDialog(updateInfo: getMypageInfo, originalAge: _age, originalHeight: _height, originalWeight: _weight, originalAbility: _ability, originalGender: _gender,);
-                                },
-                              );
-                            },
-                            child: const GreenButton(title: "나의 정보 수정"),
-                          ),
-                        ],
-                      )
-                    ),
-                    SizedBox(height: 10,),
-                    WhiteBox(
-                      widget: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              signOut();
-                              },
-                            child: GreenButton(title: "로그아웃")
-                          ),
-                          SizedBox(height: 8,),
-                          GestureDetector(
-                            onTap: (){},
-                            child: Text(
-                              "회원 탈퇴",
-                              style: TextStyle(
-                                color: Colors.grey
-                              ),
-                            ),
-                          )
-
-                        ],
-                      )
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -369,6 +371,7 @@ class _MypageScreenState extends State<MypageScreen> {
 
 class WhiteBox extends StatelessWidget {
   final Widget widget;
+
   const WhiteBox({
     required this.widget,
     super.key,
