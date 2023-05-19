@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "825520873267",
+    "project_id": "daldong",
+    "storage_bucket": "daldong.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825520873267:android:7320be52b93fbac9c92846",
+        "android_client_info": {
+          "package_name": "com.ssafy.daldong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825520873267-9me69992ckvj8nacnhp6111nu7ldtmvt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssafy.daldong",
+            "certificate_hash": "4a699a984fcc81661163de46bb937935b4d89ef7"
+          }
+        },
+        {
+          "client_id": "825520873267-eq2lgcri0nr09cv9lrq05mlccef05nua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssafy.daldong",
+            "certificate_hash": "171eac9b6346d91e89562a4e74aa6fa636870591"
+          }
+        },
+        {
+          "client_id": "825520873267-vjj59e3h2794kmpkif9v1jaqihs4h7fu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFFlHTYquqQ4Q_O9bbhOeBCVrzFbJBJHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825520873267-3v1hd2lo90d14g1dsdpdfhhd7qf2ua5t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "825520873267-6b0bll5og120p4sav2tsjr7fdmadsl7f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ssafy.daldong"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

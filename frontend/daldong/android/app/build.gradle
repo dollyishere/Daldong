@@ -1,0 +1,152 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '261000101'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0.0'
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+apply plugin: 'com.android.application'
+// START: FlutterFire Configuration
+// apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.ssafy.daldong"
+        minSdkVersion 26
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        manifestPlaceholders += [
+                'appAuthRedirectScheme': 'com.googleusercontent.apps.895899232074-cmbk11eoqfp3t5vlkjbm2s9auadbvje8.apps.googleusercontent.com'
+        ]
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            //signingConfig signingConfigs.debug로 되어있는데 signingConfig signingConfigs.release로 수정해준다.
+            signingConfig signingConfigs.release
+
+            // start of proguard 코드난독화 및 사이즈 축소
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // end of proguard 코드난독화 및 사이즈 축소
+        }
+    }
+
+    dataBinding {
+        // 데이터 바인딩 활성화
+        enabled true
+    }
+    buildFeatures {
+        // 뷰 바인딩 활성화
+        viewBinding true
+        compose true
+    }
+
+    lintOptions {
+        warningsAsErrors true
+        ignore "ObsoleteLintCustomCheck"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10"
+
+    implementation libs.play.services.wearable
+
+    // Use to implement support for interactions from the Wearables to Phones
+    implementation libs.wear.phone.interactions
+
+    // Use to implement support for interactions between the Wearables and Phones
+    implementation libs.wear.remote.interactions
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.core)
+
+    implementation(libs.squareup.okhttp)
+    implementation(libs.squareup.okhttp.urlconnection)
+    implementation(libs.squareup.okhttp.logging)
+    implementation(libs.squareup.retrofit)
+
+    // Gson 변환기 라이브러리
+    implementation(libs.squareup.retrofit.converter.gson)
+
+    // Gson 라이브러리
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    def composeBom = platform(libs.androidx.compose.bom)
+    implementation composeBom
+
+    coreLibraryDesugaring libs.android.desugarjdklibs
+
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.play.services
+
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+
+    implementation libs.androidx.activity.compose
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'com.google.firebase:firebase-messaging'
+
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+
+    <!-- Babylon.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
+    <script src="https://cdn.babylonjs.com/ammo.js"></script>
+    <script src="https://cdn.babylonjs.com/havok/HavokPhysics_umd.js"></script>
+    <script src="https://cdn.babylonjs.com/cannon.js"></script>
+    <script src="https://cdn.babylonjs.com/Oimo.js"></script>
+    <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+    <style>
+      html,
+      body {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #renderCanvas {
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+      }
+
+      #canvasZone {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
+    <script>
+      // get canvas
+      var canvas = document.getElementById("renderCanvas");
+
+      // create Babylon.js engine
+      var engine = new BABYLON.Engine(canvas, true);
+
+      // create Babylon.js scene
+      var scene = new BABYLON.Scene(engine);
+
+      // create camera
+      var camera = new BABYLON.ArcRotateCamera(
+        "Camera",
+        -Math.PI / 2,
+        Math.PI / 2,
+        10,
+        BABYLON.Vector3.Zero(),
+        scene
+      );
+      camera.attachControl(canvas, true);
+
+      // create light
+      var light = new BABYLON.HemisphericLight(
+        "HemiLight",
+        new BABYLON.Vector3(0, 1, 0),
+        scene
+      );
+
+      // load glb file as ground
+      BABYLON.SceneLoader.ImportMesh(
+        "",
+        "./models/",
+        "island_1.glb",
+        scene,
+        function (newMeshes) {
+          // access the first mesh in the returned array
+          var ground = newMeshes[0];
+
+          // apply scaling and position to the ground mesh
+          ground.scaling = new BABYLON.Vector3(10, 10, 10);
+          ground.position = new BABYLON.Vector3(0, -1, 0);
+
+          // enable shadows for the ground mesh
+          ground.receiveShadows = true;
+
+          // enable collisions for the ground mesh
+          var groundMaterial = new BABYLON.StandardMaterial(
+            "groundMaterial",
+            scene
+          );
+          groundMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
+          groundMaterial.alpha = 0.5;
+          groundMaterial.wireframe = true;
+          ground.material = groundMaterial;
+
+          // start rendering loop
+          engine.runRenderLoop(function () {
+            scene.render();
+          });
+        }
+      );
+    </script>
+  </body>
+</html>

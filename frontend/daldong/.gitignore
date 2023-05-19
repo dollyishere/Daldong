@@ -1,0 +1,134 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+*.env
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+.vscode/
+pubspec.lock
+flutter_export_environment.sh
+
+examples/all_plugins/pubspec.yaml
+
+Podfile.lock
+Pods/
+.symlinks/
+**/Flutter/App.framework/
+**/Flutter/ephemeral/
+**/Flutter/Flutter.podspec
+**/Flutter/Flutter.framework/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_assets/
+
+ServiceDefinitions.json
+xcuserdata/
+**/DerivedData/
+
+local.properties
+keystore.properties
+.gradle/
+gradlew
+gradlew.bat
+gradle-wrapper.jar
+
+generated_plugin_registrant.cc
+generated_plugin_registrant.h
+generated_plugin_registrant.dart
+GeneratedPluginRegistrant.java
+GeneratedPluginRegistrant.h
+GeneratedPluginRegistrant.m
+GeneratedPluginRegistrant.swift
+generated_plugins.cmake
+build/
+
+.project
+.classpath
+.settings
+
+# Downloaded by the plugin tools.
+google-java-format-1.3-all-deps.jar
+
+# Flutter repo-specific
+/bin/cache/
+/bin/internal/bootstrap.bat
+/bin/internal/bootstrap.sh
+/bin/mingit/
+/dev/benchmarks/mega_gallery/
+/dev/bots/.recipe_deps
+/dev/bots/android_tools/
+/dev/devicelab/ABresults*.json
+/dev/docs/doc/
+/dev/docs/flutter.docs.zip
+/dev/docs/lib/
+/dev/docs/pubspec.yaml
+/dev/integration_tests/**/xcuserdata
+/dev/integration_tests/**/Pods
+/packages/flutter/coverage/
+version
+analysis_benchmark.json
+
+# packages file containing multi-root paths
+.packages.generated
+
+# Flutter/Dart/Pub related
+**/generated_plugin_registrant.dart
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Coverage
+coverage/
