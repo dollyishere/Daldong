@@ -32,8 +32,8 @@ android {
         applicationId "com.ssafy.daldong"
         minSdk 30
         targetSdk 33
-        versionCode 331100102
-        versionName "1.1.0"
+        versionCode 331110102
+        versionName "1.1.1"
         vectorDrawables {
             useSupportLibrary true
         }
