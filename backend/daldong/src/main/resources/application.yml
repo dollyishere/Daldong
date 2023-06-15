@@ -1,20 +1,18 @@
-# MySQL ?? ??
+# MySQL
 spring:
   datasource:
     url: jdbc:mysql://k8a104.p.ssafy.io:3306/daldong?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
-    username: ssafy
-    password: wkdbfA104
+    username: 
+    password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # database pool ??
+  # database pool
   datasource.hikari:
     minimum-idle: 5
     maximum-pool-size: 20
     idle-timeout: 30000
     pool-name: HikariCP
 
-    # ???? spring.io?? doc?? ??? ??????.
-    # jpa??
   jpa:
     database: mysql
     show-sql: true
@@ -28,8 +26,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 825520873267-vjj59e3h2794kmpkif9v1jaqihs4h7fu.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 
+            client-secret: 
             scope:
               - email
               - profile
@@ -50,4 +48,4 @@ spring:
     port: 6379
 
 jwt:
-  secret: ssafya104secretkeyfordaldong20230508A
+  secret: 
